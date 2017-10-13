@@ -314,7 +314,7 @@ compute_shrinkage_metrics<-function(DT){
   maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
   ## next compute basis shrinkage vector
   message("Computing Bayesian shrinkage")
-  bs.DT<-bayesian_shrinkage(basis.DT)
+  bs.DT<-bayesian_shrinkage(DT)
   setkey(bs.DT,pid)
   shrinkage.DT<-bs.DT[maf_se.DT]
   shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
