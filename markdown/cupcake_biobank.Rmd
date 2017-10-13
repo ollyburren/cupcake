@@ -3,8 +3,8 @@ title: "Using cupcake with UK BioBank"
 author: "Olly Burren"
 date: "13/10/2017"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
