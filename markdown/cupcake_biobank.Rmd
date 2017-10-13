@@ -1,0 +1,164 @@
+---
+title: "Using cupcake with UK BioBank"
+author: "Olly Burren"
+date: "13/10/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+base.dir<-'/Users/oliver/hpc_scratch/as_basis'
+gwas.dir <- file.path(base.dir,'gwas_stats/input_files')
+support.dir<-file.path(base.dir,'support_tab')
+```
+
+## Introduction
+
+Here we introduce cupcake a set of functions for scaling GWAS summary statistics so that they are amenable to Principal Component Analysis (PCA). This vignette illustrates the neccessary steps rather than dealing with the underlying technical details.
+
+Note we assume that define to variables
+- gwas.dir - This is the location of GWAS summary statistic files that should be incorporated into the basis.
+- support.dir - This is the location of a dir containing support files (in the code below these have specific names but these are arbitrary).
+
+# Install cupcake
+
+```{r}
+library(devtools)
+install_github('ollyburren/cupcake')
+library(cuPCAke)
+library(ggplot2)
+```
+
+
+## Input Files
+
+Due to the mutable nature of variants, cupcake uses a concatenation of chromosome and position in order to create a unique index for each variant. The software therefore assumes the following.
+
+- The set of variants is constant across all traits to be examined.
+- The position of these variants is uniquely defined by chromosome and position.
+
+In order to compute underlying statistics the following input files need to be supplied.
+
+# ref_af_file
+
+This file contains a list of reference allele frequencies for each variant relevant to the population being studied. These might be generated for example using data from the the 1000 genome project.
+
+```{r}
+ref_af_file<-file.path(support.dir,'as_basis_snps.tab')
+fread(ref_af_file,nrows=3L)
+```
+
+# ld_file
+
+This file contains a list of genomic regions specificying how to split the genome into rough recombination blocks. cupcake makes the simplifying assumption that there is essentially no LD between these blocks. This file might be generated for example using recombination frequencies available from the International HapMap project.
+
+```{r}
+ld_file<-file.path(support.dir,'all.1cM.tab')
+fread(ld_file,nrows=3L)
+```
+
+# m_file
+
+This is the manifest file and specifies metadata about the GWAS summary statistics you wish to include in your basis. This example includes data generously provided by the [Neale Lab](http://www.nealelab.is/)
+
+1. trait - A user friendly label for trait can be anything but should be unique.
+2. file - Filename for input GWAS data (see later for description)
+3. cases - Number of cases for study/trait
+4. controls - Number of controls for study/trait
+5. pmid - Pubmed ID or some other unique reference (for Neale Lab bb summary stats we use bb Field Code)
+6. basis_trait - An integer where 1 = TRUE and 0 FALSE. If set to 1 then trait will be used to compute the basis (see technical details for more information).
+
+```{r}
+m_file<-file.path(support.dir,'as_basis_manifest.tab')
+fread(m_file,nrows=3L)
+```
+
+# gwas
+
+This file contains the summary statistics for a given trait. One non trivial endeavour in generating these files is making sure that alleles and therefore odds ratio's are correctly aligned. In the future we hope to create a package to semi automate this proceedure but for the time being it's an exercise for the user.
+
+1. id - unique identifier for variant (note cupcake does not use this to integrate data)
+2. chr - chromosome 
+3. position 
+4. p.val - Univariate association p.value
+5. or - Odds Ratio (Note: If you use Neale Lab bb summary stats you will need to convert linear regression $\beta$ to logistic regression odds ratio)
+
+```{r}
+eg.gwas<-fread(m_file,nrows=1L)[]$file
+fread(file.path(gwas.dir,eg.gwas),nrows=3L)
+```
+
+# Create a PCA Basis using PCA
+
+Assuming all the files are arranged as specified above then computing the basis is achieved by running the following commands.
+
+Load in and integrate GWAS summary statistics and support files to create an integrated data.table object.
+
+```{r}
+basis.DT<-get_gwas_data(m_file,ref_af_file,ld_file,gwas.dir)
+```
+
+Next we compute the shrinkage parameters for each variant in the basis.
+
+```{r}
+shrink.DT<-compute_shrinkage_metrics(basis.DT)
+```
+
+Combine to create a matrix of shrunk $\log(OR)$ suitable for basis generation using prcomp. Note that we supply a parameter as to which maf standard error to use. This can be emp or est.
+
+```{r}
+basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'emp')
+```
+
+We need to add a control trait where $\log(OR) = 0$ 
+
+```{r}
+basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
+```
+
+Finally compute the basis using prcomp
+
+```{r}
+pc.emp <- prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
+```
+
+## Projection of other GWAS summary statistics onto the basis
+
+Here we show one proof of principle application: We use our basis above to see how traits observed in a separate cohort (UK BioBank) cluster with what we have 'learned' in the basis.
+
+```{r}
+bb_traits<-fread(m_file)[grep('bb_',trait),]$trait
+bb.DT<-get_gwas_data(m_file,ref_af_file,ld_file,gwas.dir,bb_traits)
+bb.mat.emp<-create_ds_matrix(bb.DT,shrink.DT,'emp')
+pred.emp <- predict(pc.emp,newdata=bb.mat.emp)
+emp<-rbind(pc.emp$x,pred.emp)
+
+ml<-list(
+    CD = 'bb_CD',
+    CEL = 'bb_CEL',
+    MS = 'bb_MS',
+    RA = 'bb_RA',
+    SLE = 'bb_SLE',
+    T1D = 'bb_T1D',
+    UC = 'bb_UC'
+)
+
+g <- function(M){
+    M <- cbind(as.data.table(M),trait=rownames(M))
+    M$compare<-"none"
+    for(i in seq_along(ml)) {
+        M[trait %in% c(names(ml)[i], ml[i]), compare:=names(ml)[i]]
+    }
+    M[trait=="control",compare:="control"]
+    M
+}
+
+emp<-g(emp)
+ggplot(emp,aes(x=PC1,y=PC2,color=compare,label=trait,alpha=compare!='none')) + 
+    geom_point() + geom_text(show.legend=FALSE) + theme_bw() + 
+    ggtitle('Empirical MAF SE shrinkage') + scale_alpha_discrete(guide=FALSE)
+```
+
+As expected we seem to see clustering where we expect it showing the method has promise.
