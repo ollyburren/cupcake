@@ -9,7 +9,6 @@ library(magrittr)
 #'
 #' @param x a vector of logs to sum
 #' @return a scalar
-#' @export
 
 logsum <- function(x) {
     my.max <- max(x) ##take out the maximum value in log form)
@@ -30,7 +29,6 @@ logsum <- function(x) {
 #' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 #' is in the range of 0.66-1.5 at any causal variant.
 #' @return a vector of posterior probabilities.
-#' @export
 
 wakefield_pp <- function(p,f, N, s,pi=1e-4,sd.prior=0.2) {
     if(length(p) != length(f))
@@ -63,7 +61,6 @@ wakefield_pp <- function(p,f, N, s,pi=1e-4,sd.prior=0.2) {
 #' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 #' is in the range of 0.66-1.5 at any causal variant.
 #' @return a vector of posterior probabilities.
-#' @export
 
 wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     if(length(p) != length(f))
@@ -86,7 +83,6 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
 #' @param bf a vector of approximate Bayes Factors using Wakefield's method.
 #' @param a scalar or vector of posterior probabilites
 #' @return pi a scalar empirical prior
-#' @export
 
 basis_pp<-function(BF,emp_pi){
   lABF<-log(BF)
@@ -105,7 +101,6 @@ basis_pp<-function(BF,emp_pi){
 #' @param DT basis data.table object
 #' @param tquant a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)
 #' @return data.table object
-#' @export
 
 bayesian_shrinkage<-function(DT,tquant=0.9999){
   tmp<-DT[,list(pid=pid,lp0=log(1-wakefield_null_pp(p.val,maf,n,n1/n))),by=c('trait','ld.block')]
@@ -130,7 +125,6 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
 #' @param n0 a vector or scalar of number of control samples
 #' @param f a vector of reference allele frequencies
 #' @return a numeric vector
-#' @export
 
 ca<-function(n0,f){
     n0*(1-f)
@@ -142,7 +136,6 @@ ca<-function(n0,f){
 #' @param n0 a vector or scalar of number of control samples
 #' @param f a vector of reference allele frequencies
 #' @return a numeric vector
-#' @export
 
 cb<-function(n0,f){
     n0*f
@@ -156,7 +149,6 @@ cb<-function(n0,f){
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
 #' see also \code{\link{ca}} and \code{\link{cb}}
-#' @export
 
 cc<-function(n1,a,b,theta){
     (n1*a)/(a+(b*theta))
@@ -170,7 +162,6 @@ cc<-function(n1,a,b,theta){
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
 #' see also \code{\link{ca}} and \code{\link{cb}}
-#' @export
 
 cd<-function(n1,a,b,theta){
     (n1*b)/(a+(b*theta))
@@ -187,7 +178,6 @@ cd<-function(n1,a,b,theta){
 #' @param a vector of Odds Ratios
 #' @return a numeric vector
 #' see also \code{\link{ca}}, \code{\link{cb}}, \code{\link{cc}} and \code{\link{cd}}
-#' @export
 
 maf_se_empirical<-function(n0,n1,f,theta){
     n<-n0+n1
@@ -205,7 +195,6 @@ maf_se_empirical<-function(n0,n1,f,theta){
 #'
 #' @param f a vector of minor allele frequencies taken from some reference population.
 #' @return a vector of shrinkage metrics
-#' @export
 
 maf_se_estimate <- function(f){
   #1/sqrt(f * (1-f))
@@ -219,7 +208,6 @@ maf_se_estimate <- function(f){
 #' @param p a vector of p values
 #' @param lor a vector of log odds ratios
 #' @return a vector of signed Z scores
-#' @export
 
 p2z <- function(p,lor){
   z <- qnorm(0.5 * p.val, lower.tail = FALSE)
@@ -233,7 +221,6 @@ p2z <- function(p,lor){
 #'
 #' @param z a vector of Z scores
 #' @return a vector of p values
-#' @export
 
 z2p <- function(z){
   2* pnorm(abs(z), lower.tail = FALSE)
