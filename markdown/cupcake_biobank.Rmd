@@ -19,12 +19,12 @@ support.dir<-file.path(base.dir,'support_tab')
 Here we introduce cupcake a set of functions for scaling GWAS summary statistics so that they are amenable to Principal Component Analysis (PCA). This vignette illustrates the neccessary steps rather than dealing with the underlying technical details.
 
 Note we assume that define to variables
-- gwas.dir - This is the location of GWAS summary statistic files that should be incorporated into the basis.
-- support.dir - This is the location of a dir containing support files (in the code below these have specific names but these are arbitrary).
+- gwas.dir, This is the location of GWAS summary statistic files that should be incorporated into the basis.
+- support.dir, This is the location of a dir containing support files (in the code below these have specific names but these are arbitrary).
 
 # Install cupcake
 
-```{r}
+```{r, warning=FALSE,message=FALSE}
 library(devtools)
 install_github('ollyburren/cupcake')
 library(cuPCAke)
