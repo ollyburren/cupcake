@@ -268,6 +268,14 @@ add_ld_block <- function(ld_support_file,DT){
 # this function gets GWAS data using a manifest file. If a trait list is supplied
 # then gets just those traits, if trait list is missing assumes that you want just
 # basis
+#' \code{get_gwas_data} integrate GWAS summary data with support files
+#' @param manifest_file character vector file path to GWAS manifest file
+#' @param snp_manifest_file character vector file path to snp manifest
+#' @param ld_support_file character vector file path to ld regions
+#' @param data_dir character vector file path to location of GWAS summary stats
+#' @param trait_list character vector of specific traits in manifest file to include
+#' @return data.table object
+#' @export
 
 get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_dir,trait_list){
   if(missing(trait_list)){
