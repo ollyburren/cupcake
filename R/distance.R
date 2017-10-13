@@ -1,12 +1,13 @@
 #' helper function to compute variance weighted eucledian distance
-#' \code{varWeightedEucledian} sums logs without loss of precision
+#' \code{var_weighted_eucledian} compute variance weighted euclidean distance between two PC loading vectors a and b
 #'
 #' @param vexp a numeric vector of variance explained for a set of principle components (e.g summary(pc)$importance[2,])
 #' @param a a vector of principle component loadings
 #' @param b a vector of principle component loadings
 #' @return a scalar
+#' @export
 
-varWeightedEucledian<-function(vexp,a,b){
+var_weighted_eucledian<-function(vexp,a,b){
   if(length(a)!=length(b))
     stop("Loading vectors are not equal")
   if(length(a)!=vexp)
@@ -30,9 +31,9 @@ pairwise_euc_matrix<-function(x,vexp,pcidx){
     for(j in seq_along(rnames)){
       if(i!=j){
         if(missing(pcidx)){
-          M[i,j] <- varWeightedEucledian(vexp,x[i,],x[j,])
+          M[i,j] <- var_weighted_eucledian(vexp,x[i,],x[j,])
         }else{
-          M[i,j] <- varWeightedEucledian(1,x[i,pcidx],x[j,pcidx])
+          M[i,j] <- var_weighted_eucledian(1,x[i,pcidx],x[j,pcidx])
         }
       }
     }
