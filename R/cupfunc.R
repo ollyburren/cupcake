@@ -9,6 +9,7 @@ library(magrittr)
 #'
 #' @param x a vector of logs to sum
 #' @return a scalar
+#' @export
 
 logsum <- function(x) {
     my.max <- max(x) ##take out the maximum value in log form)
@@ -85,6 +86,7 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
 #' @param bf a vector of approximate Bayes Factors using Wakefield's method.
 #' @param a scalar or vector of posterior probabilites
 #' @return pi a scalar empirical prior
+#' @export
 
 basis_pp<-function(BF,emp_pi){
   lABF<-log(BF)
@@ -103,6 +105,7 @@ basis_pp<-function(BF,emp_pi){
 #' @param DT basis data.table object
 #' @param tquant a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)
 #' @return data.table object
+#' @export
 
 bayesian_shrinkage<-function(DT,tquant=0.9999){
   tmp<-DT[,list(pid=pid,lp0=log(1-wakefield_null_pp(p.val,maf,n,n1/n))),by=c('trait','ld.block')]
@@ -127,6 +130,7 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
 #' @param n0 a vector or scalar of number of control samples
 #' @param f a vector of reference allele frequencies
 #' @return a numeric vector
+#' @export
 
 ca<-function(n0,f){
     n0*(1-f)
@@ -138,6 +142,7 @@ ca<-function(n0,f){
 #' @param n0 a vector or scalar of number of control samples
 #' @param f a vector of reference allele frequencies
 #' @return a numeric vector
+#' @export
 
 cb<-function(n0,f){
     n0*f
@@ -151,6 +156,7 @@ cb<-function(n0,f){
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
 #' see also \code{\link{ca}} and \code{\link{cb}}
+#' @export
 
 cc<-function(n1,a,b,theta){
     (n1*a)/(a+(b*theta))
@@ -164,6 +170,7 @@ cc<-function(n1,a,b,theta){
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
 #' see also \code{\link{ca}} and \code{\link{cb}}
+#' @export
 
 cd<-function(n1,a,b,theta){
     (n1*b)/(a+(b*theta))
@@ -178,7 +185,7 @@ cd<-function(n1,a,b,theta){
 #' @param n1 a vector or scalar of number of case samples
 #' @param f a vector of reference allele frequencies
 #' @param a vector of Odds Ratios
-#' @returns a numeric vector
+#' @return a numeric vector
 #' see also \code{\link{ca}}, \code{\link{cb}}, \code{\link{cc}} and \code{\link{cd}}
 #' @export
 
@@ -289,7 +296,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_d
 #' \code{compute_shrinkage_metrics} computes various shrinkage metrics
 #'
 #' @param data.table object for basis traits as returned by \code{\link{get_gwas_data}}
-#' @returns a data.table object.
+#' @return a data.table object.
 #' \enumerate{
 #' \item pid - unique id using chr and position (useful for merging back)
 #' \item bshrink - Bayesian shrinkage based on association across all basis traits
@@ -299,6 +306,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_d
 #' \item est_shrinkage - overall shrinkage using est_maf_se
 #' }
 #' see also \code{\link{maf_se_empirical}}, \code{\link{maf_se_estimate}} and \code{\link{bayesian_shrinkage}}.
+#' @export
 
 compute_shrinkage_metrics<-function(DT){
   message("Computing maf_se_empirical")
@@ -324,8 +332,9 @@ compute_shrinkage_metrics<-function(DT){
 #'
 #' @param bDT data.table object for basis traits as returned by \code{\link{get_gwas_data}}
 #' @param sDT data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}
-#' @oaram method scalar vector (either emp or est), emp uses empirically generated MAF SE, est uses and estimate.
-#' @returns a matrix.
+#' @param method scalar vector (either emp or est), emp uses empirically generated MAF SE, est uses and estimate.
+#' @return a matrix.
+#' @export
 
 create_ds_matrix <- function(bDT,sDT,method=c('emp','est')){
   if(missing(method)){

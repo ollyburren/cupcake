@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .Rproj.user
 .Rhistory
 .RData
@@ -36,4 +35,3 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
->>>>>>> bf73f2b7822448d582fc3299046ed2fc4beb2b37
