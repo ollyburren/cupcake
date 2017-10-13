@@ -10,7 +10,7 @@
 var_weighted_eucledian<-function(vexp,a,b){
   if(length(a)!=length(b))
     stop("Loading vectors are not equal")
-  if(length(a)!=vexp)
+  if(length(a)!=length(vexp))
     stop("Loading and variance vectors are not equal")
   sqrt((a-b)^2 %*% vexp)
 }
