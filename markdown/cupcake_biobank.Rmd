@@ -8,6 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 base.dir<-'/Users/oliver/hpc_scratch/as_basis'
 gwas.dir <- file.path(base.dir,'gwas_stats/input_files')
@@ -48,7 +49,7 @@ This file contains a list of reference allele frequencies for each variant relev
 
 ```{r}
 ref_af_file<-file.path(support.dir,'as_basis_snps.tab')
-fread(ref_af_file,nrows=3L)
+kable(fread(ref_af_file,nrows=3L))
 ```
 
 # ld_file
@@ -57,7 +58,7 @@ This file contains a list of genomic regions specificying how to split the genom
 
 ```{r}
 ld_file<-file.path(support.dir,'all.1cM.tab')
-fread(ld_file,nrows=3L)
+kable(fread(ld_file,nrows=3L))
 ```
 
 # m_file
@@ -73,7 +74,7 @@ This is the manifest file and specifies metadata about the GWAS summary statisti
 
 ```{r}
 m_file<-file.path(support.dir,'as_basis_manifest.tab')
-fread(m_file,nrows=3L)
+kable(fread(m_file,nrows=3L))
 ```
 
 # gwas
@@ -88,7 +89,7 @@ This file contains the summary statistics for a given trait. One non trivial end
 
 ```{r}
 eg.gwas<-fread(m_file,nrows=1L)[]$file
-fread(file.path(gwas.dir,eg.gwas),nrows=3L)
+kable(fread(file.path(gwas.dir,eg.gwas),nrows=3L))
 ```
 
 # Create a PCA Basis using PCA
