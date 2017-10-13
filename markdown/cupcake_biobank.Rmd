@@ -29,7 +29,7 @@ Note we assume that define to variables
 ```{r, warning=FALSE,message=FALSE}
 library(devtools)
 install_github('ollyburren/cupcake')
-library(cuPCAke)
+library(cupcake)
 library(ggplot2)
 ```
 
