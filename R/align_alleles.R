@@ -47,10 +47,9 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,signif(1/or,digits=3),'comp.flip')]
   rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a1 & comp(other.allele) ==a2))
   if(!check){
-    gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)]
+    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)])
   }else{
     gwas.DT[is.na(check),check:='none']
-    gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or,check)]
+    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or,check)])
   }
-  return(gwas.DT)
 }
