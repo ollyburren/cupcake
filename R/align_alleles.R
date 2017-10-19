@@ -31,7 +31,7 @@ comp<-function(cv){
 align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   ## first make it so that a1 and a2 on gwas.DT are converted to risk.allele and other.allele
   gwas.DT[,c('risk.allele','other.allele'):=list(a1,a2)]
-  gwas.DT[or<1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
+  gwas.DT[or>1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
   ## next merge in ref information
   gwas.DT <- gwas.DT[,.(id,chr,position,p.val,or,risk.allele,other.allele)]
   ref.DT[,pid:=paste(chr,position,sep=':')]
