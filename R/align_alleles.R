@@ -40,11 +40,11 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   setkey(gwas.DT,pid)
   gwas.DT<-gwas.DT[ref.DT]
   flip.idx<-with(gwas.DT,which(risk.allele == a2 & other.allele ==a1))
-  gwas.DT[flip.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or),'flip')]
+  gwas.DT[flip.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or,'flip')]
   non.match.idx<-which(gwas.DT$risk.allele != gwas.DT$a1)
 	flip.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a2 & comp(other.allele) ==a1))
   actual.flip.comp.idx<-intersect(non.match.idx,flip.comp.idx)
-  gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or),'comp.flip')]
+  gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or,'comp.flip')]
   rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a1 & comp(other.allele) ==a2))
   if(!check){
     return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)])
