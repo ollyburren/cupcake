@@ -31,7 +31,7 @@ comp<-function(cv){
 align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   ## first make it so that a1 and a2 on gwas.DT are converted to risk.allele and other.allele
   gwas.DT[,c('risk.allele','other.allele'):=list(a1,a2)]
-  gwas.DT[or<1,c('risk.allele','other.allele','or'):=list(a2,a1,signif(1/or,digits=3))]
+  gwas.DT[or<1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
   ## next merge in ref information
   gwas.DT <- gwas.DT[,.(id,chr,position,p.val,or,risk.allele,other.allele)]
   ref.DT[,pid:=paste(chr,position,sep=':')]
@@ -40,11 +40,11 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   setkey(gwas.DT,pid)
   gwas.DT<-gwas.DT[ref.DT]
   flip.idx<-with(gwas.DT,which(risk.allele == a2 & other.allele ==a1))
-  gwas.DT[flip.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,signif(1/or,digits=3),'flip')]
+  gwas.DT[flip.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or),'flip')]
   non.match.idx<-which(gwas.DT$risk.allele != gwas.DT$a1)
 	flip.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a2 & comp(other.allele) ==a1))
   actual.flip.comp.idx<-intersect(non.match.idx,flip.comp.idx)
-  gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,signif(1/or,digits=3),'comp.flip')]
+  gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or),'comp.flip')]
   rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a1 & comp(other.allele) ==a2))
   if(!check){
     return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)])
