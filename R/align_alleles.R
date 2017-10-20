@@ -50,6 +50,6 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
     return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)])
   }else{
     gwas.DT[is.na(check),check:='none']
-    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or,check)])
+    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2)])
   }
 }
