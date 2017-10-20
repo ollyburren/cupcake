@@ -16,6 +16,21 @@ comp<-function(cv){
   cv
 }
 
+## this contains code to align alleles between studies
+
+#' \code{ambiguous} get ambiguous variants
+#'
+#' @param a1 a vector of alleles AGCT
+#' @param a2 a vector of alleles AGCT
+#' @return a boolean vector
+
+ambiguous<-function(a1,a2){
+  tmp<-data.table(a1=a1,a2=a2,amb=FALSE)
+  tmp[(a1=='A' & a2=='T') | (a1=='T' & a2=='A'),amb:=TRUE]
+  tmp[(a1=='G' & a2=='C') | (a1=='C' & a2=='G'),amb:=TRUE]
+  return(tmp$amb)
+}
+
 #' \code{align_alleles} compute variance weighted euclidean distance between two PC loading vectors a and b
 #'
 #' @param gwas.DT a data.table of GWAS data see \code{\link{get_gwas_data}}
@@ -30,26 +45,29 @@ comp<-function(cv){
 
 align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   ## first make it so that a1 and a2 on gwas.DT are converted to risk.allele and other.allele
-  gwas.DT[,c('risk.allele','other.allele'):=list(a1,a2)]
-  gwas.DT[or>1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
+  #gwas.DT[,c('risk.allele','other.allele'):=list(a1,a2)]
+  gwas.DT[,c('risk.allele','other.allele','ambig'):=list(a2,a1,ambiguous(a1,a2))]
+  #gwas.DT[or>1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
+  gwas.DT[or<1,c('risk.allele','other.allele','or'):=list(a1,a2,1/or)]
   ## next merge in ref information
-  gwas.DT <- gwas.DT[,.(id,chr,position,p.val,or,risk.allele,other.allele)]
+  gwas.DT <- gwas.DT[,.(id,chr,position,p.val,or,risk.allele,other.allele,ambig)]
   ref.DT[,pid:=paste(chr,position,sep=':')]
   gwas.DT[,pid:=paste(chr,position,sep=':')]
   setkey(ref.DT,pid)
   setkey(gwas.DT,pid)
   gwas.DT<-gwas.DT[ref.DT]
-  flip.idx<-with(gwas.DT,which(risk.allele == a2 & other.allele ==a1))
+  flip.idx<-with(gwas.DT,which(risk.allele == a1 & other.allele ==a2))
   gwas.DT[flip.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or,'flip')]
   non.match.idx<-which(gwas.DT$risk.allele != gwas.DT$a1)
-	flip.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a2 & comp(other.allele) ==a1))
+	flip.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a1 & comp(other.allele) ==a2))
   actual.flip.comp.idx<-intersect(non.match.idx,flip.comp.idx)
   gwas.DT[actual.flip.comp.idx,c('risk.allele','other.allele','or','check'):=list(a1,a2,1/or,'comp.flip')]
-  rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a1 & comp(other.allele) ==a2))
+  rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a2 & comp(other.allele) ==a1))
+  gwas.DT <- gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')]
   if(!check){
-    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or)])
+    return(gwas.DT[,.(id,chr,position,p.val,or)])
   }else{
     gwas.DT[is.na(check),check:='none']
-    return(gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')][,.(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2)])
+    return(gwas.DT[,.(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2,ambig)])
   }
 }
