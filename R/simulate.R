@@ -77,6 +77,16 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
   return(list(sm=new("SnpMatrix", sm),info=info))
 }
 
+#' simulate beta
+#' \code{simulate_beta} use the multivariate normal to simulate realistic beta's
+#'
+#' @param sm a snpMatrix object -
+#' @param lor a vector - observed betas
+#' @param se_lor a vector - standard error of betas
+#' @param lor_shrink a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)
+#' @param n_sims - number of simulations to conduct
+#' @return a matrix of simulated betas
+#' @export
 
 simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
   beta_hat<-lor * lor_shrink
