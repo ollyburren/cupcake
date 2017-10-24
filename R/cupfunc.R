@@ -48,7 +48,7 @@ wakefield_pp <- function(p,f, N, s,pi=1e-4,sd.prior=0.2) {
     exp(lABF+log(pi_i)-sBF)
 }
 
-#' compute reciprical posterior probabilities using Wakefield's approximate Bayes Factors
+#' compute reciprocal posterior probabilities using Wakefield's approximate Bayes Factors
 #' \code{wakefield_null_pp} computes posterior probabilities for a given SNP to be NOT be causal for a given SNP under the assumption of a single causal variant.
 #'
 #' @param p a vector of univariate pvalues from a GWAS
@@ -61,6 +61,7 @@ wakefield_pp <- function(p,f, N, s,pi=1e-4,sd.prior=0.2) {
 #' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 #' is in the range of 0.66-1.5 at any causal variant.
 #' @return a vector of posterior probabilities.
+#' @export
 
 wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     if(length(p) != length(f))

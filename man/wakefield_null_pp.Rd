@@ -2,7 +2,7 @@
 % Please edit documentation in R/cupfunc.R
 \name{wakefield_null_pp}
 \alias{wakefield_null_pp}
-\title{compute reciprical posterior probabilities using Wakefield's approximate Bayes Factors
+\title{compute reciprocal posterior probabilities using Wakefield's approximate Bayes Factors
 \code{wakefield_null_pp} computes posterior probabilities for a given SNP to be NOT be causal for a given SNP under the assumption of a single causal variant.}
 \usage{
 wakefield_null_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2)
@@ -27,6 +27,6 @@ is in the range of 0.66-1.5 at any causal variant.}
 a vector of posterior probabilities.
 }
 \description{
-compute reciprical posterior probabilities using Wakefield's approximate Bayes Factors
+compute reciprocal posterior probabilities using Wakefield's approximate Bayes Factors
 \code{wakefield_null_pp} computes posterior probabilities for a given SNP to be NOT be causal for a given SNP under the assumption of a single causal variant.
 }
