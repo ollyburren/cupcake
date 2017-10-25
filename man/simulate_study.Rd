@@ -5,12 +5,15 @@
 \title{simulate betas for a study
 \code{simulate_study} use the multivariate normal to simulate realistic betas for a study}
 \usage{
-simulate_study(DT, ref_gt_dir, n_sims = 10, quiet = TRUE)
+simulate_study(DT, ref_gt_dir, shrink_beta = TRUE, n_sims = 10,
+  quiet = TRUE)
 }
 \arguments{
 \item{DT}{a data.table - as returned by \code{\link{get_gwas_data}}}
 
 \item{ref_gt_dir}{scalar - path to a dir of R objects named CHR_1kg.RData containing reference GT in snpMatrix format}
+
+\item{shrink_beta}{scalar - Whether to use Bayesian shrinkage of betas (default = TRUE)}
 
 \item{n_sims}{a scalar - number of simulations (default 10)}
 
