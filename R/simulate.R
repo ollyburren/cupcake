@@ -126,7 +126,7 @@ simulate_study <- function(DT,ref_gt_dir,n_sims=10,quiet=TRUE){
     if(length(dup.idx)>0){
       if(!quiet)
         message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
-      sm$info<-sm$info[sm$info[-dup.idx,]]
+      sm$info<-sm$info[-dup.idx,]
       sm$sm[,-dup.idx]
     }
     sm$info$order<-1:nrow(sm$info)
