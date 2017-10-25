@@ -10,7 +10,7 @@ simulate_study(DT, ref_gt_dir, n_sims = 10, quiet = TRUE)
 \arguments{
 \item{DT}{a data.table - as returned by \code{\link{get_gwas_data}}}
 
-\item{ref_gt_dir}{scalar - path to a dir of R objects named %s_1kg.RData containing reference GT in snpMatrix format}
+\item{ref_gt_dir}{scalar - path to a dir of R objects named CHR_1kg.RData containing reference GT in snpMatrix format}
 
 \item{n_sims}{a scalar - number of simulations (default 10)}
 

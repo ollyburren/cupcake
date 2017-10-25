@@ -86,7 +86,7 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
 #' @param lor a vector - observed betas
 #' @param se_lor a vector - standard error of betas
 #' @param lor_shrink a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)
-#' @param n_sims - number of simulations to conduct
+#' @param n_sims a scalar - number of simulations to conduct
 #' @return a matrix of simulated betas
 
 simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
@@ -108,7 +108,7 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
 #' \code{simulate_study} use the multivariate normal to simulate realistic betas for a study
 #'
 #' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
-#' @param ref_gt_dir scalar - path to a dir of R objects named %s_1kg.RData containing reference GT in snpMatrix format
+#' @param ref_gt_dir scalar - path to a dir of R objects named CHR_1kg.RData containing reference GT in snpMatrix format
 #' @param n_sims a scalar - number of simulations (default 10)
 #' @param quiet a scalar - boolean whether to show progress messages
 #' @return a DT of n_sims simulated studies for projection
@@ -121,6 +121,14 @@ simulate_study <- function(DT,ref_gt_dir,n_sims=10,quiet=TRUE){
       message(sprintf("Processing %s",chr))
     ss.file<-file.path(ref_gt_dir,sprintf("%s_1kg.RData",chr))
     sm<-get(load(ss.file))
+    ## there are sometimes duplicates that we need to remove
+    dup.idx<-which(duplicated(obj$info$pid))
+    if(length(dup.idx)>0){
+      if(!quiet)
+        message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
+      sm$info<-sm$info[sm$info[-dup.idx,]]
+      sm$sm[,-dup.idx]
+    }
     sm$info$order<-1:nrow(sm$info)
     # by ld block
     by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)

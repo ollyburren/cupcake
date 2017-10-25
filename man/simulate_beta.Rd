@@ -16,7 +16,7 @@ simulate_beta(sm, lor, se_lor, lor_shrink = 1, n_sims)
 
 \item{lor_shrink}{a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)}
 
-\item{n_sims}{- number of simulations to conduct}
+\item{n_sims}{a scalar - number of simulations to conduct}
 }
 \value{
 a matrix of simulated betas
