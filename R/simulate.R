@@ -86,7 +86,6 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
 #' @param lor_shrink a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)
 #' @param n_sims - number of simulations to conduct
 #' @return a matrix of simulated betas
-#' @export
 
 simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
   beta_hat<-lor * lor_shrink
@@ -101,4 +100,45 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
   cov.beta<-cov_se * r
   ## simulate beta
   return(mvs_perm(beta_hat,cov.beta,n=n.sims))
+}
+
+#' simulate beta's for a study
+#' \code{simulate_beta} use the multivariate normal to simulate realistic beta's
+#'
+#' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
+#' @param ref_gt_dir scalar - path to a dir of R objects named %s_1kg.RData containing reference GT in snpMatrix format
+#' @param n_sims a scalar - number of simulations (default 10)
+#' @param quiet a scalar - boolean whether to show progress messages
+#' @return a DT of n_sims simulated studies for projection
+#' @export
+
+simulate_study <- function(DT,ref_gt_dir,n_sims=10,quiet=TRUE){
+  s.DT <- split(DT,DT$chr)
+  all.chr <- lapply(names(s.DT),function(chr){
+    if(!quiet)
+      message(sprintf("Processing %s",chr))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s_1kg.RData",chr))
+    sm<-get(load(ss.file))
+    sm$info$order<-1:nrow(sm$info)
+    # by ld block
+    by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)
+    chr.sims <- lapply(names(by.ld),function(block){
+      if(!quiet)
+        message(sprintf("Processing %s",block))
+      dat <- by.ld[[block]]
+      setkey(dat,pid)
+      info <-sm$info[pid %in% dat$pid ,.(pid,order)]
+      setkey(info,pid)
+      dat <- dat[info][order(order),]
+      ## compute beta shrinkage
+      shrink <- with(dat,wakefield_null_pp(p.val,maf,n,n1/n))
+      M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,shrink,n.sims))
+      sims <- cbind(dat,M)
+      sims <- melt(sims,id.vars=names(dat))
+      return(sims[,c('or','trait'):=list(exp(value),paste(trait,variable,sep='_'))][,names(dat),with=FALSE])
+    })
+    chr.sims<-rbindlist(chr.sims)
+  })
+  all.chr<-rbindlist(all.chr)
+  setkey(all.chr,pid)
 }
