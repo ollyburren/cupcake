@@ -87,10 +87,10 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
 #' @param n_sims - number of simulations to conduct
 #' @return a matrix of simulated betas
 
-simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
+simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
   beta_hat<-lor * lor_shrink
   if(length(lor)==1)
-    return(t(rnorm(n.sims,mean=beta_hat,sd=se_lor)))
+    return(t(rnorm(n_sims,mean=beta_hat,sd=se_lor)))
   # compute R statistic
   r<-ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
@@ -102,8 +102,8 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
   return(mvs_perm(beta_hat,cov.beta,n=n.sims))
 }
 
-#' simulate beta's for a study
-#' \code{simulate_study} use the multivariate normal to simulate realistic beta's for a study
+#' simulate betas for a study
+#' \code{simulate_study} use the multivariate normal to simulate realistic betas for a study
 #'
 #' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
 #' @param ref_gt_dir scalar - path to a dir of R objects named %s_1kg.RData containing reference GT in snpMatrix format
