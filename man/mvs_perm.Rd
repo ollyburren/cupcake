@@ -2,7 +2,8 @@
 % Please edit documentation in R/simulate.R
 \name{mvs_perm}
 \alias{mvs_perm}
-\title{\code{mvs_perm} sample from a multivariate normal distribution}
+\title{Code to sample multivariate norm
+\code{mvs_perm} sample from a multivariate normal distribution}
 \usage{
 mvs_perm(m, sigma, n = 2)
 }
@@ -17,5 +18,6 @@ mvs_perm(m, sigma, n = 2)
 a matrix of sampled values
 }
 \description{
+Code to sample multivariate norm
 \code{mvs_perm} sample from a multivariate normal distribution
 }

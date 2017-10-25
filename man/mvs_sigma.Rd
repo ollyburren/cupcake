@@ -2,7 +2,8 @@
 % Please edit documentation in R/simulate.R
 \name{mvs_sigma}
 \alias{mvs_sigma}
-\title{\code{mvs_sigma} create a geneotype convariance matrix}
+\title{Code to compute sigma - genotype covariance matrix
+\code{mvs_sigma} create a geneotype convariance matrix}
 \usage{
 mvs_sigma(r)
 }
@@ -13,5 +14,6 @@ mvs_sigma(r)
 a positive definite approximation of covariance matrix
 }
 \description{
+Code to compute sigma - genotype covariance matrix
 \code{mvs_sigma} create a geneotype convariance matrix
 }

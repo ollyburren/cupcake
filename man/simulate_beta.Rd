@@ -2,13 +2,13 @@
 % Please edit documentation in R/simulate.R
 \name{simulate_beta}
 \alias{simulate_beta}
-\title{simulate beta
-\code{simulate_beta} use the multivariate normal to simulate realistic beta's}
+\title{simulate betas for an ld block
+\code{simulate_beta} use the multivariate normal to simulate realistic betas}
 \usage{
-simulate_beta(sm, lor, se_lor, lor_shrink = 1, n_sims = 1)
+simulate_beta(sm, lor, se_lor, lor_shrink = 1, n_sims)
 }
 \arguments{
-\item{sm}{a snpMatrix object -}
+\item{sm}{a snpMatrix object}
 
 \item{lor}{a vector - observed betas}
 
@@ -22,6 +22,6 @@ simulate_beta(sm, lor, se_lor, lor_shrink = 1, n_sims = 1)
 a matrix of simulated betas
 }
 \description{
-simulate beta
-\code{simulate_beta} use the multivariate normal to simulate realistic beta's
+simulate betas for an ld block
+\code{simulate_beta} use the multivariate normal to simulate realistic betas
 }
