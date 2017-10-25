@@ -3,7 +3,7 @@
 \name{simulate_study}
 \alias{simulate_study}
 \title{simulate beta's for a study
-\code{simulate_beta} use the multivariate normal to simulate realistic beta's}
+\code{simulate_study} use the multivariate normal to simulate realistic beta's for a study}
 \usage{
 simulate_study(DT, ref_gt_dir, n_sims = 10, quiet = TRUE)
 }
@@ -21,5 +21,5 @@ a DT of n_sims simulated studies for projection
 }
 \description{
 simulate beta's for a study
-\code{simulate_beta} use the multivariate normal to simulate realistic beta's
+\code{simulate_study} use the multivariate normal to simulate realistic beta's for a study
 }

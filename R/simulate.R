@@ -103,7 +103,7 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims=1){
 }
 
 #' simulate beta's for a study
-#' \code{simulate_beta} use the multivariate normal to simulate realistic beta's
+#' \code{simulate_study} use the multivariate normal to simulate realistic beta's for a study
 #'
 #' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
 #' @param ref_gt_dir scalar - path to a dir of R objects named %s_1kg.RData containing reference GT in snpMatrix format
@@ -132,7 +132,7 @@ simulate_study <- function(DT,ref_gt_dir,n_sims=10,quiet=TRUE){
       dat <- dat[info][order(order),]
       ## compute beta shrinkage
       shrink <- with(dat,wakefield_null_pp(p.val,maf,n,n1/n))
-      M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,shrink,n.sims))
+      M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,shrink,n_sims))
       sims <- cbind(dat,M)
       sims <- melt(sims,id.vars=names(dat))
       return(sims[,c('or','trait'):=list(exp(value),paste(trait,variable,sep='_'))][,names(dat),with=FALSE])
