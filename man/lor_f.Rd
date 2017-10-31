@@ -24,7 +24,9 @@ a list object
 \item 00 - mean lor for reference hom
 \item 01 - mean lor for het
 \item 11 - mean lor for alternative hom
-\item quant - quantiles for posterior distribution of allele frequency in cases.
+\item quant00 - quantiles for posterior distribution of allele frequency in cases for ref hom
+\item quant01 - quantiles for posterior distribution of allele frequency in cases for het
+\item quant11 - quantiles for posterior distribution of allele frequency in cases for alt hom
 }
 }
 \description{
