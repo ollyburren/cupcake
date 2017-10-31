@@ -1,3 +1,20 @@
+#' This function computes shape parameters for beta distribution matching a binomial proportion B(n,f)/n
+#' \code{control_prior_shape} shape parameters for beta distribution matching a binomial proportion B(n,f)/n
+#'
+#' @param f a scalar - allele frequency in the controls
+#' @param n a scalar - number if indivudals (not observations) used to estimate f
+#' @return list of shape parameters for a beta distributon
+#' \enumerate{
+#' \item a0 - alpha shape parameter in controls
+#' \item b0 - beta shape parameter in controls
+#' }
+control_prior_shape <- function(f,n){
+    v=f*(1-f)/(2*n)
+    a0=-f*(f^2-f+v)/v
+    b0=(f^2-f+v)*(f-1)/v
+    list(a0=a0,b0=b0)
+}
+
 #' This function computes expected log odds ratio for a set of shape parameters
 #' \code{e_lor} computes expected log odds ratio for a set of shape parameters
 #'
