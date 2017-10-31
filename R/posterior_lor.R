@@ -109,7 +109,7 @@ lor_f <- function(f0,n,nsim,target.or,target.prob){
     a0 <- p0.shape$a0
     b0 <- p0.shape$b0
     p0 <- rbeta(nsim,shape1=a0,shape2=b0)
-    a1b1 <- est.a1b1(a0,b0,target.or,target.prob,nsim)
+    a1b1 <- est_a1b1(a0,b0,target.or,target.prob,nsim)
     a1 <- a1b1$a1
     b1 <- a1b1$b1
     lor.00 <- post.lor(0)
