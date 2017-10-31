@@ -8,6 +8,7 @@
 #' \item a0 - alpha shape parameter in controls
 #' \item b0 - beta shape parameter in controls
 #' }
+#' @export
 control_prior_shape <- function(f,n){
     v=f*(1-f)/(2*n)
     a0=-f*(f^2-f+v)/v
