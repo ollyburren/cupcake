@@ -85,7 +85,7 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
     posta <- 2-gt + a1
     postb <- gt + b1
     p1 <- rbeta(nsim,shape1=posta,shape2=postb)
-    log(p0*(1-p1)/(p1*(1-p0)))
+    list(lor=log(p0*(1-p1)/(p1*(1-p0))),p1=p1)
 }
 
 #' This function samples from the posterior distribution of a given control allele frequency, for different genotype configurations
@@ -100,7 +100,9 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' \item 00 - mean lor for reference hom
 #' \item 01 - mean lor for het
 #' \item 11 - mean lor for alternative hom
-#' \item quant - quantiles for posterior distribution of allele frequency in cases.
+#' \item quant00 - quantiles for posterior distribution of allele frequency in cases for ref hom
+#' \item quant01 - quantiles for posterior distribution of allele frequency in cases for het
+#' \item quant11 - quantiles for posterior distribution of allele frequency in cases for alt hom
 #' }
 #' @export
 
@@ -112,11 +114,14 @@ lor_f <- function(f0,n,nsim,target.or,target.prob){
     a1b1 <- est_a1b1(a0,b0,target.or,target.prob,nsim)
     a1 <- a1b1$a1
     b1 <- a1b1$b1
+
     lor.00 <- post_lor(0,a1,b1,p0,nsim)
     lor.01 <- post_lor(1,a1,b1,p0,nsim)
     lor.11 <- post_lor(2,a1,b1,p0,nsim)
-    c("00"=mean(lor.00),
-      "01"=mean(lor.01),
-      "11"=mean(lor.11),
-      quant=quantile(p1,c(0.05,0.25,0.5,0.75,0.95)))
+    c("00"=mean(lor.00$lor),
+      "01"=mean(lor.01$lor),
+      "11"=mean(lor.11$lor),
+      quant00=quantile(lor.00$p1,c(0.05,0.25,0.5,0.75,0.95)),
+      quant01=quantile(lor.01$p1,c(0.05,0.25,0.5,0.75,0.95)),
+      quant11=quantile(lor.11$p1,c(0.05,0.25,0.5,0.75,0.95)))
 }
