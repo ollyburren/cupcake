@@ -22,9 +22,9 @@ e_lor <- function(b1,a0,b0,a1){
 #' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
 #' @return scalar - P(sim.or>target.or)
 
-lor_constraint <- function(a1,a0,b0,p0,target.or){
+lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
     b1 <- optimise(e_lor,c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
-    p1 <- rbeta(10000,shape1=a1,shape2=b1)
+    p1 <- rbeta(nsim,shape1=a1,shape2=b1)
     lor <- log(p0) - log(1-p0) + log(1-p1) - log(p1)
     mean(abs(lor) > log(target.or))
 }
@@ -37,12 +37,12 @@ lor_constraint <- function(a1,a0,b0,p0,target.or){
 #' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
 #' @return list - shape parameters for beta distribution satisfying target.or,target.prob and control prior distribution constraints.
 
-est_a1b1 <- function(a0,b0,target.or,target.prob){
+est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
     # get an independendent sample of the prior of f_0
-    p0 <- rbeta(10000,shape1 = a0 ,shape2 = b0)
+    p0 <- rbeta(nsims,shape1 = a0 ,shape2 = b0)
     ## estimate compatible a1 shape parameter for f1 given target OR and probability
     a1 <- 1
-    while((pr <- lor_constraint(a1,a0,b0,p0,target.or)) > target.prob){
+    while((pr <- lor_constraint(a1,a0,b0,p0,target.or,nsim)) > target.prob){
         if(pr==1){
             message(sprintf("Never satisfies %.2f %.2f",target.or,target.prob))
             return(list(a1=NULL,b1=NULL))
@@ -91,7 +91,7 @@ lor_f <- function(f0,n,nsim,target.or,target.prob){
     a0 <- p0.shape$a0
     b0 <- p0.shape$b0
     p0 <- rbeta(nsim,shape1=a0,shape2=b0)
-    a1b1 <- est.a1b1(a0,b0,target.or,target.prob)
+    a1b1 <- est.a1b1(a0,b0,target.or,target.prob,nsim)
     a1 <- a1b1$a1
     b1 <- a1b1$b1
     lor.00 <- post.lor(0)
