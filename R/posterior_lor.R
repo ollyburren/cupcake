@@ -112,9 +112,9 @@ lor_f <- function(f0,n,nsim,target.or,target.prob){
     a1b1 <- est_a1b1(a0,b0,target.or,target.prob,nsim)
     a1 <- a1b1$a1
     b1 <- a1b1$b1
-    lor.00 <- post.lor(0)
-    lor.01 <- post.lor(1)
-    lor.11 <- post.lor(2)
+    lor.00 <- post_lor(0)
+    lor.01 <- post_lor(1)
+    lor.11 <- post_lor(2)
     c("00"=mean(lor.00),
       "01"=mean(lor.01),
       "11"=mean(lor.11),
