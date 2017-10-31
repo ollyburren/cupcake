@@ -6,7 +6,7 @@
 shape parameters estimate the P(OR > target.or)
 \code{lor_constraint} estimate the P(OR > target.or) given shape parameters for case and control allele frequency}
 \usage{
-lor_constraint(a1, a0, b0, p0, target.or)
+lor_constraint(a1, a0, b0, p0, target.or, nsim)
 }
 \arguments{
 \item{a1}{a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases}

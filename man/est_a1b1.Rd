@@ -5,7 +5,7 @@
 \title{This function estimates shape parameters for a prior distribution of control allele frequencies
 \code{est_a1b1} estimate shape parameters a1,b1}
 \usage{
-est_a1b1(a0, b0, target.or, target.prob)
+est_a1b1(a0, b0, target.or, target.prob, nsim)
 }
 \arguments{
 \item{a0}{a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls}
