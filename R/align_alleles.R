@@ -71,3 +71,31 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
     return(gwas.DT[,.(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2,ambig)])
   }
 }
+
+## align OR
+#' \code{align_allele} given a data.table of pid,a1,a2 get a list of SNPs where alleles are flipped wrt to basis reference
+#' @param DT - a data.table object - columns chr,position,a1 and a2
+#' @param ref.DT - a data.table of reference alleles (see details)
+#' @return an index wrt to DT of OR that require flipping
+#' @export
+
+flip_allele<-function(DT,ref.DT){
+   ref.DT[,pid:=paste(chr,position,sep=':')]
+   DT[,pid:=paste(chr,position,sep=':')]
+   setkey(ref.DT,pid)
+   setkey(DT,pid)
+   # a1 is from dataset i.a1 is from reference
+   gwas.DT<-DT[ref.DT][,.(pid,a1,a2,i.a1,i.a2)]
+   no.change.pid<-gwas.DT[a1==i.a1 & a2==i.a2,]$pid
+   flip.pid <- gwas.DT[a2==i.a1 & a1==i.a2,]$pid
+   rev.no.change.pid <- gwas.DT[comp(a1)==i.a1 & comp(a2)==i.a2,]$pid
+   rev.flip.pid <- gwas.DT[comp(a2)==i.a1 & comp(a1)==i.a2,]$pid
+   nc.pid <- union(no.change.pid,rev.no.change.pid)
+   c.pid <- union(flip.pid,rev.flip.pid)
+   if(length(intersect(nc.pid,c.pid))>0)
+    stop("Can't work out allele flipping")
+   #check to see if there are any issues
+   if(any(is.na(gwas.DT$pid)))
+    stop("Missing some SNPs when aligning with basis reference")
+   return(which(DT$pid %in% c.pid))
+ }
