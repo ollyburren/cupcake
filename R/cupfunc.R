@@ -342,5 +342,8 @@ create_ds_matrix <- function(bDT,sDT,method=c('emp','est')){
   tmp<-bDT[stmp]
   tmp$metric <- tmp[[vmethod]] * log(tmp$or)
   B <- dcast(tmp,pid ~ trait,value.var='metric')
-  return(as.matrix(B[,-1]) %>% t())
+  snames <- B[,1]$pid
+  tmp.mat <- as.matrix(B[,-1]) %>% t()
+  colnames(tmp.mat) <- snames
+  return(tmp.mat)
 }
