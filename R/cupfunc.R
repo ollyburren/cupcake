@@ -271,6 +271,8 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_d
   }else{
     man<-fread(manifest_file)[trait %in% trait_list,]
   }
+  if(nrow(man)==0)
+    stop(sprintf("Cannot find any traits in manifest %s for %s",manifest_file,paste(trait_list,collapse=',')))
   man[,file:=file.path(data_dir,file)]
   ret<-rbindlist(lapply(1:nrow(man),function(i){
     message(sprintf("Processing %s",man[i,]$trait))
