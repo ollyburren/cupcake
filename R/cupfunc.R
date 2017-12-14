@@ -105,7 +105,7 @@ basis_pp<-function(BF,emp_pi){
 #' @return data.table object
 
 bayesian_shrinkage<-function(DT,tquant=0.9999){
-  tmp<-DT[,list(pid=pid,lp0=log(1-wakefield_null_pp(p.val,maf,n,n1/n))),by=c('trait','ld.block')]
+  tmp<-DT[,list(pid=pid,lp0=log(1-wakefield_null_pp(p.value,maf,n,n1/n))),by=c('trait','ld.block')]
   # if pvalue is 1 (as OR is 1) we get numerical errors / NA. Removing is fine as the they should be 0 therefore 1
   tmp<-tmp[,list(q_i=1-exp(sum(lp0,na.rm=TRUE))),by=c('ld.block','pid')]
   ## compute an empirical prior
