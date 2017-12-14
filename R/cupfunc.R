@@ -235,7 +235,8 @@ add_ref_maf <- function(snp_support_file,DT){
     stop(sprintf("Cannot find file %s",snp_support_file))
   ss<-fread(snp_support_file)
   ## use data table to merge the two files
-  ss[,pid:=paste(chr,position,sep=':')]
+  #ss[,pid:=paste(chr,position,sep=':')]
+  ss[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ss<-ss[,.(pid,maf)]
   setkey(ss,pid)
   tmp<-DT[ss]
