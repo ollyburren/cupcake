@@ -251,7 +251,7 @@ add_ld_block <- function(ld_support_file,DT){
   ld<-fread(ld_support_file)
   ld.gr<-with(ld,GRanges(seqnames=Rle(chr),ranges=IRanges(start=as.numeric(start),end=as.numeric(end))))
   DT[,c('chr','position'):=tstrsplit(pid,':')]
-  snps.gr<-with(DT,GRanges(seqnames=Rle(chr),ranges=IRanges(start=position,width=1)))
+  snps.gr<-with(DT,GRanges(seqnames=Rle(chr),ranges=IRanges(start=as.numeric(position),width=1)))
   ol<-as.matrix(findOverlaps(snps.gr,ld.gr))
   DT[ol[,1],ld.block := ol[,2]]
 }
