@@ -279,7 +279,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_d
   ret<-rbindlist(lapply(1:nrow(man),function(i){
     message(sprintf("Processing %s",man[i,]$trait))
     tDT<-fread(man[i,]$file)
-    tDT[,pid:=paste(chr,position,sep=':')]
+    #tDT[,pid:=paste(chr,position,sep=':')]
     tDT[,c('trait','n','n1') := man[i,.(trait,cases+controls,cases)]]
   }))
   setkey(ret,pid)
