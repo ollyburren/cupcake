@@ -31,7 +31,7 @@ logsum <- function(x) {
 #' @return a vector of posterior probabilities.
 #' @export
 
-wakefield_pp <- function(p,f, N, s,pi=1e-4,sd.prior=0.2) {
+wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     if(length(p) != length(f))
       stop("p and f must be vectors of the same size")
     # compute V
