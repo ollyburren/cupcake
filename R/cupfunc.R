@@ -243,7 +243,9 @@ add_ref_annotations <- function(snp_support_file,DT){
   ss[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ss<-ss[,.(pid,maf,ld.block)]
   setkey(ss,pid)
-  tmp<-DT[ss]
+  # we filter here as this allows us to use this to
+  # knock traits where we have surplus SNPs into the correct format
+  tmp<-DT[ss][!is.na(or),]
   if(nrow(tmp)!=nrow(DT))
     stop("Something went wrong perhaps there are duplicates (by position) in your snp support file or in GWAS input")
   return(tmp)
