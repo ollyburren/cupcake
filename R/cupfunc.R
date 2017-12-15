@@ -228,32 +228,25 @@ z2p <- function(z){
   2* pnorm(abs(z), lower.tail = FALSE)
 }
 
-# this function reads in maf data
+# this function gets adds reference data from a snp support file to GWAS summ stats
+#' \code{add_ref_annotations} integrate GWAS summary data with support file
+#' @param snp_support_file character vector file path to snp manifest
+#' @param DT data.table containing GWAS summary stats
+#' @return data.table object
 
-add_ref_maf <- function(snp_support_file,DT){
+add_ref_annotations <- function(snp_support_file,DT){
   if(!file.exists(snp_support_file))
     stop(sprintf("Cannot find file %s",snp_support_file))
   ss<-fread(snp_support_file)
   ## use data table to merge the two files
   #ss[,pid:=paste(chr,position,sep=':')]
   ss[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
-  ss<-ss[,.(pid,maf)]
+  ss<-ss[,.(pid,maf,ld.block)]
   setkey(ss,pid)
   tmp<-DT[ss]
   if(nrow(tmp)!=nrow(DT))
     stop("Something went wrong perhaps there are duplicates (by position) in your snp support file or in GWAS input")
   return(tmp)
-}
-
-add_ld_block <- function(ld_support_file,DT){
-  if(!file.exists(ld_support_file))
-    stop(sprintf("Cannot find file %s",ld_support_file))
-  ld<-fread(ld_support_file)
-  ld.gr<-with(ld,GRanges(seqnames=Rle(chr),ranges=IRanges(start=as.numeric(start),end=as.numeric(end))))
-  DT[,c('chr','position'):=tstrsplit(pid,':')]
-  snps.gr<-with(DT,GRanges(seqnames=Rle(chr),ranges=IRanges(start=as.numeric(position),width=1)))
-  ol<-as.matrix(findOverlaps(snps.gr,ld.gr))
-  DT[ol[,1],ld.block := ol[,2]]
 }
 
 # this function gets GWAS data using a manifest file. If a trait list is supplied
@@ -286,9 +279,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_d
   setkey(ret,pid)
   ## next add minor allele frequencies
   message("Adding reference minor allele freq.")
-  ret<-add_ref_maf(snp_manifest_file,ret)
-  message("Assigning LD Blocks")
-  ret<-add_ld_block(ld_support_file,ret)
+  ret<-add_ref_annotations(snp_manifest_file,ret)
   ret
 }
 
