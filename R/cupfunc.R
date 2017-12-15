@@ -279,7 +279,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,trait_list){
   }))
   setkey(ret,pid)
   ## next add minor allele frequencies
-  message("Adding reference minor allele freq.")
+  message("Adding reference snp manifest annotations")
   ret<-add_ref_annotations(snp_manifest_file,ret)
   ret
 }
