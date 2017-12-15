@@ -255,13 +255,12 @@ add_ref_annotations <- function(snp_support_file,DT){
 #' \code{get_gwas_data} integrate GWAS summary data with support files
 #' @param manifest_file character vector file path to GWAS manifest file
 #' @param snp_manifest_file character vector file path to snp manifest
-#' @param ld_support_file character vector file path to ld regions
 #' @param data_dir character vector file path to location of GWAS summary stats
 #' @param trait_list character vector of specific traits in manifest file to include
 #' @return data.table object
 #' @export
 
-get_gwas_data <- function(manifest_file,snp_manifest_file,ld_support_file,data_dir,trait_list){
+get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,trait_list){
   if(missing(trait_list)){
     man<-fread(manifest_file)[basis_trait==1,]
   }else{

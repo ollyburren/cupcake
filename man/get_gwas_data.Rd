@@ -4,15 +4,12 @@
 \alias{get_gwas_data}
 \title{\code{get_gwas_data} integrate GWAS summary data with support files}
 \usage{
-get_gwas_data(manifest_file, snp_manifest_file, ld_support_file, data_dir,
-  trait_list)
+get_gwas_data(manifest_file, snp_manifest_file, data_dir, trait_list)
 }
 \arguments{
 \item{manifest_file}{character vector file path to GWAS manifest file}
 
 \item{snp_manifest_file}{character vector file path to snp manifest}
-
-\item{ld_support_file}{character vector file path to ld regions}
 
 \item{data_dir}{character vector file path to location of GWAS summary stats}
 
