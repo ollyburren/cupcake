@@ -30,7 +30,7 @@ e_lor <- function(b1,a0,b0,a1){
 }
 
 #' This function computes a probability for a given configuration of beta distribution
-#' shape parameters estimate the P(OR > target.or)
+#' shape parameters estimate the P(OR > target.or).
 #' \code{lor_constraint} estimate the P(OR > target.or) given shape parameters for case and control allele frequency
 #'
 #' @param a1 a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases
