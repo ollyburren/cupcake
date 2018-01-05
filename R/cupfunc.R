@@ -259,10 +259,12 @@ add_ref_annotations <- function(snp_support_file,DT){
 #' @param snp_manifest_file character vector file path to snp manifest
 #' @param data_dir character vector file path to location of GWAS summary stats
 #' @param trait_list character vector of specific traits in manifest file to include
+#' @param filter_snps_by_manifest boolean - whether to prefilter the by snp manifest.
+#' This should be true if you wish to take a subset of SNPs
 #' @return data.table object
 #' @export
 
-get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,trait_list){
+get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,trait_list,filter_snps_by_manifest=FALSE){
   if(missing(trait_list)){
     man<-fread(manifest_file)[basis_trait==1,]
   }else{
@@ -278,6 +280,10 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,trait_list){
     tDT[,c('trait','n','n1') := man[i,.(trait,cases+controls,cases)]]
   }))
   setkey(ret,pid)
+  if(filter_snps_by_manifest){
+    bsnps <- fread(snp_manifest_file)$pid
+    ret <- ret[pid %in% bsnps,]
+  }
   ## next add minor allele frequencies
   message("Adding reference snp manifest annotations")
   ret<-add_ref_annotations(snp_manifest_file,ret)

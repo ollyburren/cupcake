@@ -57,7 +57,7 @@ lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
 
 est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
     # get an independendent sample of the prior of f_0
-    p0 <- rbeta(nsims,shape1 = a0 ,shape2 = b0)
+    p0 <- rbeta(nsim,shape1 = a0 ,shape2 = b0)
     ## estimate compatible a1 shape parameter for f1 given target OR and probability
     a1 <- 1
     while((pr <- lor_constraint(a1,a0,b0,p0,target.or,nsim)) > target.prob){
