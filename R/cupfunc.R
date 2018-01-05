@@ -264,7 +264,7 @@ add_ref_annotations <- function(snp_support_file,DT){
 #' @return data.table object
 #' @export
 
-get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,,filter_snps_by_manifest=FALSE,trait_list){
+get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_by_manifest=FALSE,trait_list){
   if(missing(trait_list)){
     man<-fread(manifest_file)[basis_trait==1,]
   }else{
