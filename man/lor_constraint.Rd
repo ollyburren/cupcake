@@ -3,7 +3,7 @@
 \name{lor_constraint}
 \alias{lor_constraint}
 \title{This function computes a probability for a given configuration of beta distribution
-shape parameters estimate the P(OR > target.or)
+shape parameters estimate the P(OR > target.or).
 \code{lor_constraint} estimate the P(OR > target.or) given shape parameters for case and control allele frequency}
 \usage{
 lor_constraint(a1, a0, b0, p0, target.or, nsim)
@@ -24,6 +24,6 @@ scalar - P(sim.or>target.or)
 }
 \description{
 This function computes a probability for a given configuration of beta distribution
-shape parameters estimate the P(OR > target.or)
+shape parameters estimate the P(OR > target.or).
 \code{lor_constraint} estimate the P(OR > target.or) given shape parameters for case and control allele frequency
 }

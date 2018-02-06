@@ -3,6 +3,7 @@
 export(align_alleles)
 export(compute_shrinkage_metrics)
 export(control_prior_shape)
+export(convertBetaToOR)
 export(create_ds_matrix)
 export(flip_allele)
 export(get_gwas_data)

@@ -4,7 +4,8 @@
 \alias{get_gwas_data}
 \title{\code{get_gwas_data} integrate GWAS summary data with support files}
 \usage{
-get_gwas_data(manifest_file, snp_manifest_file, data_dir, trait_list)
+get_gwas_data(manifest_file, snp_manifest_file, data_dir,
+  filter_snps_by_manifest = FALSE, trait_list)
 }
 \arguments{
 \item{manifest_file}{character vector file path to GWAS manifest file}
@@ -12,6 +13,9 @@ get_gwas_data(manifest_file, snp_manifest_file, data_dir, trait_list)
 \item{snp_manifest_file}{character vector file path to snp manifest}
 
 \item{data_dir}{character vector file path to location of GWAS summary stats}
+
+\item{filter_snps_by_manifest}{boolean - whether to prefilter the by snp manifest.
+This should be true if you wish to take a subset of SNPs}
 
 \item{trait_list}{character vector of specific traits in manifest file to include}
 }
