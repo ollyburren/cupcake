@@ -266,9 +266,9 @@ add_ref_annotations <- function(snp_support_file,DT){
 
 get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_by_manifest=FALSE,trait_list){
   if(missing(trait_list)){
-    man<-fread(manifest_file)[basis_trait==1,]
+    man<-fread(manifest_file)[basis_trait==1 & include=='Y',]
   }else{
-    man<-fread(manifest_file)[trait %in% trait_list,]
+    man<-fread(manifest_file)[trait %in% trait_list & include=='Y',]
   }
   if(nrow(man)==0)
     stop(sprintf("Cannot find any traits in manifest %s for %s",manifest_file,paste(trait_list,collapse=',')))
