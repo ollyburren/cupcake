@@ -133,7 +133,8 @@ threshSigmaBeta<-function(thresh,n1,n0,m,tb){
   c<-((n1*a)/(a+(b*exp(tb))))/N
   d<-((n1*b)/(a+(b*exp(tb))))/N
   var_maf<-sqrt(rowSums(do.call('cbind',lapply(list(a,b,c,d),function(fi) 1/fi))))
-  var_ss<-sqrt(1/N)
+  ## I think that this may have been a bug (with sqrt(1/N))
+  var_ss<-sqrt(1/n0 + 1/n1)
   var_ploidy<-sqrt(1/ploidy)
   var_maf * var_ss * var_ploidy
 }
