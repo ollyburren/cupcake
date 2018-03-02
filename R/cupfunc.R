@@ -123,7 +123,7 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
 
 mean_shrinkage <- function(DT){
   tmp<-DT[,list(pid=pid,ppi=wakefield_null_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
-  tmp<-tmp[,list(mean_ppi=mean(ppi)),by='trait']
+  tmp<-tmp[,list(mean_ppi=mean(ppi)),by='pid']
 }
 
 #' This function computes an estimate of allele count of unexposed controls
