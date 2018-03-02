@@ -326,12 +326,13 @@ compute_shrinkage_metrics<-function(DT){
   bs.DT<-bayesian_shrinkage(DT)
   setkey(bs.DT,pid)
   shrinkage.DT<-bs.DT[maf_se.DT]
-  shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
   setkey(shrinkage.DT,pid)
   ## add mean method
   mean.DT<-mean_shrinkage(DT)
   setkey(mean.DT,pid)
   shrinkage.DT<-mean.DT[shrinkage.DT]
+  shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
+  shrinkage.DT[,c('memp_shrinkage','mest_shrinkage'):=list(mean_ppi/emp_maf_se,mean_ppi/est_maf_se),by=pid]
   setkey(shrinkage.DT,pid)
   return(shrinkage.DT)
 }
@@ -345,7 +346,7 @@ compute_shrinkage_metrics<-function(DT){
 #' @return a matrix.
 #' @export
 
-create_ds_matrix <- function(bDT,sDT,method=c('emp','est')){
+create_ds_matrix <- function(bDT,sDT,method=c('emp','est','memp','mest')){
   if(missing(method)){
     method='emp'
   }
