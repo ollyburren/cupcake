@@ -121,6 +121,11 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
   tmp[,bshrink:=basis_pp(uABF,emp),by=ld.block][,.(bshrink),by=pid]
 }
 
+mean_shrinkage <- function(DT){
+  tmp<-DT[,list(pid=pid,ppi=wakefield_null_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
+  tmp<-tmp[,list(mean_ppi=mean(ppi)),by='trait']
+}
+
 #' This function computes an estimate of allele count of unexposed controls
 #' \code{ca} estimate of allele count of unexposed controls
 #'
@@ -322,6 +327,11 @@ compute_shrinkage_metrics<-function(DT){
   setkey(bs.DT,pid)
   shrinkage.DT<-bs.DT[maf_se.DT]
   shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
+  setkey(shrinkage.DT,pid)
+  ## add mean method
+  mean.DT<-mean_shrinkage(DT)
+  setkey(mean.DT,pid)
+  shrinkage.DT<-mean.DT[shrinkage.DT]
   setkey(shrinkage.DT,pid)
   return(shrinkage.DT)
 }
