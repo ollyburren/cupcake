@@ -121,9 +121,25 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
   tmp[,bshrink:=basis_pp(uABF,emp),by=ld.block][,.(bshrink),by=pid]
 }
 
-mean_shrinkage <- function(DT){
-  tmp<-DT[,list(pid=pid,ppi=wakefield_null_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
-  tmp<-tmp[,list(mean_ppi=mean(ppi)),by='pid']
+#' This function computes an alternative to the Bayesian shrinkage method which can be too agressive.
+#' \code{ws_shrinkage} computes a shrinkage based on a weighted sum (ws) of posteriors for each disease
+#' this is then normalised by the total posterior for a given LD block
+#'
+#' @param DT basis data.table object
+#' @param tquant a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)
+#' @return data.table object
+
+ws_shrinkage <- function(DT){
+  tmp <- DT[,list(pid=pid,ppi=wakefield_null_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
+  wj <- tmp[,list(wj=sum(ppi)),by=c('trait','ld.block')]
+  S <- tmp[,list(S=sum(ppi)),by='ld.block']
+  setkey(wj,ld.block)
+  setkey(S,ld.block)
+  wj <- wj[S]
+  setkeyv(wj,c('trait','ld.block'))
+  setkeyv(tmp,c('trait','ld.block'))
+  wj <- tmp[wj]
+  wj[,list(ws_ppi=sum(ppi * wj)/unique(S)),by=c('pid','ld.block')]
 }
 
 #' This function computes an estimate of allele count of unexposed controls
@@ -151,7 +167,7 @@ cb<-function(n0,f){
 #' This function computes an estimate of allele count of  unexposed cases
 #' \code{cc} estimate of allele count of unexposed cases
 #'
-#' @param n1 a vector or scalar of number of control samples
+#' @param n1 a vector or scalar of number of case samples
 #' @param a a vector of estimates for allele count of  unexposed controls
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
@@ -164,7 +180,7 @@ cc<-function(n1,a,b,theta){
 #' This function computes an estimate of allele count of  exposed cases
 #' \code{cc} estimate of allele count of exposed cases
 #'
-#' @param n1 a vector or scalar of number of control samples
+#' @param n1 a vector or scalar of number of case samples
 #' @param a a vector of estimates for allele count of  unexposed controls
 #' @param b a vector of estimates for allele count of  exposed controls
 #' @return a numeric vector
@@ -327,12 +343,17 @@ compute_shrinkage_metrics<-function(DT){
   setkey(bs.DT,pid)
   shrinkage.DT<-bs.DT[maf_se.DT]
   setkey(shrinkage.DT,pid)
+  #add alternative shrinkage method based on a weighted sum of ppi for a SNP across all diseases
+  #normalised by the total ppi across all diseases observed for a given LD block.
+  ws.DT <- ws_shrinkage(DT)
+  setkey(ws.DT,pid)
+  shrinkage.DT <- ws.DT[shrinkage.DT]
   ## add mean method
-  mean.DT<-mean_shrinkage(DT)
-  setkey(mean.DT,pid)
-  shrinkage.DT<-mean.DT[shrinkage.DT]
+  #mean.DT<-mean_shrinkage(DT)
+  #setkey(mean.DT,pid)
+  #shrinkage.DT<-mean.DT[shrinkage.DT]
   shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
-  shrinkage.DT[,c('memp_shrinkage','mest_shrinkage'):=list(mean_ppi/emp_maf_se,mean_ppi/est_maf_se),by=pid]
+  shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/emp_maf_se,ws_ppi/est_maf_se),by=pid]
   setkey(shrinkage.DT,pid)
   return(shrinkage.DT)
 }
