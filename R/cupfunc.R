@@ -130,7 +130,7 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
 #' @return data.table object
 
 ws_shrinkage <- function(DT){
-  tmp <- DT[,list(pid=pid,ppi=wakefield_null_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
+  tmp <- DT[,list(pid=pid,ppi=wakefield_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
   wj <- tmp[,list(wj=sum(ppi)),by=c('trait','ld.block')]
   S <- tmp[,list(S=sum(ppi)),by='ld.block']
   setkey(wj,ld.block)
