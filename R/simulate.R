@@ -105,6 +105,28 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
   return(mvs_perm(beta_hat,cov.beta,n=n_sims))
 }
 
+#' covariance matrix of betas for an ld block
+#' \code{cov_beta}
+#'
+#' @param sm a snpMatrix object
+#' @param se_lor a vector - standard error of betas
+#' @param lor_shrink a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)
+#' @return a covariance matrix for beta
+
+cov_beta <- function(sm,se_lor){
+  #beta_hat <- lor * lor_shrink
+  if(length(se_lor)==1)
+    return(se_lor^2)
+  # compute R statistic
+  r<-ld(sm,sm,stats="R.squared")
+  # compute closest pos-def covariance matrix
+  r<-as.matrix(mvs_sigma(Matrix(r)))
+  ## for beta the covariance matrix is estimates by sigma x SE * SE^T
+  cov_se<-tcrossprod(se_lor)
+  return(cov_se * r)
+}
+
+
 #' simulate betas for a study
 #' \code{simulate_study} use the multivariate normal to simulate realistic betas for a study
 #'
@@ -129,7 +151,7 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
       if(!quiet)
         message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
       sm$info<-sm$info[-dup.idx,]
-      sm$sm[,-dup.idx]
+      sm$sm <- sm$sm[,-dup.idx]
     }
     sm$info$order<-1:nrow(sm$info)
     # by ld block
@@ -157,4 +179,71 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
   })
   all.chr<-rbindlist(all.chr)
   setkey(all.chr,pid)
+}
+
+
+
+#DT <- study1.DT
+#w.DT <- data.table(pid=rownames(cache.obj$basis$rotation),cache.obj$basis$rotation)
+#ref_gt_dir <-  DEFAULT.SNPSTATS.DIR
+#quiet=TRUE
+#shrink.DT <- cache.obj$shrink
+
+#' analytically compute the variance of a projection given a reference set of genotypes
+#' \code{compute_proj_var} te
+#'
+#' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
+#' @param w.DT a data.table - a data table of weights/rotations from a  basis first column is 'pid' and subsequent columns for each principal component.
+#' @param shrink.DT a data.table - as returned by \code{\link{compute_shrinkage_metrics}}
+#' @param ref_gt_dir scalar - path to a dir of R objects named CHR_1kg.RData containing reference GT in snpMatrix format
+#' @param method scalar - shrinkage method to use (default ws_emp)
+#' @param quiet a scalar - boolean whether to show progress messages
+#' @return a scalar of variances for each principal component
+#' @export
+
+compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=TRUE){
+  s.DT <- split(DT,DT$chr)
+  setkey(w.DT,pid)
+  all.chr <- lapply(names(s.DT),function(chr){
+    if(!quiet)
+      message(sprintf("Processing %s",chr))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s_1kg.RData",chr))
+    sm<-get(load(ss.file))
+    ## there are sometimes duplicates that we need to remove
+    dup.idx<-which(duplicated(obj$info$pid))
+    if(length(dup.idx)>0){
+      if(!quiet)
+        message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
+      sm$info<-sm$info[-dup.idx,]
+      sm$sm <- sm$sm[,-dup.idx]
+    }
+    sm$info$order<-1:nrow(sm$info)
+    # by ld block
+    by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)
+    chr.var <- lapply(names(by.ld),function(block){
+      if(!quiet)
+        message(sprintf("Processing %s",block))
+      dat <- by.ld[[block]]
+      w <- w.DT[pid %in% dat$pid,]
+      vmethod = sprintf("%s_shrinkage",method)
+      s <- shrink.DT[pid %in% dat$pid,c('pid',vmethod),with=FALSE]
+      setkey(w,pid)
+      setkey(dat,pid)
+      dat <- dat[w]
+      setkey(s,pid)
+      dat <- dat[s]
+      info <-sm$info[pid %in% dat$pid ,.(pid,order)]
+      setkey(info,pid)
+      dat <- dat[info][order(order),]
+      ## need to add shrinkage if we attempt to compute under the alternative
+      Sigma <- with(dat,cov_beta(sm$sm[,order],emp_se))
+      pc.cols <- which(grepl("^PC[0-9]+$",names(dat)))
+      # multiply basis weights by the shrinkge metric
+      w.mat <- as.matrix(dat[,pc.cols,with=FALSE]) * dat[[vmethod]]
+      #pc^{T} %*% pc * Sigma
+      apply(w.mat,2,function(pc) rowSums(tcrossprod(pc) * Sigma))
+    })
+    colSums(do.call('rbind',chr.var))
+  })
+  colSums(do.call('rbind',all.chr))
 }

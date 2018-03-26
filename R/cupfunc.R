@@ -338,11 +338,12 @@ compute_shrinkage_metrics<-function(DT){
   setkey(est_maf_se.DT,pid)
   maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
   ## next compute basis shrinkage vector
-  message("Computing Bayesian shrinkage")
+  message("Computing pp shrinkage")
   bs.DT<-bayesian_shrinkage(DT)
   setkey(bs.DT,pid)
   shrinkage.DT<-bs.DT[maf_se.DT]
   setkey(shrinkage.DT,pid)
+  message("Computing weighted pp shrinkage")
   #add alternative shrinkage method based on a weighted sum of ppi for a SNP across all diseases
   #normalised by the total ppi across all diseases observed for a given LD block.
   ws.DT <- ws_shrinkage(DT)
