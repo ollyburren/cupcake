@@ -241,7 +241,7 @@ compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=
       # multiply basis weights by the shrinkge metric
       w.mat <- as.matrix(dat[,pc.cols,with=FALSE]) * dat[[vmethod]]
       #pc^{T} %*% pc * Sigma
-      apply(w.mat,2,function(pc) rowSums(tcrossprod(pc) * Sigma))
+      apply(w.mat,2,function(pc) sum(tcrossprod(pc) * Sigma))
     })
     colSums(do.call('rbind',chr.var))
   })
