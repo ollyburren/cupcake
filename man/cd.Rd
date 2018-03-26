@@ -8,7 +8,7 @@
 cd(n1, a, b, theta)
 }
 \arguments{
-\item{n1}{a vector or scalar of number of control samples}
+\item{n1}{a vector or scalar of number of case samples}
 
 \item{a}{a vector of estimates for allele count of  unexposed controls}
 

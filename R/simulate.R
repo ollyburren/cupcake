@@ -190,7 +190,7 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 #shrink.DT <- cache.obj$shrink
 
 #' analytically compute the variance of a projection given a reference set of genotypes
-#' \code{compute_proj_var} te
+#' \code{compute_proj_var}
 #'
 #' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
 #' @param w.DT a data.table - a data table of weights/rotations from a  basis first column is 'pid' and subsequent columns for each principal component.
