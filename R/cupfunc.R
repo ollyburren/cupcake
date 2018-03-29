@@ -213,6 +213,7 @@ maf_se_empirical<-function(n0,n1,f,theta){
     #return(log(theta)/res)
 }
 
+
 #' This function computes standard error under the null
 #' \code{se_null} analytically compute standard error of \eqn{\beta} under \eqn{\mathbb{E}(\beta) = 0}
 #' \eqn{\sqrt{\frac{1}{2fN_0} +  \frac{1}{2N_{0}(1-f)} + \frac{1}{2fN_1} +  \frac{1}{2N_{1}(1-f)} }}
@@ -231,6 +232,7 @@ se_null<-function(N,n1,f){
   d<-1/(2*(1-f)*n1)
   sqrt(rowSums(cbind(a,b,c,d)))
 }
+
 
 #' Compute minor allele frequency shrinkage
 #' \code{maf_se_estimate} computes a shrinkage metric for a given list of minor allele frequencies'
