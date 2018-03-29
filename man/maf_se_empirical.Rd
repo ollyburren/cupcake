@@ -2,7 +2,7 @@
 % Please edit documentation in R/cupfunc.R
 \name{maf_se_empirical}
 \alias{maf_se_empirical}
-\title{This function standard error due to minor allele frequency empirically
+\title{This function computes standard error due to minor allele frequency empirically
 \code{maf_se_empirical} emprically estimate the standard error that is due to minor allele frequency
 \eqn{\sqrt{\frac{1}{a} +  \frac{1}{b} + \frac{1}{b} + \frac{1}{b} }}}
 \usage{
@@ -22,7 +22,7 @@ a numeric vector
 see also \code{\link{ca}}, \code{\link{cb}}, \code{\link{cc}} and \code{\link{cd}}
 }
 \description{
-This function standard error due to minor allele frequency empirically
+This function computes standard error due to minor allele frequency empirically
 \code{maf_se_empirical} emprically estimate the standard error that is due to minor allele frequency
 \eqn{\sqrt{\frac{1}{a} +  \frac{1}{b} + \frac{1}{b} + \frac{1}{b} }}
 }
