@@ -191,7 +191,7 @@ cd<-function(n1,a,b,theta){
 }
 
 
-#' This function standard error due to minor allele frequency empirically
+#' This function computes standard error due to minor allele frequency empirically
 #' \code{maf_se_empirical} emprically estimate the standard error that is due to minor allele frequency
 #' \eqn{\sqrt{\frac{1}{a} +  \frac{1}{b} + \frac{1}{b} + \frac{1}{b} }}
 #'
@@ -211,6 +211,24 @@ maf_se_empirical<-function(n0,n1,f,theta){
     recip.sm<-do.call('cbind',lapply(list(a,b,c,d),function(fi) 1/fi))
     sqrt(rowSums(recip.sm))
     #return(log(theta)/res)
+}
+
+#' This function computes standard error under the null
+#' \code{se_null} analytically compute standard error of \eqn{\beta} under \eqn{\mathbb{E}(\beta) = 0}
+#' \eqn{\sqrt{\frac{1}{2fN_0} +  \frac{1}{2N_{0}(1-f)} + \frac{1}{2fN_1} +  \frac{1}{2N_{1}(1-f)} }}
+#'
+#' @param N a vector or scalar of total number od samples
+#' @param n1 a vector or scalar of number of case samples
+#' @param f a vector of reference allele frequencies
+#' @return a numeric vector
+
+se_null<-function(N,n1,f){
+  n0<-N-n1
+  a<-1/(2*f*n0)
+  b<-1/(2*(1-f)*n0)
+  c<-1/(2*f*n1)
+  d<-1/(2*(1-f)*n1)
+  sqrt(rowSums(cbind(a,b,c,d)))
 }
 
 #' Compute minor allele frequency shrinkage
