@@ -221,6 +221,7 @@ maf_se_empirical<-function(n0,n1,f,theta){
 #' @param n1 a vector or scalar of number of case samples
 #' @param f a vector of reference allele frequencies
 #' @return a numeric vector
+#' @export
 
 se_null<-function(N,n1,f){
   n0<-N-n1
