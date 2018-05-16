@@ -242,7 +242,7 @@ se_null<-function(N,n1,f){
 
 maf_se_estimate <- function(f){
   #1/sqrt(f * (1-f))
-  sqrt(1/f + 1/(1-f))
+  sqrt(1/f + 1/(1-f))/2
 }
 
 
