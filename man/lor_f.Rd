@@ -5,7 +5,7 @@
 \title{This function samples from the posterior distribution of a given control allele frequency, for different genotype configurations
 \code{lor_f} sample from log(or) posterior distribution given an allele frequency.}
 \usage{
-lor_f(f0, n, nsim, target.or, target.prob)
+lor_f(f0, n, nsim, target.or, target.prob, n.steps)
 }
 \arguments{
 \item{f0}{a scalar - allele frequency in cases to simulate}

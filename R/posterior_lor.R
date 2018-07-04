@@ -106,22 +106,59 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' }
 #' @export
 
-lor_f <- function(f0,n,nsim,target.or,target.prob){
-    p0.shape <- control_prior_shape(f0,n)
-    a0 <- p0.shape$a0
-    b0 <- p0.shape$b0
-    p0 <- rbeta(nsim,shape1=a0,shape2=b0)
-    a1b1 <- est_a1b1(a0,b0,target.or,target.prob,nsim)
-    a1 <- a1b1$a1
-    b1 <- a1b1$b1
+lor_f <- function(f0,n,nsim,target.or,target.prob,n.steps){
+  p0.shape <- control_prior_shape(f0,n.sample)
+  a0 <- p0.shape$a0
+  b0 <- p0.shape$b0
+  a1b1 <- opt_a1b1(a0,b0,target.or,target.prob,n.steps)
+  a1 <- a1b1$a1
+  b1 <- a1b1$b1
+  c("00"=digamma(a0) - digamma(b0) - digamma(2+a1) + digamma(b1),
+    "01"=digamma(a0) - digamma(b0) - digamma(1+a1) + digamma(1+b1),
+    "11"=digamma(a0) - digamma(b0) - digamma(a1) + digamma(2+b1))
+}
 
-    lor.00 <- post_lor(0,a1,b1,p0,nsim)
-    lor.01 <- post_lor(1,a1,b1,p0,nsim)
-    lor.11 <- post_lor(2,a1,b1,p0,nsim)
-    c("00"=mean(lor.00$lor),
-      "01"=mean(lor.01$lor),
-      "11"=mean(lor.11$lor),
-      quant00=quantile(lor.00$p1,c(0.05,0.25,0.5,0.75,0.95)),
-      quant01=quantile(lor.01$p1,c(0.05,0.25,0.5,0.75,0.95)),
-      quant11=quantile(lor.11$p1,c(0.05,0.25,0.5,0.75,0.95)))
+#' This function estimates shape parameters for a prior distribution of control allele frequencies
+#' \code{opt_a1b1} estimate shape parameters a1,b1
+#' @param a0 a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls
+#' @param b0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
+#' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
+#' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
+#' @param n.steps an integer - length of search grid to employ - larger gives a more accurate integral estimate
+#' @return list - shape parameters for beta distribution satisfying target.or,target.prob and control prior distribution constraints.
+
+opt_a1b1 <- function(a0,b0,target.or,target.prob,n.steps){
+    ## estimate compatible a1 shape parameter for f1 given target OR and probability
+    p <- seq(0,1,length.out=n.steps)
+    p <- p[-c(1,length(p))]
+    a1 <- optimise(fopt,interval=c(1,a0),target.prob=target.prob,p=p,a0=a0,b0=b0,target.or=target.or)$minimum
+    b1 <- optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    list(a1=a1,b1=b1)
+}
+
+
+#' This function computes the optimal shape parameter a1 for a given set of constraints
+#' shape parameters estimate the P(OR > target.or).
+#' \code{fopt} estimate the P(OR > target.or) given shape parameters for case and control allele frequency
+#'
+#' @param a1 a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases
+#' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
+#' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
+#' @param p - a vector of values to optimise over
+#' @param a0 a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls
+#' @param b0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
+#' @return scalar - P(sim.or>target.or)
+
+
+fopt <- function(a1,target.prob,target.or,p,a0,b0) {
+    b1 <- optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    denom <- dbeta(p,shape1=a0,shape2=b0)
+    py <- sapply(p,function(x){
+      l <- x/(target.or * (1-x) + x)
+      u <- x/((1-x)/target.or + x)
+      pbl <- pbeta(l,shape1=a1,shape2=b1,lower.tail=TRUE)
+      pbu <- pbeta(u,shape1=a1,shape2=b1,lower.tail=FALSE)
+      (pbl + pbu)
+    })
+    abs(sum(py*denom)/sum(denom) - target.prob)
 }
