@@ -26,7 +26,7 @@ control_prior_shape <- function(f,n){
 #' @return scalar - expected log(OR)
 
 e_lor <- function(b1,a0,b0,a1){
-    abs(digamma(a0) - digamma(b0) - digamma(a1) + digamma(b1))
+    digamma(a0) - digamma(b0) - digamma(a1) + digamma(b1)
 }
 
 #' This function computes a probability for a given configuration of beta distribution
@@ -92,7 +92,6 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' \code{lor_f} sample from log(or) posterior distribution given an allele frequency.
 #' @param f0 a scalar - allele frequency in cases to simulate
 #' @param n a scalar - number of individuals sampled
-#' @param nsim a scalar - number of simulations to perform to define the posterior and select parameters
 #' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
 #' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
 #' @return a list object
@@ -106,13 +105,16 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' }
 #' @export
 
-lor_f <- function(f0,n,nsim,target.or,target.prob,n.steps){
+lor_f <- function(f0,n,target.or,target.prob,n.steps){
   p0.shape <- control_prior_shape(f0,n.sample)
   a0 <- p0.shape$a0
   b0 <- p0.shape$b0
+  #a0 <- (2*n.sample-1)*f0
+  #b0 <- (2*n.sample-1)*(1-f0)
   a1b1 <- opt_a1b1(a0,b0,target.or,target.prob,n.steps)
   a1 <- a1b1$a1
   b1 <- a1b1$b1
+  message(sprintf("AF %f a0 %f b0 %f a1 %f b1 %f",f0,a0,b0,a1,b1))
   c("00"=digamma(a0) - digamma(b0) - digamma(2+a1) + digamma(b1),
     "01"=digamma(a0) - digamma(b0) - digamma(1+a1) + digamma(1+b1),
     "11"=digamma(a0) - digamma(b0) - digamma(a1) + digamma(2+b1))
@@ -129,10 +131,9 @@ lor_f <- function(f0,n,nsim,target.or,target.prob,n.steps){
 
 opt_a1b1 <- function(a0,b0,target.or,target.prob,n.steps){
     ## estimate compatible a1 shape parameter for f1 given target OR and probability
-    p <- seq(0,1,length.out=n.steps)
-    p <- p[-c(1,length(p))]
-    a1 <- optimise(fopt,interval=c(1,a0),target.prob=target.prob,p=p,a0=a0,b0=b0,target.or=target.or)$minimum
-    b1 <- optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    p <- seq(1,n.steps)/(n.steps+1) # will integrate over a grid of p x p
+    a1 <- uniroot(fopt,interval=c(0.1/a0,a0),target.prob=target.prob,p=p,a0=a0,b0=b0,target.or=target.or)$root
+    b1 <- uniroot(e_lor,interval=c(1e-16,2*b0),a1=a1,a0=a0,b0=b0)$root
     list(a1=a1,b1=b1)
 }
 
@@ -151,7 +152,7 @@ opt_a1b1 <- function(a0,b0,target.or,target.prob,n.steps){
 
 
 fopt <- function(a1,target.prob,target.or,p,a0,b0) {
-    b1 <- optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    b1 <- uniroot(e_lor,interval=c(1e-16,2*b0),a0=a0,b0=b0,a1=a1)$root
     denom <- dbeta(p,shape1=a0,shape2=b0)
     py <- sapply(p,function(x){
       l <- x/(target.or * (1-x) + x)
@@ -160,5 +161,5 @@ fopt <- function(a1,target.prob,target.or,p,a0,b0) {
       pbu <- pbeta(u,shape1=a1,shape2=b1,lower.tail=FALSE)
       (pbl + pbu)
     })
-    abs(sum(py*denom)/sum(denom) - target.prob)
+    log(sum(py*denom)/sum(denom)) - log(target.prob)
 }
