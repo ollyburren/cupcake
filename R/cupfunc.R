@@ -1,6 +1,7 @@
+#' @import data.table
+
+
 library(data.table)
-library(GenomicRanges)
-library(magrittr)
 
 
 
@@ -245,6 +246,24 @@ maf_se_estimate <- function(f){
   sqrt(1/f + 1/(1-f)) * 2
 }
 
+#' Compute minor allele frequency shrinkage using sample size
+#' \code{maf_se_estimate_sample_size} computes component of standard error of beta due to minor allele frequency
+#'
+#' @param N a vector or scalar of total number od samples
+#' @param p a vector or scalar of p values
+#' @param theta a vector or scalar of odds ratios
+#' @param f a vector of reference allele frequencies
+#' @return a numeric vector
+
+maf_se_estimate_sample_size <- function(N,p,theta,f){
+  Z <- qnorm(p/2,lower.tail=FALSE)
+  se.beta <- log(theta)/Z
+  se_maf_ss <- sqrt(2 * N) * se.beta
+  ## can get numeric errors if theta = 1 or such like in this case compute using maf_se estimate under null
+  idx <- which(is.infinite(se_maf_ss) | is.nan(se_maf_ss) | se_maf_ss>100)
+  se_maf_ss[idx] <- maf_se_estimate(f[idx])
+  se_maf_ss
+}
 
 #' convert p value  to a signed Z score
 #' \code{p2z} p value to a signed Z score
@@ -350,7 +369,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_b
 #' @export
 
 compute_shrinkage_metrics<-function(DT){
-  message("Computing maf_se_empirical")
+  message("Computing maf_se_empirical using or, sample size and maf")
   emp_maf_se.DT<-DT[,list(pid=pid,emp_maf_se=maf_se_empirical(n-n1,n1,maf,or))][,list(emp_maf_se=mean(emp_maf_se)),by=pid]
   setkey(emp_maf_se.DT,pid)
   ## second way to do it is to compute based on function fitting.
@@ -358,6 +377,12 @@ compute_shrinkage_metrics<-function(DT){
   est_maf_se.DT<-unique(DT[,list(est_maf_se=maf_se_estimate(maf)),by=pid])
   setkey(est_maf_se.DT,pid)
   maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
+  ## third way to do it based on sample size
+  message("Computing maf_se_estimated using or, sample size and p.value ")
+  ss_est_maf_se.DT<-DT[,list(pid=pid,ss_emp_maf_se=maf_se_estimate_sample_size(n,p.value,or,maf)),by=pid][,list(ss_emp_maf_se=mean(abs(ss_emp_maf_se))),by=pid]
+  setkey(ss_est_maf_se.DT,pid)
+  maf_se.DT<-maf_se.DT[ss_est_maf_se.DT]
+
   ## next compute basis shrinkage vector
   message("Computing pp shrinkage")
   bs.DT<-bayesian_shrinkage(DT)
@@ -374,8 +399,8 @@ compute_shrinkage_metrics<-function(DT){
   #mean.DT<-mean_shrinkage(DT)
   #setkey(mean.DT,pid)
   #shrinkage.DT<-mean.DT[shrinkage.DT]
-  shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
-  shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/emp_maf_se,ws_ppi/est_maf_se),by=pid]
+  shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/ss_emp_maf_se,bshrink/est_maf_se),by=pid]
+  shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/ss_emp_maf_se,ws_ppi/est_maf_se),by=pid]
   setkey(shrinkage.DT,pid)
   return(shrinkage.DT)
 }

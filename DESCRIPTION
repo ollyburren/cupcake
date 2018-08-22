@@ -3,7 +3,14 @@ Title: PCA for GWAS
 Version: 0.0.0.9000
 Authors@R: person("Olly", "Burren", email = "ob219@cam.ac.uk", role = "cre")
 Description: cupcake provides a set of functions that makes GWAS summary statistics amenable to PCA
-Depends: R (>= 3.3.0),data.table,GenomicRanges,magrittr,snpStats,Matrix,corpcor,mvtnorm
+Depends: R (>= 3.3.0),data.table,
+Imports:
+  GenomicRanges,
+  magrittr,
+  snpStats,
+  Matrix,
+  corpcor,
+  mvtnorm
 License: MIT
 Encoding: UTF-8
 LazyData: true
