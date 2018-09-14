@@ -118,7 +118,8 @@ cov_beta <- function(sm,se_lor){
   if(length(se_lor)==1)
     return(se_lor^2)
   # compute R statistic
-  r<-ld(sm,sm,stats="R.squared")
+  #r<-ld(sm,sm,stats="R.squared")
+  r<-ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
   r<-as.matrix(mvs_sigma(Matrix(r)))
   ## for beta the covariance matrix is estimates by sigma x SE * SE^T
@@ -201,13 +202,37 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 #' @return a scalar of variances for each principal component
 #' @export
 
+if(FALSE){
+SHRINKAGE_METHOD<-'ws_emp'
+SHRINKAGE_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/shrinkage_ic.RDS'
+BASIS_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/basis_ic.RDS'
+ICHIP_DATA_DIR <- '/home/ob219/rds/hpc-work/as_basis/gwas_stats/ichip/aligned/'
+SNP_MANIFEST_FILE <- '/home/ob219/rds/hpc-work/as_basis/gwas_stats/ichip/snp_manifest/ichip_september.tab'
+MANIFEST <- '/home/ob219/git/as_basis/manifest/as_manifest_ichip.tsv'
+VARIANCE_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/analytical_variances_ichip.RDS'
+ref_gt_dir<- '/home/ob219/rds/hpc-work/as_basis/snpStats/basis_ichip'
+
+
+basis.DT<-get_gwas_data(MANIFEST,SNP_MANIFEST_FILE,ICHIP_DATA_DIR,filter_snps_by_manifest=TRUE)
+pc.emp <- readRDS(BASIS_FILE)
+shrink.DT <- readRDS(SHRINKAGE_FILE)
+DT <- basis.DT[trait==head(sample(unique(trait)),n=1),]
+## set the standard error to the null
+DT[,emp_se:=se_null(n,n1,maf)]
+## data table of PC snp loadings
+DT[,c('chr','position'):=tstrsplit(pid,':')]
+w.DT <- data.table(pid=rownames(pc.emp$rotation),pc.emp$rotation)
+}
+
+
 compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=TRUE){
   s.DT <- split(DT,DT$chr)
   setkey(w.DT,pid)
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
       message(sprintf("Processing %s",chr))
-    ss.file<-file.path(ref_gt_dir,sprintf("%s_1kg.RData",chr))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s.RData",chr))
+    message(ss.file)
     sm<-get(load(ss.file))
     ## there are sometimes duplicates that we need to remove
     dup.idx<-which(duplicated(obj$info$pid))
@@ -241,7 +266,12 @@ compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=
       # multiply basis weights by the shrinkge metric
       w.mat <- as.matrix(dat[,pc.cols,with=FALSE]) * dat[[vmethod]]
       #pc^{T} %*% pc * Sigma
+      #used to date
+      #apply(w.mat,2,function(pc) sum(tcrossprod(pc) * Sigma))
+      #code from latex
+      #apply(w.mat,2,function(pc) sum(diag(tcrossprod(pc) %*% Sigma)))
       apply(w.mat,2,function(pc) sum(tcrossprod(pc) * Sigma))
+      #apply(w.mat,2,function(pc) sum(tcrossprod(pc) %*% Sigma))
     })
     colSums(do.call('rbind',chr.var))
   })
