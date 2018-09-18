@@ -183,17 +183,10 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 }
 
 
-
-#DT <- study1.DT
-#w.DT <- data.table(pid=rownames(cache.obj$basis$rotation),cache.obj$basis$rotation)
-#ref_gt_dir <-  DEFAULT.SNPSTATS.DIR
-#quiet=TRUE
-#shrink.DT <- cache.obj$shrink
-
 #' analytically compute the variance of a projection given a reference set of genotypes
 #' \code{compute_proj_var}
 #'
-#' @param DT a data.table - as returned by \code{\link{get_gwas_data}}
+#' @param man.DT a data.table - manifest of variants included in the basis
 #' @param w.DT a data.table - a data table of weights/rotations from a  basis first column is 'pid' and subsequent columns for each principal component.
 #' @param shrink.DT a data.table - as returned by \code{\link{compute_shrinkage_metrics}}
 #' @param ref_gt_dir scalar - path to a dir of R objects named CHR_1kg.RData containing reference GT in snpMatrix format
@@ -202,32 +195,16 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 #' @return a scalar of variances for each principal component
 #' @export
 
-if(FALSE){
-SHRINKAGE_METHOD<-'ws_emp'
-SHRINKAGE_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/shrinkage_ic.RDS'
-BASIS_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/basis_ic.RDS'
-ICHIP_DATA_DIR <- '/home/ob219/rds/hpc-work/as_basis/gwas_stats/ichip/aligned/'
-SNP_MANIFEST_FILE <- '/home/ob219/rds/hpc-work/as_basis/gwas_stats/ichip/snp_manifest/ichip_september.tab'
-MANIFEST <- '/home/ob219/git/as_basis/manifest/as_manifest_ichip.tsv'
-VARIANCE_FILE <- '/home/ob219/rds/hpc-work/as_basis/support/analytical_variances_ichip.RDS'
-ref_gt_dir<- '/home/ob219/rds/hpc-work/as_basis/snpStats/basis_ichip'
-
-
-basis.DT<-get_gwas_data(MANIFEST,SNP_MANIFEST_FILE,ICHIP_DATA_DIR,filter_snps_by_manifest=TRUE)
-pc.emp <- readRDS(BASIS_FILE)
-shrink.DT <- readRDS(SHRINKAGE_FILE)
-DT <- basis.DT[trait==head(sample(unique(trait)),n=1),]
-## set the standard error to the null
-DT[,emp_se:=se_null(n,n1,maf)]
-## data table of PC snp loadings
-DT[,c('chr','position'):=tstrsplit(pid,':')]
-w.DT <- data.table(pid=rownames(pc.emp$rotation),pc.emp$rotation)
-}
-
-
-compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=TRUE){
-  s.DT <- split(DT,DT$chr)
-  setkey(w.DT,pid)
+compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=TRUE){
+  vmethod = sprintf("%s_shrinkage",method)
+  M <- merge(man.DT,w.DT,by='pid')
+  M <- merge(M,shrink.DT[,.(pid,shrink=get(`vmethod`))],by='pid')
+  M <- M[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
+  ## create a set of analytical se_beta_maf
+  beta_se_maf <- function(f,n,n1) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
+  M <- M[,beta_se_maf:=beta_se_maf(maf)]
+  M <- M[,c('chr','pos'):=tstrsplit(pid,':')]
+  s.DT <- split(M,M$chr)
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
       message(sprintf("Processing %s",chr))
@@ -245,33 +222,15 @@ compute_proj_var <- function(DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=
     sm$info$order<-1:nrow(sm$info)
     # by ld block
     by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)
-    chr.var <- lapply(names(by.ld),function(block){
+    chr.var <- lapply(by.ld,function(block){
       if(!quiet)
-        message(sprintf("Processing %s",block))
-      dat <- by.ld[[block]]
-      w <- w.DT[pid %in% dat$pid,]
-      vmethod = sprintf("%s_shrinkage",method)
-      s <- shrink.DT[pid %in% dat$pid,c('pid',vmethod),with=FALSE]
-      setkey(w,pid)
-      setkey(dat,pid)
-      dat <- dat[w]
-      setkey(s,pid)
-      dat <- dat[s]
-      info <-sm$info[pid %in% dat$pid ,.(pid,order)]
-      setkey(info,pid)
-      dat <- dat[info][order(order),]
-      ## need to add shrinkage if we attempt to compute under the alternative
-      Sigma <- with(dat,cov_beta(sm$sm[,order],emp_se))
-      pc.cols <- which(grepl("^PC[0-9]+$",names(dat)))
-      # multiply basis weights by the shrinkge metric
-      w.mat <- as.matrix(dat[,pc.cols,with=FALSE]) * dat[[vmethod]]
-      #pc^{T} %*% pc * Sigma
-      #used to date
-      #apply(w.mat,2,function(pc) sum(tcrossprod(pc) * Sigma))
-      #code from latex
-      #apply(w.mat,2,function(pc) sum(diag(tcrossprod(pc) %*% Sigma)))
-      apply(w.mat,2,function(pc) sum(tcrossprod(pc) * Sigma))
-      #apply(w.mat,2,function(pc) sum(tcrossprod(pc) %*% Sigma))
+        message(sprintf("Processing %s",block$ld.block %>% unique))
+      sm.map <- match(block$pid,sm$info$pid)
+      r <- ld(sm$sm[,sm.map],sm$sm[,sm.map],stats="R")
+      # compute closest pos-def covariance matrix
+      Sigma <- as.matrix(mvs_sigma(Matrix(r)))
+      pc.cols <- which(grepl("^PC[0-9]+$",names(M)))
+      sapply(names(M)[pc.cols],function(pc) (tcrossprod(block[,.(tot=get(`pc`) * shrink * beta_se_maf)]$tot) * Sigma) %>% sum)
     })
     colSums(do.call('rbind',chr.var))
   })
