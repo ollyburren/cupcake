@@ -35,14 +35,15 @@ This package is concerned with steps 4 and 5, and whilst the other steps are non
 You will need to have the devtool R package installed
 ```{r,eval=FALSE}
 library(devtools)
-
 install_github("ollyburren/cupcake")
 ```
 
 
 ## Input files
 
-The package expects two manifest files, one describing the SNPs to include in the basis and the other describing the traits. The package makes the choice to define a `pid` or primary identify for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, in practice they are best removed before basis construction.
+Exemplar files can be located in `./inst/extdata/`
+
+The package expects two manifest files, one describing the SNPs to include in the basis and the other describing the traits. The package makes the choice to define a `pid` or primary identifier for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, for practical, they are best removed before basis construction.
 
 ### SNP Manifest
 
@@ -58,11 +59,11 @@ e.g.
 
 | pid       | ref_a1 | ref_a2 | ref_a1.af         | ld.block |
 |-----------|--------|--------|-------------------|----------|
-| 1:1118275 | G      | A      | 0.95729537366548  | 2        |
-| 1:1120431 | G      | A      | 0.956702253855279 | 2        |
-| 1:1218086 | G      | A      | 0.924436536180308 | 2        |
-| 1:1335790 | A      | G      | 0.820026100367778 | 2        |
-| 1:1497824 | G      | A      | 0.875919335705813 | 2        |
+| 1:1118275 | G      | A      | 0.957  | 2        |
+| 1:1120431 | G      | A      | 0.956 | 2        |
+| 1:1218086 | G      | A      | 0.924 | 2        |
+| 1:1335790 | A      | G      | 0.820 | 2        |
+| 1:1497824 | G      | A      | 0.875 | 2        |
 
 
 ### Trait Manifest
