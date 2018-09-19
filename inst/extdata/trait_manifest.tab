@@ -1,0 +1,4 @@
+include	trait	cases	controls	basis_trait	file
+Y	trait1	1000	2000	1	trait1.tab
+Y	trait2	2000	4000	1	trait2.tab
+Y	trait3	500	2000	0	trait3.tab

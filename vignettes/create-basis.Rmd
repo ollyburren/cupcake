@@ -28,6 +28,18 @@ The function of this package is to facillitate the building of a set of ordered 
 
 This package is concerned with steps 4 and 5, and whilst the other steps are non-trivial this package assumes access to a set ($n\gt1$) of  OR aligned summary statistics (see section on file formats below as to what is required).
 
+## Installing cupcake
+
+## Installing COGS
+
+You will need to have the devtool R package installed
+```{r,eval=FALSE}
+library(devtools)
+
+install_github("ollyburren/cupcake")
+```
+
+
 ## Input files
 
 The package expects two manifest files, one describing the SNPs to include in the basis and the other describing the traits. The package makes the choice to define a `pid` or primary identify for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, in practice they are best removed before basis construction.
@@ -43,6 +55,7 @@ Each row of this file describes a non redundant (see above) SNP to include in th
 5. ld.block - A number grouping a block of SNPs in high LD (see note).
 
 e.g.
+
 | pid       | ref_a1 | ref_a2 | ref_a1.af         | ld.block |
 |-----------|--------|--------|-------------------|----------|
 | 1:1118275 | G      | A      | 0.95729537366548  | 2        |
@@ -91,52 +104,79 @@ e.g.
 | 10:100286138 | G  | C  | 1.04  | 0.493   |
 | 10:10028820  | G  | A  | 0.918 | 0.1125  |
 
+## Loading in data
 
+The loading of data is handled through `get_gwas_data` routine like so
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
-
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
-
-## Vignette Info
-
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output:
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side.
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r}
+library(devtools)
+load_all('~/git/cupcake')
+SNP_MANIFEST_FILE <- '../inst/extdata/snp_manifest.tab'
+TRAIT_MANIFEST_FILE <- '../inst/extdata/trait_manifest.tab'
+DATA_DIR <- '../inst/extdata/gwas_data/'
+basis.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
+The `data.table` object `basis.DT` contains the loaded data required for the next step of calculating the shrinkage values to appy to the $\beta$ of all traits.
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```{r}
+library(magrittr)
+head(basis.DT,n=2) %>% knitr::kable()
 ```
 
-Also a quote using `>`:
+Basically a merge between the metadata for the two basis traits in the example trait manifest file and the meta data on each SNP, contained in the snp manifest file.
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+## computing shrinkage
+
+Next we use the `data.table` created to compute shrinkages like so.
+
+```{r}
+shrink.DT<-compute_shrinkage_metrics(basis.DT)
+```
+
+This computes various shrinkages, for this example we will take forward `ws_emp`, the types of different shrinkages and their names are are explained later in this vignette.
+
+## creating the basis
+
+The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a 
+
+```{r}
+basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'ws_emp')
+## need to add control where beta is zero
+basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
+pc.emp <- prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
+```
+
+Visualising
+
+```{r,fig.width = 5}
+plot.DT <- data.table(trait=rownames(pc.emp$x),pc.emp$x)
+xlim <- with(plot.DT,c(min(PC1),max(PC1)) * 1.2)
+ylim <- with(plot.DT,c(min(PC2),max(PC2)) * 1.2)
+with(plot.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim))
+with(plot.DT,text(PC1,PC2,labels=trait, cex= 1, offset = 20))
+```
+
+
+## projecting data onto the basis
+
+```{r}
+proj.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR,trait_list='trait3')
+proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'ws_emp')
+pred <- predict(pc.emp,proj.mat.emp)
+```
+
+Visualising projected data
+
+```{r,fig.width = 5}
+## plotting code
+plot2.DT <- rbind(data.table(trait=rownames(pred),pred),plot.DT)
+plot2.DT[,cat:=ifelse(trait=='trait3','projected','basis')]
+xlim <- with(plot2.DT,c(min(PC1),max(PC1)) * 1.2)
+ylim <- with(plot2.DT,c(min(PC2),max(PC2)) * 1.2)
+cols <- c('red',rep('black',3))
+with(plot2.DT,plot(PC1,PC2,col=cols,type='n',xlim=xlim,ylim=ylim))
+with(plot2.DT,text(PC1,PC2,labels=trait, cex= 1,col=cols))
+```
+
+
