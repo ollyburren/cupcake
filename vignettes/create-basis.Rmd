@@ -35,7 +35,7 @@ This package is concerned with steps 4 and 5, and whilst the other steps are non
 You will need to have the devtool R package installed
 ```{r,eval=FALSE}
 library(devtools)
-install_github("ollyburren/cupcake")
+install_github("ollyburren/cupcake",build_vignettes = TRUE)
 ```
 
 
