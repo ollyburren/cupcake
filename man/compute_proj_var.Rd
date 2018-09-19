@@ -5,11 +5,11 @@
 \title{analytically compute the variance of a projection given a reference set of genotypes
 \code{compute_proj_var}}
 \usage{
-compute_proj_var(DT, w.DT, shrink.DT, ref_gt_dir, method = "ws_emp",
+compute_proj_var(man.DT, w.DT, shrink.DT, ref_gt_dir, method = "ws_emp",
   quiet = TRUE)
 }
 \arguments{
-\item{DT}{a data.table - as returned by \code{\link{get_gwas_data}}}
+\item{man.DT}{a data.table - manifest of variants included in the basis}
 
 \item{w.DT}{a data.table - a data table of weights/rotations from a  basis first column is 'pid' and subsequent columns for each principal component.}
 
