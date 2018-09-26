@@ -212,7 +212,7 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',qu
     message(ss.file)
     sm <- readRDS(ss.file)
     ## there are sometimes duplicates that we need to remove
-    pids <- colnames(s)
+    pids <- colnames(sm)
     dup.idx<-which(duplicated(pids))
     if(length(dup.idx)>0){
       if(!quiet)
