@@ -226,6 +226,9 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',qu
       if(!quiet)
         message(sprintf("Processing %s",block$ld.block %>% unique))
       sm.map <- match(block$pid,pids)
+      if(any(is.na(sm.map))){
+        message("SNPs in manifest that don't have genotypes")
+      }
       r <- ld(sm[,sm.map],sm[,sm.map],stats="R")
       # compute closest pos-def covariance matrix
       Sigma <- as.matrix(mvs_sigma(Matrix(r)))
