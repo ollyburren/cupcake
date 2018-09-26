@@ -208,24 +208,24 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',qu
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
       message(sprintf("Processing %s",chr))
-    ss.file<-file.path(ref_gt_dir,sprintf("%s.RData",chr))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s.RDS",chr))
     message(ss.file)
-    sm<-get(load(ss.file))
+    sm <- readRDS(ss.file)
     ## there are sometimes duplicates that we need to remove
-    dup.idx<-which(duplicated(obj$info$pid))
+    pids <- colnames(s)
+    dup.idx<-which(duplicated(pids))
     if(length(dup.idx)>0){
       if(!quiet)
         message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
-      sm$info<-sm$info[-dup.idx,]
-      sm$sm <- sm$sm[,-dup.idx]
+      sm <- sm[,-dup.idx]
+      pids <- pids[-dup.idx]
     }
-    sm$info$order<-1:nrow(sm$info)
     # by ld block
     by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)
     chr.var <- lapply(by.ld,function(block){
       if(!quiet)
         message(sprintf("Processing %s",block$ld.block %>% unique))
-      sm.map <- match(block$pid,sm$info$pid)
+      sm.map <- match(block$pid,pids)
       r <- ld(sm$sm[,sm.map],sm$sm[,sm.map],stats="R")
       # compute closest pos-def covariance matrix
       Sigma <- as.matrix(mvs_sigma(Matrix(r)))
