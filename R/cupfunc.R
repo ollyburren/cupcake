@@ -414,15 +414,15 @@ compute_shrinkage_metrics<-function(DT){
 #' @return a matrix.
 #' @export
 
-create_ds_matrix <- function(bDT,sDT,method=c('emp','est','memp','mest')){
+create_ds_matrix <- function(bDT,sDT,method){
   if(missing(method)){
-    method='emp'
+    method='ws_emp_shrinkage'
   }
   message(sprintf("Using %s",method))
-  vmethod = sprintf("%s_shrinkage",method)
-  stmp<-sDT[,c('pid',vmethod),with=FALSE]
+  #vmethod = sprintf("%s_shrinkage",method)
+  stmp<-sDT[,c('pid',method),with=FALSE]
   tmp<-bDT[stmp]
-  tmp$metric <- tmp[[vmethod]] * log(tmp$or)
+  tmp$metric <- tmp[[method]] * log(tmp$or)
   B <- dcast(tmp,pid ~ trait,value.var='metric')
   snames <- B[,1]$pid
   tmp.mat <- as.matrix(B[,-1]) %>% t()

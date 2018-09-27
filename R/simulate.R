@@ -195,10 +195,9 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 #' @return a scalar of variances for each principal component
 #' @export
 
-compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='ws_emp',quiet=TRUE){
-  vmethod = sprintf("%s_shrinkage",method)
+compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage_ws_emp',quiet=TRUE){
   M <- merge(man.DT,w.DT,by='pid')
-  M <- merge(M,shrink.DT[,.(pid,shrink=get(`vmethod`))],by='pid')
+  M <- merge(M,shrink.DT[,.(pid,shrink=get(`method`))],by='pid')
   M <- M[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ## create a set of analytical se_beta_maf
   beta_se_maf <- function(f,n,n1) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
