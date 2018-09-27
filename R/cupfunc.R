@@ -380,9 +380,10 @@ compute_shrinkage_metrics<-function(DT){
   ## third way to do it based on sample size
   message("Computing maf_se_estimated using or, sample size and p.value ")
   ss_est_maf_se.DT<-DT[,list(pid=pid,ss_emp_maf_se=maf_se_estimate_sample_size(n,p.value,or,maf)),by=pid][,list(ss_emp_maf_se=mean(abs(ss_emp_maf_se))),by=pid]
+  ## for gamma hat
+  ss_est_maf_se.DT[,recip.ss_emp_maf_se:=1/ss_emp_maf_se]
   setkey(ss_est_maf_se.DT,pid)
   maf_se.DT<-maf_se.DT[ss_est_maf_se.DT]
-
   ## next compute basis shrinkage vector
   message("Computing pp shrinkage")
   bs.DT<-bayesian_shrinkage(DT)
