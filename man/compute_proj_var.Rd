@@ -5,8 +5,8 @@
 \title{analytically compute the variance of a projection given a reference set of genotypes
 \code{compute_proj_var}}
 \usage{
-compute_proj_var(man.DT, w.DT, shrink.DT, ref_gt_dir, method = "ws_emp",
-  quiet = TRUE)
+compute_proj_var(man.DT, w.DT, shrink.DT, ref_gt_dir,
+  method = "shrinkage_ws_emp", quiet = TRUE)
 }
 \arguments{
 \item{man.DT}{a data.table - manifest of variants included in the basis}

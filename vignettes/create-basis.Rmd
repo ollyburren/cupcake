@@ -135,14 +135,14 @@ Next we use the `data.table` created to compute shrinkages like so.
 shrink.DT<-compute_shrinkage_metrics(basis.DT)
 ```
 
-This computes various shrinkages, for this example we will take forward `ws_emp`, the types of different shrinkages and their names are are explained later in this vignette.
+This computes various shrinkages, for this example we will take forward `ws_emp_shrinkage`, the types of different shrinkages and their names are are explained later in this vignette.
 
 ## creating the basis
 
-The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a 
+The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a
 
 ```{r}
-basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'ws_emp')
+basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'ws_emp_shrinkage')
 ## need to add control where beta is zero
 basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
 pc.emp <- prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
@@ -163,7 +163,7 @@ with(plot.DT,text(PC1,PC2,labels=trait, cex= 1, offset = 20))
 
 ```{r}
 proj.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR,trait_list='trait3')
-proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'ws_emp')
+proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'ws_emp_shrinkage')
 pred <- predict(pc.emp,proj.mat.emp)
 ```
 
@@ -179,5 +179,3 @@ cols <- c('red',rep('black',3))
 with(plot2.DT,plot(PC1,PC2,col=cols,type='n',xlim=xlim,ylim=ylim))
 with(plot2.DT,text(PC1,PC2,labels=trait, cex= 1,col=cols))
 ```
-
-

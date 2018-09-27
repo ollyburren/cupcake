@@ -1,7 +1,4 @@
-library(snpStats)
-library(Matrix)
-library(corpcor)
-library(mvtnorm)
+
 
 #' Code to sample multivariate norm
 #' \code{mvs_perm} sample from a multivariate normal distribution
@@ -14,9 +11,9 @@ library(mvtnorm)
 mvs_perm<-function(m,sigma,n=2){
   if(!is.matrix(sigma))
     stop("sigma parameter is not a matrix")
-  if(!is.positive.definite(sigma,,method="chol"))
+  if(!corpcor::is.positive.definite(sigma,,method="chol"))
     stop("sigma is not positive definite")
-  rd<-rmvnorm(n,mean=m,sigma=sigma,method="chol")
+  rd<-mvtnorm::rmvnorm(n,mean=m,sigma=sigma,method="chol")
   t(rd)
 }
 
@@ -32,7 +29,7 @@ mvs_sigma<-function(r,quiet=TRUE){
     if(!quiet)
       message(sprintf("Found %s where R^2 is NA",sum(is.na(r))))
     r[is.na(r)]<-0
-  return(as(make.positive.definite(r),"Matrix"))
+  return(as(corpcor::make.positive.definite(r),"Matrix"))
 }
 
 #' convert a vcf file to snpMatrix object
@@ -95,7 +92,7 @@ simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
   if(length(lor)==1)
     return(t(rnorm(n_sims,mean=beta_hat,sd=se_lor)))
   # compute R statistic
-  r<-ld(sm,sm,stats="R")
+  r<-snpStats::ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
   r<-as.matrix(mvs_sigma(Matrix(r)))
   ## for beta the covariance matrix is estimates by sigma x SE * SE^T
@@ -119,7 +116,7 @@ cov_beta <- function(sm,se_lor){
     return(se_lor^2)
   # compute R statistic
   #r<-ld(sm,sm,stats="R.squared")
-  r<-ld(sm,sm,stats="R")
+  r<-snpStats::ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
   r<-as.matrix(mvs_sigma(Matrix(r)))
   ## for beta the covariance matrix is estimates by sigma x SE * SE^T

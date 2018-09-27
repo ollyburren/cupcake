@@ -5,7 +5,7 @@
 \title{This function creates a trait snp matrix
 \code{create_ts_matrix} creates a trait snp matrix that is suitable for basis creation and projection}
 \usage{
-create_ds_matrix(bDT, sDT, method = c("emp", "est", "memp", "mest"))
+create_ds_matrix(bDT, sDT, method)
 }
 \arguments{
 \item{bDT}{data.table object for basis traits as returned by \code{\link{get_gwas_data}}}
