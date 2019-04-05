@@ -371,6 +371,7 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_b
 compute_shrinkage_metrics<-function(DT){
   message("Computing maf_se_empirical using or, sample size and maf")
   emp_maf_se.DT<-DT[,list(pid=pid,emp_maf_se=maf_se_empirical(n-n1,n1,maf,or))][,list(emp_maf_se=mean(emp_maf_se)),by=pid]
+  emp_maf_se.DT[,recip.emp_maf_se:=1/emp_maf_se]
   setkey(emp_maf_se.DT,pid)
   ## second way to do it is to compute based on function fitting.
   message("Computing maf_se_estimated")
@@ -401,7 +402,11 @@ compute_shrinkage_metrics<-function(DT){
   #setkey(mean.DT,pid)
   #shrinkage.DT<-mean.DT[shrinkage.DT]
   shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/ss_emp_maf_se,bshrink/est_maf_se),by=pid]
+  #shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
   shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/ss_emp_maf_se,ws_ppi/est_maf_se),by=pid]
+  #shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/emp_maf_se,ws_ppi/est_maf_se),by=pid]
+  ## add this for the case where make no adjustment for the beta
+  shrinkage.DT[,none:=1]
   setkey(shrinkage.DT,pid)
   return(shrinkage.DT)
 }
@@ -420,6 +425,8 @@ create_ds_matrix <- function(bDT,sDT,method){
     method='ws_emp_shrinkage'
   }
   message(sprintf("Using %s",method))
+  if(method=='none')
+    sDT[,none:=1]
   #vmethod = sprintf("%s_shrinkage",method)
   stmp<-sDT[,c('pid',method),with=FALSE]
   tmp<-bDT[stmp]

@@ -1,4 +1,7 @@
-
+library(snpStats)
+library(corpcor)
+library(Matrix)
+library(mvtnorm)
 
 #' Code to sample multivariate norm
 #' \code{mvs_perm} sample from a multivariate normal distribution
@@ -141,17 +144,24 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
       message(sprintf("Processing %s",chr))
-    ss.file<-file.path(ref_gt_dir,sprintf("%s_1kg.RData",chr))
-    sm<-get(load(ss.file))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s.RDS",chr))
+     message(file.path(ref_gt_dir,sprintf("%s.RDS",chr)))
+    sm <- readRDS(ss.file)
+    #sm<-get(load(ss.file))
     ## there are sometimes duplicates that we need to remove
-    dup.idx<-which(duplicated(obj$info$pid))
+    info <- data.table(pid=colnames(sm),order=1:ncol(sm))
+    dup.idx <- which(duplicated(info$pid))
+    #dup.idx<-which(duplicated(obj$info$pid))
     if(length(dup.idx)>0){
       if(!quiet)
         message(sprintf("Warning removing %d duplicated SNPs",length(dup.idx)))
-      sm$info<-sm$info[-dup.idx,]
-      sm$sm <- sm$sm[,-dup.idx]
+      #sm$info<-sm$info[-dup.idx,]
+      #sm$sm <- sm$sm[,-dup.idx]
+      info <- info[-dup.idx,]
+      sm <- sm[,-dup.idx]
     }
-    sm$info$order<-1:nrow(sm$info)
+    info$order <- 1:nrow(info)
+    #sm$info$order<-1:nrow(sm$info)
     # by ld block
     by.ld <- split(s.DT[[chr]],s.DT[[chr]]$ld.block)
     chr.sims <- lapply(names(by.ld),function(block){
@@ -159,15 +169,18 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
         message(sprintf("Processing %s",block))
       dat <- by.ld[[block]]
       setkey(dat,pid)
-      info <-sm$info[pid %in% dat$pid ,.(pid,order)]
-      setkey(info,pid)
-      dat <- dat[info][order(order),]
+      #info <-sm$info[pid %in% dat$pid ,.(pid,order)]
+      linfo <- info[pid %in% dat$pid ,.(pid,order)]
+      setkey(linfo,pid)
+      dat <- dat[linfo][order(order),]
       if(shrink_beta){
         ## compute beta shrinkage
         shrink <- with(dat,wakefield_null_pp(p.val,maf,n,n1/n))
-        M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,shrink,n_sims))
+        #M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,shrink,n_sims))
+        M <- with(dat,simulate_beta(sm[,order],log(or),beta_se,shrink,n_sims))
       }else{
-        M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,1,n_sims))
+        #M <- with(dat,simulate_beta(sm$sm[,order],log(or),emp_se,1,n_sims))
+        M <- with(dat,simulate_beta(sm[,order],log(or),beta_se,1,n_sims))
       }
       sims <- cbind(dat,M)
       sims <- melt(sims,id.vars=names(dat))
@@ -197,7 +210,7 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage_
   M <- merge(M,shrink.DT[,.(pid,shrink=get(`method`))],by='pid')
   M <- M[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ## create a set of analytical se_beta_maf
-  beta_se_maf <- function(f,n,n1) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
+  beta_se_maf <- function(f) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
   M <- M[,beta_se_maf:=beta_se_maf(maf)]
   M <- M[,c('chr','pos'):=tstrsplit(pid,':')]
   s.DT <- split(M,M$chr)

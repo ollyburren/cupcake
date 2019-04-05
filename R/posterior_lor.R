@@ -106,7 +106,7 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' @export
 
 lor_f <- function(f0,n,target.or,target.prob,n.steps){
-  p0.shape <- control_prior_shape(f0,n.sample)
+  p0.shape <- control_prior_shape(f0,n)
   a0 <- p0.shape$a0
   b0 <- p0.shape$b0
   #a0 <- (2*n.sample-1)*f0
@@ -114,7 +114,7 @@ lor_f <- function(f0,n,target.or,target.prob,n.steps){
   a1b1 <- opt_a1b1(a0,b0,target.or,target.prob,n.steps)
   a1 <- a1b1$a1
   b1 <- a1b1$b1
-  message(sprintf("AF %f a0 %f b0 %f a1 %f b1 %f",f0,a0,b0,a1,b1))
+  #message(sprintf("AF %f a0 %f b0 %f a1 %f b1 %f",f0,a0,b0,a1,b1))
   c("00"=digamma(a0) - digamma(b0) - digamma(2+a1) + digamma(b1),
     "01"=digamma(a0) - digamma(b0) - digamma(1+a1) + digamma(1+b1),
     "11"=digamma(a0) - digamma(b0) - digamma(a1) + digamma(2+b1))
