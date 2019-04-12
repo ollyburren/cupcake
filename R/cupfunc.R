@@ -127,11 +127,11 @@ bayesian_shrinkage<-function(DT,tquant=0.9999){
 #' this is then normalised by the total posterior for a given LD block
 #'
 #' @param DT basis data.table object
-#' @param tquant a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)
+#' @param pi_i - The prior probability that a variant is causal
 #' @return data.table object
 
-ws_shrinkage <- function(DT){
-  tmp <- DT[,list(pid=pid,ppi=wakefield_pp(p.value,maf,n,n1/n)),by=c('trait','ld.block')]
+ws_shrinkage <- function(DT,pi_i=1e-4){
+  tmp <- DT[,list(pid=pid,ppi=wakefield_pp(p.value,maf,n,n1/n,pi_i)),by=c('trait','ld.block')]
   wj <- tmp[,list(wj=sum(ppi)),by=c('trait','ld.block')]
   S <- tmp[,list(S=sum(ppi)),by='ld.block']
   setkey(wj,ld.block)
@@ -368,42 +368,43 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_b
 #' see also \code{\link{maf_se_empirical}}, \code{\link{maf_se_estimate}} and \code{\link{bayesian_shrinkage}}.
 #' @export
 
-compute_shrinkage_metrics<-function(DT){
-  message("Computing maf_se_empirical using or, sample size and maf")
-  emp_maf_se.DT<-DT[,list(pid=pid,emp_maf_se=maf_se_empirical(n-n1,n1,maf,or))][,list(emp_maf_se=mean(emp_maf_se)),by=pid]
-  emp_maf_se.DT[,recip.emp_maf_se:=1/emp_maf_se]
-  setkey(emp_maf_se.DT,pid)
+compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
+  #message("Computing maf_se_empirical using or, sample size and maf")
+  #emp_maf_se.DT<-DT[,list(pid=pid,emp_maf_se=maf_se_empirical(n-n1,n1,maf,or))][,list(emp_maf_se=mean(emp_maf_se)),by=pid]
+  #emp_maf_se.DT[,recip.emp_maf_se:=1/emp_maf_se]
+  #setkey(emp_maf_se.DT,pid)
   ## second way to do it is to compute based on function fitting.
-  message("Computing maf_se_estimated")
-  est_maf_se.DT<-unique(DT[,list(est_maf_se=maf_se_estimate(maf)),by=pid])
-  setkey(est_maf_se.DT,pid)
-  maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
+  #message("Computing maf_se_estimated")
+  #est_maf_se.DT<-unique(DT[,list(est_maf_se=maf_se_estimate(maf)),by=pid])
+  #setkey(est_maf_se.DT,pid)
+  #maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
   ## third way to do it based on sample size
   message("Computing maf_se_estimated using or, sample size and p.value ")
   ss_est_maf_se.DT<-DT[,list(pid=pid,ss_emp_maf_se=maf_se_estimate_sample_size(n,p.value,or,maf)),by=pid][,list(ss_emp_maf_se=mean(abs(ss_emp_maf_se))),by=pid]
   ## for gamma hat
   ss_est_maf_se.DT[,recip.ss_emp_maf_se:=1/ss_emp_maf_se]
   setkey(ss_est_maf_se.DT,pid)
-  maf_se.DT<-maf_se.DT[ss_est_maf_se.DT]
+  #maf_se.DT<-DT[ss_est_maf_se.DT]
   ## next compute basis shrinkage vector
-  message("Computing pp shrinkage")
-  bs.DT<-bayesian_shrinkage(DT)
-  setkey(bs.DT,pid)
-  shrinkage.DT<-bs.DT[maf_se.DT]
-  setkey(shrinkage.DT,pid)
+  #message("Computing pp shrinkage")
+  #bs.DT<-bayesian_shrinkage(DT)
+  #setkey(bs.DT,pid)
+  #shrinkage.DT<-bs.DT[maf_se.DT]
+  #setkey(shrinkage.DT,pid)
   message("Computing weighted pp shrinkage")
   #add alternative shrinkage method based on a weighted sum of ppi for a SNP across all diseases
   #normalised by the total ppi across all diseases observed for a given LD block.
-  ws.DT <- ws_shrinkage(DT)
+  ws.DT <- ws_shrinkage(DT,pi_i)
   setkey(ws.DT,pid)
-  shrinkage.DT <- ws.DT[shrinkage.DT]
+  shrinkage.DT <- ss_est_maf_se.DT[ws.DT]
   ## add mean method
   #mean.DT<-mean_shrinkage(DT)
   #setkey(mean.DT,pid)
   #shrinkage.DT<-mean.DT[shrinkage.DT]
-  shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/ss_emp_maf_se,bshrink/est_maf_se),by=pid]
+  #shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/ss_emp_maf_se,bshrink/est_maf_se),by=pid]
   #shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
-  shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/ss_emp_maf_se,ws_ppi/est_maf_se),by=pid]
+  #shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/ss_emp_maf_se,ws_ppi/est_maf_se),by=pid]
+  shrinkage.DT[,'ws_emp_shrinkage':=ws_ppi/ss_emp_maf_se,by=pid]
   #shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/emp_maf_se,ws_ppi/est_maf_se),by=pid]
   ## add this for the case where make no adjustment for the beta
   shrinkage.DT[,none:=1]
