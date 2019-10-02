@@ -30,12 +30,10 @@ This package is concerned with steps 4 and 5, and whilst the other steps are non
 
 ## Installing cupcake
 
-## Installing COGS
-
 You will need to have the devtool R package installed
 ```{r,eval=FALSE}
 library(devtools)
-install_github("ollyburren/cupcake",build_vignettes = TRUE)
+install_github("ollyburren/cupcake",build_vignettes = FALSE)
 ```
 
 
@@ -142,7 +140,7 @@ This computes various shrinkages, for this example we will take forward `ws_emp_
 The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a
 
 ```{r}
-basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'ws_emp_shrinkage')
+basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'shrinkage')
 ## need to add control where beta is zero
 basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
 pc.emp <- prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
@@ -163,7 +161,7 @@ with(plot.DT,text(PC1,PC2,labels=trait, cex= 1, offset = 20))
 
 ```{r}
 proj.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR,trait_list='trait3')
-proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'ws_emp_shrinkage')
+proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'shrinkage')
 pred <- predict(pc.emp,proj.mat.emp)
 ```
 
