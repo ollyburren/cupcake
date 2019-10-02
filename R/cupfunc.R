@@ -3,8 +3,6 @@
 
 library(data.table)
 
-
-
 #' helper function to sum logs without loss of precision
 #' \code{logsum} sums logs without loss of precision
 #'
@@ -80,47 +78,7 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     pp = po/(1+po)
 }
 
-#' This function computes the posterior prob that a SNP is causal in a set of traits
-#' \code{basis_pp} computes the posterior probability that a SNP is causal across a set of traits
-#'
-#' @param bf a vector of approximate Bayes Factors using Wakefield's method.
-#' @param a scalar or vector of posterior probabilites
-#' @return pi a scalar empirical prior
 
-basis_pp<-function(BF,emp_pi){
-  lABF<-log(BF)
-  tABF <- c(lABF,0)
-  vpi_i<-c(rep(emp_pi,length(lABF)),1)
-  sBF <- logsum(tABF + log(vpi_i))
-  exp(lABF+log(emp_pi)-sBF)
-}
-
-#' This function computes an approximate Bayes Factor for whether a given SNP is causal
-#' in a set of basis traits assuming a single causal variant.
-#' \code{bayesian_shrinkage} computes an approximate Bayes Factor for whether a given SNP is causal
-#' in a set of basis traits assuming a single causal variant. Using an emprically derived
-#' prior computes a posterior probability.
-#'
-#' @param DT basis data.table object
-#' @param tquant a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)
-#' @return data.table object
-
-bayesian_shrinkage<-function(DT,tquant=0.9999){
-  tmp<-DT[,list(pid=pid,lp0=log(1-wakefield_null_pp(p.value,maf,n,n1/n))),by=c('trait','ld.block')]
-  # if pvalue is 1 (as OR is 1) we get numerical errors / NA. Removing is fine as the they should be 0 therefore 1
-  tmp<-tmp[,list(q_i=1-exp(sum(lp0,na.rm=TRUE))),by=c('ld.block','pid')]
-  ## compute an empirical prior
-  emp<-mean(tmp$q_i)
-  ## prior odds
-  po<-emp/(1-emp)
-  ## note that emp is for h1 that beta != 0 therefore we need to take reciprocal as equation assumes pi_0 - see notes
-  po<-1/po
-  tmp[,uABF:=po*(q_i/(1-q_i))]
-  ## set an upper limit to BF (here its upper 0.0001 percentile)
-  BIG<-quantile(tmp[is.finite(tmp$uABF),]$uABF,prob=0.9999)
-  tmp[is.infinite(uABF) | uABF > BIG, uABF:=BIG]
-  tmp[,bshrink:=basis_pp(uABF,emp),by=ld.block][,.(bshrink),by=pid]
-}
 
 #' This function computes an alternative to the Bayesian shrinkage method which can be too agressive.
 #' \code{ws_shrinkage} computes a shrinkage based on a weighted sum (ws) of posteriors for each disease
@@ -141,54 +99,6 @@ ws_shrinkage <- function(DT,pi_i=1e-4){
   setkeyv(tmp,c('trait','ld.block'))
   wj <- tmp[wj]
   wj[,list(ws_ppi=sum(ppi * wj)/unique(S)),by=c('pid','ld.block')]
-}
-
-#' This function computes an estimate of allele count of unexposed controls
-#' \code{ca} estimate of allele count of unexposed controls
-#'
-#' @param n0 a vector or scalar of number of control samples
-#' @param f a vector of reference allele frequencies
-#' @return a numeric vector
-
-ca<-function(n0,f){
-    n0*(1-f)
-}
-
-#' This function computes an estimate of allele count of  exposed controls
-#' \code{cb} estimate of allele count of exposed controls
-#'
-#' @param n0 a vector or scalar of number of control samples
-#' @param f a vector of reference allele frequencies
-#' @return a numeric vector
-
-cb<-function(n0,f){
-    n0*f
-}
-
-#' This function computes an estimate of allele count of  unexposed cases
-#' \code{cc} estimate of allele count of unexposed cases
-#'
-#' @param n1 a vector or scalar of number of case samples
-#' @param a a vector of estimates for allele count of  unexposed controls
-#' @param b a vector of estimates for allele count of  exposed controls
-#' @return a numeric vector
-#' see also \code{\link{ca}} and \code{\link{cb}}
-
-cc<-function(n1,a,b,theta){
-    (n1*a)/(a+(b*theta))
-}
-
-#' This function computes an estimate of allele count of  exposed cases
-#' \code{cc} estimate of allele count of exposed cases
-#'
-#' @param n1 a vector or scalar of number of case samples
-#' @param a a vector of estimates for allele count of  unexposed controls
-#' @param b a vector of estimates for allele count of  exposed controls
-#' @return a numeric vector
-#' see also \code{\link{ca}} and \code{\link{cb}}
-
-cd<-function(n1,a,b,theta){
-    (n1*b)/(a+(b*theta))
 }
 
 
@@ -289,16 +199,16 @@ z2p <- function(z){
   2* pnorm(abs(z), lower.tail = FALSE)
 }
 
-# this function gets adds reference data from a snp support file to GWAS summ stats
+# this function gets adds reference data from a snp support data.table to GWAS summ stats
 #' \code{add_ref_annotations} integrate GWAS summary data with support file
-#' @param snp_support_file character vector file path to snp manifest
+#' @param ss data.table object for snp manifest
 #' @param DT data.table containing GWAS summary stats
 #' @return data.table object
 
-add_ref_annotations <- function(snp_support_file,DT){
-  if(!file.exists(snp_support_file))
-    stop(sprintf("Cannot find file %s",snp_support_file))
-  ss<-fread(snp_support_file)
+add_ref_annotations <- function(ss,DT){
+  #if(!file.exists(snp_support_file))
+  #  stop(sprintf("Cannot find file %s",snp_support_file))
+  #ss<-fread(snp_support_file)
   ## use data table to merge the two files
   #ss[,pid:=paste(chr,position,sep=':')]
   ss[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
@@ -337,17 +247,16 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_b
   ret<-rbindlist(lapply(1:nrow(man),function(i){
     message(sprintf("Processing %s",man[i,]$trait))
     tDT<-fread(man[i,]$file)
-    #tDT[,pid:=paste(chr,position,sep=':')]
     tDT[,c('trait','n','n1') := man[i,.(trait,cases+controls,cases)]]
   }))
   setkey(ret,pid)
+  ss <- fread(snp_manifest_file)
   if(filter_snps_by_manifest){
-    bsnps <- fread(snp_manifest_file)$pid
-    ret <- ret[pid %in% bsnps,]
+    ret <- ret[pid %in% ss$pid,]
   }
   ## next add minor allele frequencies
   message("Adding reference snp manifest annotations")
-  ret<-add_ref_annotations(snp_manifest_file,ret)
+  ret<-add_ref_annotations(ss,ret)
   ret
 }
 
@@ -369,47 +278,17 @@ get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_b
 #' @export
 
 compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
-  #message("Computing maf_se_empirical using or, sample size and maf")
-  #emp_maf_se.DT<-DT[,list(pid=pid,emp_maf_se=maf_se_empirical(n-n1,n1,maf,or))][,list(emp_maf_se=mean(emp_maf_se)),by=pid]
-  #emp_maf_se.DT[,recip.emp_maf_se:=1/emp_maf_se]
-  #setkey(emp_maf_se.DT,pid)
-  ## second way to do it is to compute based on function fitting.
-  #message("Computing maf_se_estimated")
-  #est_maf_se.DT<-unique(DT[,list(est_maf_se=maf_se_estimate(maf)),by=pid])
-  #setkey(est_maf_se.DT,pid)
-  #maf_se.DT<-emp_maf_se.DT[est_maf_se.DT]
-  ## third way to do it based on sample size
   message("Computing maf_se_estimated using or, sample size and p.value ")
   ss_est_maf_se.DT<-DT[,list(pid=pid,ss_emp_maf_se=maf_se_estimate_sample_size(n,p.value,or,maf)),by=pid][,list(ss_emp_maf_se=mean(abs(ss_emp_maf_se))),by=pid]
-  ## for gamma hat
   ss_est_maf_se.DT[,recip.ss_emp_maf_se:=1/ss_emp_maf_se]
   setkey(ss_est_maf_se.DT,pid)
-  #maf_se.DT<-DT[ss_est_maf_se.DT]
-  ## next compute basis shrinkage vector
-  #message("Computing pp shrinkage")
-  #bs.DT<-bayesian_shrinkage(DT)
-  #setkey(bs.DT,pid)
-  #shrinkage.DT<-bs.DT[maf_se.DT]
-  #setkey(shrinkage.DT,pid)
   message("Computing weighted pp shrinkage")
-  #add alternative shrinkage method based on a weighted sum of ppi for a SNP across all diseases
-  #normalised by the total ppi across all diseases observed for a given LD block.
   ws.DT <- ws_shrinkage(DT,pi_i)
   setkey(ws.DT,pid)
   shrinkage.DT <- ss_est_maf_se.DT[ws.DT]
-  ## add mean method
-  #mean.DT<-mean_shrinkage(DT)
-  #setkey(mean.DT,pid)
-  #shrinkage.DT<-mean.DT[shrinkage.DT]
-  #shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/ss_emp_maf_se,bshrink/est_maf_se),by=pid]
-  #shrinkage.DT[,c('emp_shrinkage','est_shrinkage'):=list(bshrink/emp_maf_se,bshrink/est_maf_se),by=pid]
-  #shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/ss_emp_maf_se,ws_ppi/est_maf_se),by=pid]
-  shrinkage.DT[,'ws_emp_shrinkage':=ws_ppi/ss_emp_maf_se,by=pid]
-  #shrinkage.DT[,c('ws_emp_shrinkage','ws_est_shrinkage'):=list(ws_ppi/emp_maf_se,ws_ppi/est_maf_se),by=pid]
-  ## add this for the case where make no adjustment for the beta
-  shrinkage.DT[,none:=1]
+  shrinkage.DT[,shrinkage:=ws_ppi/ss_emp_maf_se,by=pid]
   setkey(shrinkage.DT,pid)
-  return(shrinkage.DT)
+  return(shrinkage.DT[,.(pid,shrinkage)])
 }
 
 #' This function creates a trait snp matrix
@@ -423,7 +302,7 @@ compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
 
 create_ds_matrix <- function(bDT,sDT,method){
   if(missing(method)){
-    method='ws_emp_shrinkage'
+    method='shrinkage'
   }
   message(sprintf("Using %s",method))
   if(method=='none')

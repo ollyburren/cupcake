@@ -1,0 +1,14 @@
+trait	disease	cases	controls	pmid	file
+VIT	vitiligo_jin	4680	39586	27723757	vitiligo_jin.tab
+UC	uc_delaange	12366	33609	28067908	uc_delaange.tab
+CD	cd_delaange	12194	28072	28067908	cd_delaange.tab
+RA	ra_okada	14361	43923	24390342	ra_okada.tab
+SLE	sle_bentham	4036	6959	26502338	sle_bentham.tab
+T1D	t1d_cooper	5913	8829	https://doi.org/10.1101/120022	t1d_cooper.tab
+PSC	psc_ji	4796	19955	27992413	psc_ji.tab
+asthma	asthma_demenais	19954	107715	29273806	asthma_demenais.tab
+PBC	pbc_cordell	2764	10475	26394269	pbc_cordell.tab
+CEL	cel_dubois	4533	10750	20190712	cel_dubois.tab
+MS	ms_imsgc	9772	17376	21833088	ms_imsgc.tab
+LADA	cousminer_lada	2634	14104	30254083	lada_cousminer.tab
+IgA_NEPH	kiryluk_neph	2747	3952	25305756	iga_neph_kiryluk.tab
