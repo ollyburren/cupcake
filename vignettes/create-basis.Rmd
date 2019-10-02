@@ -36,16 +36,31 @@ library(devtools)
 install_github("ollyburren/cupcake",build_vignettes = FALSE)
 ```
 
+## Setup
+
+Here we load cupcake and other useful packages and define the locations of various data files that we will need to construct a basis.
+
+```{r}
+library(cupcake)
+library(magrittr)
+SPARSE_BASIS_EXTDATA <- '../inst/extdata/sparse_imd_basis'
+SNP_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_traits_sparse_snp_manifest.RDS')
+TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_traits_manifest.tab')
+GWAS_DATA_DIR <- file.path(SPARSE_BASIS_EXTDATA,'/gwas_data/')
+```
 
 ## Input files
 
-Exemplar files can be located in `./inst/extdata/`
-
-The package expects two manifest files, one describing the SNPs to include in the basis and the other describing the traits. The package makes the choice to define a `pid` or primary identifier for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, for practical, they are best removed before basis construction.
+The package expects two manifest files, one describing the SNPs to include  in the basis and the other describing the traits . The package makes the choice to define a `pid` or primary identifier for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, for practical reasons, they are best removed before basis construction.
 
 ### SNP Manifest
 
-Each row of this file describes a non redundant (see above) SNP to include in the basis.
+Each row of this file  (see `r SNP_MANIFEST_FILE`) describes a non redundant (see above) SNP to include in the basis.
+
+```{r}
+readRDS(SNP_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
+```
+
 
 1. pid - See above.
 2. ref_a1 - Allele 1 (A/G/C/T/I/D).
@@ -53,39 +68,30 @@ Each row of this file describes a non redundant (see above) SNP to include in th
 4. ref_a1.af - The allele frequency of ref_a1 (estimated from a suitable reference population).
 5. ld.block - A number grouping a block of SNPs in high LD (see note).
 
-e.g.
-
-| pid       | ref_a1 | ref_a2 | ref_a1.af         | ld.block |
-|-----------|--------|--------|-------------------|----------|
-| 1:1118275 | G      | A      | 0.957  | 2        |
-| 1:1120431 | G      | A      | 0.956 | 2        |
-| 1:1218086 | G      | A      | 0.924 | 2        |
-| 1:1335790 | A      | G      | 0.820 | 2        |
-| 1:1497824 | G      | A      | 0.875 | 2        |
-
 
 ### Trait Manifest
 
-Each row of this file describes a trait to either include in basis creation or to project.
+Each row of this file describes a trait (see `r TRAIT_MANIFEST_FILE`) to either include in basis creation or to project.
 
-1. include - `Y` indicates that a trait should be considered anything else will be excluded.
-2. trait - Human readable name for the trait e.g. Juvenile Idiopathic Arthritis.
+```{r}
+fread(TRAIT_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
+```
+
+1. trait - Short label for a trait
+2. disease - Human readable name for the trait e.g. Juvenile Idiopathic Arthritis.
 3. cases - Number of cases in the study.
 4. controls - Number of controls in the study.
-5. basis_trait - `1` indicates that a trait should be used to create a basis rather than for projection.
-6. file - Name of the summary statistic source file (see below) to use e.g. JIA.tab.
-
-e.g.
-
-| include | trait                      | cases | controls | basis_trait | file    |
-|---------|----------------------------|-------|----------|-------------|---------|
-| Y       | Autoimmume Thyroid Disease | 2733  | 9364     | 1           | ATD.tab |
-| Y       | Multiple sclerosis         | 14498 | 24091    | 1           | MS.tab  |
-| Y       | Primary billiary cirrhosis | 2861  | 8514     | 1           | PBC.tab |
+5. file - Name of the summary statistic source file (see below) to use e.g. JIA.tab.
 
 ## GWAS source file
 
 Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in the SNP manifest.
+
+```{r}
+file.path(GWAS_DATA_DIR,fread(TRAIT_MANIFEST_FILE)[1,]$file) %>% fread %>% head(.,n=5) %>% knitr::kable()
+```
+
+
 
 1. pid - as for the SNP manifest.
 2. a1 - Allele 1  - should match SNP manifest.
@@ -93,63 +99,51 @@ Each row of this file describes the effect and signficance for a set of alleles 
 4. or - Odds ration with respect to a2.
 5. p.value
 
-e.g.
-
-| pid          | a1 | a2 | or    | p.value |
-|--------------|----|----|-------|---------|
-| 10:100134036 | A  | G  | 0.941 | 0.2727  |
-| 10:100179274 | G  | A  | 0.914 | 0.1358  |
-| 10:100286047 | C  | A  | 1.05  | 0.4344  |
-| 10:100286138 | G  | C  | 1.04  | 0.493   |
-| 10:10028820  | G  | A  | 0.918 | 0.1125  |
-
 ## Loading in data
 
 The loading of data is handled through `get_gwas_data` routine like so
 
 ```{r}
-library(devtools)
-load_all('~/git/cupcake')
-SNP_MANIFEST_FILE <- '../inst/extdata/snp_manifest.tab'
-TRAIT_MANIFEST_FILE <- '../inst/extdata/trait_manifest.tab'
-DATA_DIR <- '../inst/extdata/gwas_data/'
-basis.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR)
+gwas.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)
 ```
 
-The `data.table` object `basis.DT` contains the loaded data required for the next step of calculating the shrinkage values to appy to the $\beta$ of all traits.
+The `data.table` object `gwas.DT` contains the loaded data required for the next step of calculating the shrinkage values to appy to the $\beta$ of all traits.
 
 ```{r}
-library(magrittr)
-head(basis.DT,n=2) %>% knitr::kable()
+head(gwas.DT,n=10) %>% knitr::kable()
 ```
 
 Basically a merge between the metadata for the two basis traits in the example trait manifest file and the meta data on each SNP, contained in the snp manifest file.
 
-## computing shrinkage
+## computing shrinkage (for illustrative purposes only)
 
-Next we use the `data.table` created to compute shrinkages like so.
+Next we use the `data.table` created to compute shrinkages like so
 
 ```{r}
-shrink.DT<-compute_shrinkage_metrics(basis.DT)
+shrink.DT<-compute_shrinkage_metrics(gwas.DT)
+head(shrink.DT,n=10) %>% knitr::kable()
 ```
 
-This computes various shrinkages, for this example we will take forward `ws_emp_shrinkage`, the types of different shrinkages and their names are are explained later in this vignette.
+**Note** that this shrinkage object is for illustrative purposes only and it should **not** be generated from a sparse map of SNPs such as the one included in this package. Instead we load in a pregnerated shrinkage object that has been generated from approximately 250,000 SNPs across 13 diseases.
+
+
+```{r}
+shrink.DT <- readRDS('../inst/extdata/sparse_imd_basis/support/13_traits_sparse_shrinkage.RDS')
+
+```
 
 ## creating the basis
 
-The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a
+The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a row of zeroes to 
 
 ```{r}
-basis.mat.emp <- create_ds_matrix(basis.DT,shrink.DT,'shrinkage')
-## need to add control where beta is zero
-basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
-pc.emp <- prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
+basis <- create_basis(gwas.DT,shrink.DT)
 ```
 
-Visualising
+## Visualising basis
 
 ```{r,fig.width = 5}
-plot.DT <- data.table(trait=rownames(pc.emp$x),pc.emp$x)
+plot.DT <- data.table(trait=rownames(basis$x),basis$x)
 xlim <- with(plot.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.DT,c(min(PC2),max(PC2)) * 1.2)
 with(plot.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim))
@@ -157,23 +151,22 @@ with(plot.DT,text(PC1,PC2,labels=trait, cex= 1, offset = 20))
 ```
 
 
-## projecting data onto the basis
+## Projecting data onto the basis
 
 ```{r}
-proj.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,DATA_DIR,trait_list='trait3')
-proj.mat.emp <- create_ds_matrix(proj.DT,shrink.DT,'shrinkage')
-pred <- predict(pc.emp,proj.mat.emp)
+sle.DT <- file.path(GWAS_DATA_DIR,'UKBB_NEALE:SRD:SLE.tab') %>% fread
+sle.proj <- project_basis(sle.DT,shrink.DT,basis,traitname='UKBB:SLE')
 ```
 
-Visualising projected data
+## Visualising projected data
 
 ```{r,fig.width = 5}
 ## plotting code
-plot2.DT <- rbind(data.table(trait=rownames(pred),pred),plot.DT)
-plot2.DT[,cat:=ifelse(trait=='trait3','projected','basis')]
+plot2.DT <- rbind(data.table(trait=rownames(sle.proj),sle.proj),plot.DT)
+#plot2.DT[,cat:=ifelse(trait=='UKBB:SLE','projected','basis')]
 xlim <- with(plot2.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot2.DT,c(min(PC2),max(PC2)) * 1.2)
-cols <- c('red',rep('black',3))
+cols <- ifelse(plot2.DT$trait=='UKBB:SLE','red','black')
 with(plot2.DT,plot(PC1,PC2,col=cols,type='n',xlim=xlim,ylim=ylim))
 with(plot2.DT,text(PC1,PC2,labels=trait, cex= 1,col=cols))
 ```

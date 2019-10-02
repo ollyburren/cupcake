@@ -226,7 +226,7 @@ add_ref_annotations <- function(ss,DT){
 # then gets just those traits, if trait list is missing assumes that you want just
 # basis
 #' \code{get_gwas_data} integrate GWAS summary data with support files
-#' @param manifest_file character vector file path to GWAS manifest file
+#' @param trait_manifest_file character vector file path to GWAS manifest file
 #' @param snp_manifest_file character vector file path to snp manifest
 #' @param data_dir character vector file path to location of GWAS summary stats
 #' @param trait_list character vector of specific traits in manifest file to include
@@ -235,22 +235,25 @@ add_ref_annotations <- function(ss,DT){
 #' @return data.table object
 #' @export
 
-get_gwas_data <- function(manifest_file,snp_manifest_file,data_dir,filter_snps_by_manifest=FALSE,trait_list){
-  if(missing(trait_list)){
-    man<-fread(manifest_file)[basis_trait==1 & include=='Y',]
-  }else{
-    man<-fread(manifest_file)[trait %in% trait_list & include=='Y',]
-  }
-  if(nrow(man)==0)
+get_gwas_data <- function(trait_manifest_file,snp_manifest_file,data_dir,filter_snps_by_manifest=FALSE){
+  #if(missing(trait_list)){
+  #  man<-fread(manifest_file)[basis_trait==1 & include=='Y',]
+  #}else{
+  #  man<-fread(manifest_file)[trait %in% trait_list & include=='Y',]
+  #}
+  if(!file.exists(trait_manifest_file))
+    stop(sprintf("Cannot find trait manifest file %s",trait_manifest_file))
+  man.DT <- fread(trait_manifest_file)
+  if(nrow(man.DT)==0)
     stop(sprintf("Cannot find any traits in manifest %s for %s",manifest_file,paste(trait_list,collapse=',')))
-  man[,file:=file.path(data_dir,file)]
-  ret<-rbindlist(lapply(1:nrow(man),function(i){
-    message(sprintf("Processing %s",man[i,]$trait))
-    tDT<-fread(man[i,]$file)
-    tDT[,c('trait','n','n1') := man[i,.(trait,cases+controls,cases)]]
+  man.DT[,file:=file.path(data_dir,file)]
+  ret<-rbindlist(lapply(1:nrow(man.DT),function(i){
+    message(sprintf("Processing %s",man.DT[i,]$trait))
+    tDT<-fread(man.DT[i,]$file)
+    tDT[,c('trait','n','n1') := man.DT[i,.(trait,cases+controls,cases)]]
   }))
   setkey(ret,pid)
-  ss <- fread(snp_manifest_file)
+  ss <- readRDS(snp_manifest_file)
   if(filter_snps_by_manifest){
     ret <- ret[pid %in% ss$pid,]
   }
@@ -316,4 +319,52 @@ create_ds_matrix <- function(bDT,sDT,method){
   tmp.mat <- as.matrix(B[,-1]) %>% t()
   colnames(tmp.mat) <- snames
   return(tmp.mat)
+}
+
+#' This function creates a basis
+#' \code{create_basis} creates a trait snp matrix that is suitable for basis creation and projection
+#'
+#' @param gwas.DT data.table object for basis traits as returned by \code{\link{get_gwas_data}}
+#' @param shrink.DT data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}
+#' @param method scalar vector (either shrinkage or none), emp uses empirically generated MAF SE, est uses and estimate.
+#' @return a prcomp object representing the basis
+#' @export
+
+
+
+create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
+  if(apply.shrinkage){
+    basis.mat.emp <- create_ds_matrix(gwas.DT,shrink.DT,'shrinkage')
+  }else{
+    message("Warning: No shrinkage will be applied!")
+    basis.mat.emp <- create_ds_matrix(gwas.DT,shrink.DT,'none')
+  }
+  ## need to add control where beta is zero
+  basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
+  prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
+}
+
+#' This function projects an aligned trait onto the basis
+#' \code{project_basis} projects an external trait into basis space
+#'
+#' @param gwas.DT data.table object representing summary statistics from external GWAS with columns as defined in \code{\link{get_gwas_data}}
+#' @param shrink.DT data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}
+#' @param pc prcomp object returned by \code{\link{create_basis}}
+#' @param traitname character label for this trait defaults to 'test_trait'
+#' @return a matrix of PC scores for the projection.
+#' @export
+
+project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait'){
+  tmp <- merge(gwas.DT,shrink.DT,by='pid',all.y=TRUE)
+  tmp$metric <- tmp[['ws_emp_shrinkage']] * log(tmp$or)
+  ## where snp is missing or infinite make it zero
+  tmp[is.na(metric) | !is.finite(metric),metric:=0]
+  tmp[,trait:= traitname]
+  B <- dcast(tmp,pid ~ trait,value.var='metric')
+  snames <- B[,1]$pid
+  mat.emp <- as.matrix(B[,-1]) %>% t()
+  colnames(mat.emp) <- snames
+  if(!identical(colnames(mat.emp),rownames(pc$rotation)))
+    stop("Something wrong basis and projection matrix don't match")
+  all.proj <- predict(pc,newdata=mat.emp)
 }
