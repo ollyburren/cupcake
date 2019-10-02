@@ -8,7 +8,9 @@
 compute_shrinkage_metrics(DT, pi_i = 1e-04)
 }
 \arguments{
-\item{data.table}{object for basis traits as returned by \code{\link{get_gwas_data}}}
+\item{DT}{data.table object for basis traits as returned by \code{\link{get_gwas_data}}}
+
+\item{pi_i}{numeric the prior probability that a variant is causal  see \code{\link{ws_shrinkage}}}
 }
 \value{
 a data.table object.
@@ -20,7 +22,7 @@ a data.table object.
 \item emp_shrinkage - overall shrinkage using emp_maf_se
 \item est_shrinkage - overall shrinkage using est_maf_se
 }
-see also \code{\link{maf_se_empirical}}, \code{\link{maf_se_estimate}} and \code{\link{bayesian_shrinkage}}.
+see also \code{\link{maf_se_estimate_sample_size}}.
 }
 \description{
 This function computes various shrinkage metrics

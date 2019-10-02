@@ -12,9 +12,9 @@ e_lor(b1, a0, b0, a1)
 
 \item{a0}{a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls}
 
-\item{a1}{a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases}
+\item{b0}{a scalar - beta distribution beta shape parameter for prior on allele frequency in controls}
 
-\item{a0}{a scalar - beta distribution beta shape parameter for prior on allele frequency in controls}
+\item{a1}{a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases}
 }
 \value{
 scalar - expected log(OR)

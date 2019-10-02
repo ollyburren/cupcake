@@ -12,7 +12,7 @@ create_basis(gwas.DT, shrink.DT, apply.shrinkage = TRUE)
 
 \item{shrink.DT}{data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}}
 
-\item{method}{scalar vector (either shrinkage or none), emp uses empirically generated MAF SE, est uses and estimate.}
+\item{apply.shrinkage}{boolean on whether to apply shrinkage or not [Default TRUE]}
 }
 \value{
 a prcomp object representing the basis

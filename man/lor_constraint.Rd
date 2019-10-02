@@ -18,6 +18,8 @@ lor_constraint(a1, a0, b0, p0, target.or, nsim)
 \item{p0}{a vector - a set of samples from beta(a0,b0)}
 
 \item{target.or}{a scalar - an odds ratio threshold to compute P(sim.or > target.or)}
+
+\item{nsim}{a scalar - number of simulations to use when estimating parameters}
 }
 \value{
 scalar - P(sim.or>target.or)

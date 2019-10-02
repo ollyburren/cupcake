@@ -15,11 +15,10 @@ maf_se_empirical(n0, n1, f, theta)
 
 \item{f}{a vector of reference allele frequencies}
 
-\item{a}{vector of Odds Ratios}
+\item{theta}{vector of Odds Ratios}
 }
 \value{
 a numeric vector
-see also \code{\link{ca}}, \code{\link{cb}}, \code{\link{cc}} and \code{\link{cd}}
 }
 \description{
 This function computes standard error due to minor allele frequency empirically

@@ -11,8 +11,6 @@ cov_beta(sm, se_lor)
 \item{sm}{a snpMatrix object}
 
 \item{se_lor}{a vector - standard error of betas}
-
-\item{lor_shrink}{a vector - shrinkage values to use to adjust betas (default 1 no shrinkage)}
 }
 \value{
 a covariance matrix for beta

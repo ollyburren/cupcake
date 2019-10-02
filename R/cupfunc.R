@@ -22,7 +22,7 @@ logsum <- function(x) {
 #' @param f a vector of minor allele frequencies taken from some reference population.
 #' @param N a scalar or vector for total sample size of GWAS
 #' @param s a scalar representing the proportion of cases (n.cases/N)
-#' @param pi a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})
+#' @param pi_i a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})
 #' @param sd.prior a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2).
 #' The method assumes a normal prior on the population log relative risk centred at 0 and the DEFAULT
 #' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
@@ -109,9 +109,8 @@ ws_shrinkage <- function(DT,pi_i=1e-4){
 #' @param n0 a vector or scalar of number of control samples
 #' @param n1 a vector or scalar of number of case samples
 #' @param f a vector of reference allele frequencies
-#' @param a vector of Odds Ratios
+#' @param theta vector of Odds Ratios
 #' @return a numeric vector
-#' see also \code{\link{ca}}, \code{\link{cb}}, \code{\link{cc}} and \code{\link{cd}}
 
 maf_se_empirical<-function(n0,n1,f,theta){
     n<-n0+n1
@@ -229,7 +228,6 @@ add_ref_annotations <- function(ss,DT){
 #' @param trait_manifest_file character vector file path to GWAS manifest file
 #' @param snp_manifest_file character vector file path to snp manifest
 #' @param data_dir character vector file path to location of GWAS summary stats
-#' @param trait_list character vector of specific traits in manifest file to include
 #' @param filter_snps_by_manifest boolean - whether to prefilter the by snp manifest.
 #' This should be true if you wish to take a subset of SNPs
 #' @return data.table object
@@ -267,7 +265,8 @@ get_gwas_data <- function(trait_manifest_file,snp_manifest_file,data_dir,filter_
 #' This function computes various shrinkage metrics
 #' \code{compute_shrinkage_metrics} computes various shrinkage metrics
 #'
-#' @param data.table object for basis traits as returned by \code{\link{get_gwas_data}}
+#' @param DT data.table object for basis traits as returned by \code{\link{get_gwas_data}}
+#' @param pi_i numeric the prior probability that a variant is causal  see \code{\link{ws_shrinkage}}
 #' @return a data.table object.
 #' \enumerate{
 #' \item pid - unique id using chr and position (useful for merging back)
@@ -277,7 +276,7 @@ get_gwas_data <- function(trait_manifest_file,snp_manifest_file,data_dir,filter_
 #' \item emp_shrinkage - overall shrinkage using emp_maf_se
 #' \item est_shrinkage - overall shrinkage using est_maf_se
 #' }
-#' see also \code{\link{maf_se_empirical}}, \code{\link{maf_se_estimate}} and \code{\link{bayesian_shrinkage}}.
+#' see also \code{\link{maf_se_estimate_sample_size}}.
 #' @export
 
 compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
@@ -326,7 +325,7 @@ create_ds_matrix <- function(bDT,sDT,method){
 #'
 #' @param gwas.DT data.table object for basis traits as returned by \code{\link{get_gwas_data}}
 #' @param shrink.DT data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}
-#' @param method scalar vector (either shrinkage or none), emp uses empirically generated MAF SE, est uses and estimate.
+#' @param apply.shrinkage boolean on whether to apply shrinkage or not [Default TRUE]
 #' @return a prcomp object representing the basis
 #' @export
 

@@ -16,12 +16,12 @@ wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2)
 
 \item{s}{a scalar representing the proportion of cases (n.cases/N)}
 
+\item{pi_i}{a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})}
+
 \item{sd.prior}{a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2).
 The method assumes a normal prior on the population log relative risk centred at 0 and the DEFAULT
 value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 is in the range of 0.66-1.5 at any causal variant.}
-
-\item{pi}{a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})}
 }
 \value{
 a vector of posterior probabilities.

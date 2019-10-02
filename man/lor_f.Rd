@@ -15,6 +15,8 @@ lor_f(f0, n, target.or, target.prob, n.steps)
 \item{target.or}{a scalar - an odds ratio threshold to compute P(sim.or > target.or)}
 
 \item{target.prob}{a scalar - a probability that a sampled variant will exceed target.or}
+
+\item{n.steps}{a scalar - number of steps to use when optimising a1b1 function}
 }
 \value{
 a list object

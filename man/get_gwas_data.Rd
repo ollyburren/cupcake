@@ -16,8 +16,6 @@ get_gwas_data(trait_manifest_file, snp_manifest_file, data_dir,
 
 \item{filter_snps_by_manifest}{boolean - whether to prefilter the by snp manifest.
 This should be true if you wish to take a subset of SNPs}
-
-\item{trait_list}{character vector of specific traits in manifest file to include}
 }
 \value{
 data.table object

@@ -164,25 +164,27 @@ par(mfrow=c(1,2))
 plot.no.DT <- data.table(trait=rownames(basis.noshrink$x),basis.noshrink$x)
 xlim <- with(plot.no.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.no.DT,c(min(PC2),max(PC2)) * 1.2)
-with(plot.no.DT,plot(PC1,PC3,type='n',xlim=xlim,ylim=ylim,main="No shrinkage"))
-with(plot.no.DT,text(PC1,PC3,labels=trait, cex= 1, offset = 20))
+with(plot.no.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim,main="No shrinkage"))
+with(plot.no.DT,text(PC1,PC2,labels=trait, cex= 0.8,adj=c(0,0)))
+with(plot.no.DT,points(PC1,PC2,cex=0.5))
 
 #plot shrinkage
 plot.DT <- data.table(trait=rownames(basis$x),basis$x)
 xlim <- with(plot.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.DT,c(min(PC2),max(PC2)) * 1.2)
-with(plot.DT,plot(PC1,PC3,type='n',xlim=xlim,ylim=ylim,main="With shrinkage"))
-with(plot.DT,text(PC1,PC3,labels=trait, cex= 1, offset = 20))
+with(plot.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim,main="With shrinkage"))
+with(plot.DT,text(PC1,PC2,labels=trait, cex= 0.8, adj=c(0,0)))
+with(plot.DT,points(PC1,PC2,cex=0.5))
 ```
 
 In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis. 
 
 ## Projecting data onto the basis
 
-Whilst the basis created has some interest its primary purpose is to project on an external dataset. Here we project on summary statistics from UK Biobank for self-reported SLE status (obtained from [Neale Laboratory compendium of UKBB round 2]{http://www.nealelab.is/uk-biobank} ) using the `project_basis` command. One hypothesis might be that we expect this projected SLE dataset to sit closer to the basis SLE projection than other traits. Here we perform this analysis using bases with both with and without shrinkage using standard aglommerative hierarchical clustering in order to compare PC scores across traits.
+Whilst the basis created has some interest its primary purpose is to project on an external dataset. Here we project on summary statistics from UK Biobank for self-reported SLE status (obtained from [Neale Laboratory UKBB round 2](http://www.nealelab.is/uk-biobank) using the `project_basis` command. One hypothesis might be that we expect this projected SLE dataset to sit closer to the basis SLE projection than other traits. Here we perform this analysis using bases with both with and without shrinkage using standard aglommerative hierarchical clustering in order to compare PC scores across traits.
 
 ```{r,fig.width = 7,fig.height=5}
-sle.DT <- file.path(GWAS_DATA_DIR,'UKBB_NEALE:SRD:SLE.tab') %>% fread
+sle.DT <- file.path(GWAS_DATA_DIR,'ukbb_neale_srd_sle.tab') %>% fread
 sle.proj <- project_basis(sle.DT,shrink.DT,basis,traitname='UKBB:SLE')
 sle.noshrink.proj <- project_basis(sle.DT,shrink.DT,basis.noshrink,traitname='UKBB:SLE')
 par(mfrow=c(1,2))
