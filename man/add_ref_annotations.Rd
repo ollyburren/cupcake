@@ -4,10 +4,10 @@
 \alias{add_ref_annotations}
 \title{\code{add_ref_annotations} integrate GWAS summary data with support file}
 \usage{
-add_ref_annotations(snp_support_file, DT)
+add_ref_annotations(ss, DT)
 }
 \arguments{
-\item{snp_support_file}{character vector file path to snp manifest}
+\item{ss}{data.table object for snp manifest}
 
 \item{DT}{data.table containing GWAS summary stats}
 }

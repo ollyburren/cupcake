@@ -5,7 +5,7 @@
 \title{This function computes various shrinkage metrics
 \code{compute_shrinkage_metrics} computes various shrinkage metrics}
 \usage{
-compute_shrinkage_metrics(DT)
+compute_shrinkage_metrics(DT, pi_i = 1e-04)
 }
 \arguments{
 \item{data.table}{object for basis traits as returned by \code{\link{get_gwas_data}}}

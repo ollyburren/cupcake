@@ -6,12 +6,12 @@
 \code{ws_shrinkage} computes a shrinkage based on a weighted sum (ws) of posteriors for each disease
 this is then normalised by the total posterior for a given LD block}
 \usage{
-ws_shrinkage(DT)
+ws_shrinkage(DT, pi_i = 1e-04)
 }
 \arguments{
 \item{DT}{basis data.table object}
 
-\item{tquant}{a scalar representing quantile on which to truncate infinite Bayes Factors (DEFAULT 0.9999)}
+\item{pi_i}{- The prior probability that a variant is causal}
 }
 \value{
 data.table object
