@@ -23,17 +23,17 @@ The function of this package is to facillitate the building of a set of ordered 
 1. Identify a set of traits of interest from which to construct the basis and collect relevant summary statistics.
 2. Idenification of the maximal set of SNPs that are included in all source traits.
 3. Odds ratio (OR) alignment, such that the effect allele for all the traits is standardised.
-4. *Basis construction.*
-5. *Projecting new traits onto the basis.*
+4. **Basis construction.**
+5. **Projecting new traits onto the basis.**
 
 This package is concerned with steps 4 and 5, and whilst the other steps are non-trivial this package assumes access to a set ($n\gt1$) of  OR aligned summary statistics (see section on file formats below as to what is required).
 
 ## Installing cupcake
 
-You will need to have the devtool R package installed
+You will need to have the `devtool` R package installed after which the latest version of the package can be installed as follows 
 ```{r,eval=FALSE}
 library(devtools)
-install_github("ollyburren/cupcake",build_vignettes = FALSE)
+install_github("ollyburren/cupcake",build_vignettes = TRUE)
 ```
 
 ## Setup
@@ -49,13 +49,17 @@ TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_traits_manifes
 GWAS_DATA_DIR <- file.path(SPARSE_BASIS_EXTDATA,'/gwas_data/')
 ```
 
+During this vignette we will create a `sparse' basis relevant to immune mediated diseases (IMD) over 13 different diseases. This sparse basis incorporates data about a small subset of SNPs ($n<500$) that is sufficient to capture the relationships between the input traits with over 99% accuracy as compared to a full basis where $n>250,000. We have found such a sparse basis to be sufficient for most analyses.
+
+If you wish to create your own basis for a set of related traits you should be able to follow this vignette, please note that you will need to define your own set of input files as detailed below. 
+
 ## Input files
 
 The package expects two manifest files, one describing the SNPs to include  in the basis and the other describing the traits . The package makes the choice to define a `pid` or primary identifier for each SNP, that is a portmanteau of it's chromomsome and position. For example, given a reference genome assembly of GRCh37, `rs2476601` which has a position on  chromosome 1 of 114,377,568 has a pid of `1:114377568`. Whilst variants with the same position but differing alleles may exist, the fidelity of any genotyping calls of such a class of variants means that, for practical reasons, they are best removed before basis construction.
 
 ### SNP Manifest
 
-Each row of this file  (see `r SNP_MANIFEST_FILE`) describes a non redundant (see above) SNP to include in the basis.
+Each row of this file  (see `r SNP_MANIFEST_FILE`) describes a non redundant (see above) set of SNPs to include in the basis. Note that for *de novo* basis creation this should represent the maximal number of SNPs for which data is available across all basis studies. 
 
 ```{r}
 readRDS(SNP_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
@@ -68,10 +72,12 @@ readRDS(SNP_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
 4. ref_a1.af - The allele frequency of ref_a1 (estimated from a suitable reference population).
 5. ld.block - A number grouping a block of SNPs in high LD (see note).
 
+The ld.block column assigns each SNP to an approximately LD independent block. We have derived ours from HapMap recombination data and these are available in `r file.path(SPARSE_BASIS_EXTDATA,'hapmap.ld.tab')`.
+
 
 ### Trait Manifest
 
-Each row of this file describes a trait (see `r TRAIT_MANIFEST_FILE`) to either include in basis creation or to project.
+Each row of this file describes a trait (see `r TRAIT_MANIFEST_FILE`) toinclude in basis creation.
 
 ```{r}
 fread(TRAIT_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
@@ -81,11 +87,11 @@ fread(TRAIT_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
 2. disease - Human readable name for the trait e.g. Juvenile Idiopathic Arthritis.
 3. cases - Number of cases in the study.
 4. controls - Number of controls in the study.
-5. file - Name of the summary statistic source file (see below) to use e.g. JIA.tab.
+5. file - Name of the summary statistic source file (see below) to use e.g. JIA.tab. These are all expected to be in the same directory (see `GWAS_DATA_DIR`)
 
 ## GWAS source file
 
-Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in the SNP manifest.
+Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in  `SNP_MANIFEST_FILE`. SNPs that are not found in the `SNP_MANIFEST_FILE` are excluded, SNPs missing in the input file or for which odds ratio estimates $\in \{0,1\}$ are set to zero. 
 
 ```{r}
 file.path(GWAS_DATA_DIR,fread(TRAIT_MANIFEST_FILE)[1,]$file) %>% fread %>% head(.,n=5) %>% knitr::kable()
@@ -99,6 +105,8 @@ file.path(GWAS_DATA_DIR,fread(TRAIT_MANIFEST_FILE)[1,]$file) %>% fread %>% head(
 4. or - Odds ration with respect to a2.
 5. p.value
 
+**N.B If creating your own basis it is critical that odds ratios are aligned, failure to do so will result in a junk basis.** 
+
 ## Loading in data
 
 The loading of data is handled through `get_gwas_data` routine like so
@@ -107,13 +115,12 @@ The loading of data is handled through `get_gwas_data` routine like so
 gwas.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)
 ```
 
-The `data.table` object `gwas.DT` contains the loaded data required for the next step of calculating the shrinkage values to appy to the $\beta$ of all traits.
+The `data.table` object `gwas.DT` contains all the data required for the next step of calculating the shrinkage values to appy to the $\beta$ of all traits.
 
 ```{r}
 head(gwas.DT,n=10) %>% knitr::kable()
 ```
 
-Basically a merge between the metadata for the two basis traits in the example trait manifest file and the meta data on each SNP, contained in the snp manifest file.
 
 ## computing shrinkage (for illustrative purposes only)
 
@@ -124,49 +131,69 @@ shrink.DT<-compute_shrinkage_metrics(gwas.DT)
 head(shrink.DT,n=10) %>% knitr::kable()
 ```
 
-**Note** that this shrinkage object is for illustrative purposes only and it should **not** be generated from a sparse map of SNPs such as the one included in this package. Instead we load in a pregnerated shrinkage object that has been generated from approximately 250,000 SNPs across 13 diseases.
+**Note** that this shrinkage object is for illustrative purposes only and it should **not** be generated from a sparse map of SNPs such as the one included in this package. 
+
+
+To overcome this  we instead load in a pregnerated shrinkage object that has been generated from all available SNPs across 13 basis diseases and then filtered only to include sparse basis SNPs.
 
 
 ```{r}
 shrink.DT <- readRDS('../inst/extdata/sparse_imd_basis/support/13_traits_sparse_shrinkage.RDS')
-
 ```
 
-## creating the basis
+## Creating the basis
+
+The final step is to create a basis. This can be done using the `create_basis` command. Note there is an `apply.shrinkage` option that allows the creation of a basis without the application of any shrinkage.
 
 The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a row of zeroes to 
 
 ```{r}
+## create a basis without using the shrinkages
+basis.noshrink <- create_basis(gwas.DT,shrink.DT,apply.shrinkage=FALSE)
 basis <- create_basis(gwas.DT,shrink.DT)
 ```
 
 ## Visualising basis
 
-```{r,fig.width = 5}
+We can look at a simple biplot of the first two principal components (PCs) of both bases to look at broad differences between them.
+
+```{r,fig.width = 7,fig.height=4}
+par(mfrow=c(1,2))
+
+#plot no shrinkage
+plot.no.DT <- data.table(trait=rownames(basis.noshrink$x),basis.noshrink$x)
+xlim <- with(plot.no.DT,c(min(PC1),max(PC1)) * 1.2)
+ylim <- with(plot.no.DT,c(min(PC2),max(PC2)) * 1.2)
+with(plot.no.DT,plot(PC1,PC3,type='n',xlim=xlim,ylim=ylim,main="No shrinkage"))
+with(plot.no.DT,text(PC1,PC3,labels=trait, cex= 1, offset = 20))
+
+#plot shrinkage
 plot.DT <- data.table(trait=rownames(basis$x),basis$x)
 xlim <- with(plot.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.DT,c(min(PC2),max(PC2)) * 1.2)
-with(plot.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim))
-with(plot.DT,text(PC1,PC2,labels=trait, cex= 1, offset = 20))
+with(plot.DT,plot(PC1,PC3,type='n',xlim=xlim,ylim=ylim,main="With shrinkage"))
+with(plot.DT,text(PC1,PC3,labels=trait, cex= 1, offset = 20))
 ```
 
+In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis. 
 
 ## Projecting data onto the basis
 
-```{r}
+Whilst the basis created has some interest its primary purpose is to project on an external dataset. Here we project on summary statistics from UK Biobank for self-reported SLE status (obtained from [Neale Laboratory compendium of UKBB round 2]{http://www.nealelab.is/uk-biobank} ) using the `project_basis` command. One hypothesis might be that we expect this projected SLE dataset to sit closer to the basis SLE projection than other traits. Here we perform this analysis using bases with both with and without shrinkage using standard aglommerative hierarchical clustering in order to compare PC scores across traits.
+
+```{r,fig.width = 7,fig.height=5}
 sle.DT <- file.path(GWAS_DATA_DIR,'UKBB_NEALE:SRD:SLE.tab') %>% fread
 sle.proj <- project_basis(sle.DT,shrink.DT,basis,traitname='UKBB:SLE')
+sle.noshrink.proj <- project_basis(sle.DT,shrink.DT,basis.noshrink,traitname='UKBB:SLE')
+par(mfrow=c(1,2))
+rbind(sle.proj,basis.noshrink$x) %>% dist %>% hclust %>% plot(.,main="No shrinkage")
+rbind(sle.proj,basis$x) %>% dist %>% hclust %>% plot(.,main="With shrinkage")
 ```
 
-## Visualising projected data
+Here we can see that with no shrinkage relationships between basis traits seem less clear and UKBB:SLE cluster with `control'. When shrinkage is applied our hypothesis is bourne out such that UKBB:SLE projection clusters with the basis SLE.
 
-```{r,fig.width = 5}
-## plotting code
-plot2.DT <- rbind(data.table(trait=rownames(sle.proj),sle.proj),plot.DT)
-#plot2.DT[,cat:=ifelse(trait=='UKBB:SLE','projected','basis')]
-xlim <- with(plot2.DT,c(min(PC1),max(PC1)) * 1.2)
-ylim <- with(plot2.DT,c(min(PC2),max(PC2)) * 1.2)
-cols <- ifelse(plot2.DT$trait=='UKBB:SLE','red','black')
-with(plot2.DT,plot(PC1,PC2,col=cols,type='n',xlim=xlim,ylim=ylim))
-with(plot2.DT,text(PC1,PC2,labels=trait, cex= 1,col=cols))
-```
+## To Do
+
+1. Significance testing. 
+2. Separate vignette on aligning external dataset.
+3. Nice plotting functions (Chris?).
