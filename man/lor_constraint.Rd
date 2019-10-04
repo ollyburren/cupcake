@@ -19,7 +19,7 @@ lor_constraint(a1, a0, b0, p0, target.or, nsim)
 
 \item{target.or}{a scalar - an odds ratio threshold to compute P(sim.or > target.or)}
 
-\item{nsim}{a scalar - number of simulations to use when estimating parameters}
+\item{nsim}{a scalar - number of log odds ratios to simulate from the posterior distribution}
 }
 \value{
 scalar - P(sim.or>target.or)

@@ -16,7 +16,7 @@ est_a1b1(a0, b0, target.or, target.prob, nsim)
 
 \item{target.prob}{a scalar - a probability that a sampled variant will exceed target.or}
 
-\item{nsim}{a scalar - number of simulations to use when estimating parameters}
+\item{nsim}{a scalar - number of log odds ratios to simulate from the posterior distribution}
 }
 \value{
 list - shape parameters for beta distribution satisfying target.or,target.prob and control prior distribution constraints.

@@ -16,7 +16,7 @@ lor_f(f0, n, target.or, target.prob, n.steps)
 
 \item{target.prob}{a scalar - a probability that a sampled variant will exceed target.or}
 
-\item{n.steps}{a scalar - number of steps to use when optimising a1b1 function}
+\item{n.steps}{an integer - length of search grid to employ - larger gives a more accurate integral estimate}
 }
 \value{
 a list object
