@@ -44,8 +44,8 @@ Here we load cupcake and other useful packages and define the locations of vario
 library(cupcake)
 library(magrittr)
 SPARSE_BASIS_EXTDATA <- '../inst/extdata/sparse_imd_basis'
-SNP_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_traits_sparse_snp_manifest.RDS')
-TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_traits_manifest.tab')
+SNP_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_snp_manifest.RDS')
+TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_trait_manifest.tab')
 GWAS_DATA_DIR <- file.path(SPARSE_BASIS_EXTDATA,'/gwas_data/')
 ```
 

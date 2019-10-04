@@ -9,6 +9,7 @@
 #' \item b0 - beta shape parameter in controls
 #' }
 #' @export
+
 control_prior_shape <- function(f,n){
     v=f*(1-f)/(2*n)
     a0=-f*(f^2-f+v)/v
@@ -21,7 +22,7 @@ control_prior_shape <- function(f,n){
 #'
 #' @param b1 a scalar - beta distribution beta shape parameter for prior on allele frequency in cases
 #' @param a0 a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls
-#' @param b0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
+#' @param a0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
 #' @param a1 a scalar - beta distribution alpha shape parameter for prior on allele frequency in cases
 #' @return scalar - expected log(OR)
 
@@ -38,7 +39,6 @@ e_lor <- function(b1,a0,b0,a1){
 #' @param b0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
 #' @param p0 a vector - a set of samples from beta(a0,b0)
 #' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
-#' @param nsim a scalar - number of simulations to use when estimating parameters
 #' @return scalar - P(sim.or>target.or)
 
 lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
@@ -54,7 +54,6 @@ lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
 #' @param b0 a scalar - beta distribution beta shape parameter for prior on allele frequency in controls
 #' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
 #' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
-#' @param nsim a scalar - number of simulations to use when estimating parameters
 #' @return list - shape parameters for beta distribution satisfying target.or,target.prob and control prior distribution constraints.
 
 est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
@@ -96,7 +95,6 @@ post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
 #' @param n a scalar - number of individuals sampled
 #' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
 #' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
-#' @param n.steps a scalar - number of steps to use when optimising a1b1 function
 #' @return a list object
 #' \enumerate{
 #' \item 00 - mean lor for reference hom
