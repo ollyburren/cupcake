@@ -29,7 +29,7 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
     message("Cannot find required summary statistics aborting")
     return()
   }
-  gwas.DT[is.na(seb),seb:=0]
+  gwas.DT[!is.finite(seb),seb:=0]
   gwas.DT[,c('chr','pos'):=tstrsplit(pid,':')]
   ## next add ld.block information
   gwas.DT <- merge(gwas.DT,man.DT[,.(pid,ld.block)],by='pid')
