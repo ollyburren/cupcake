@@ -21,13 +21,15 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
   gwas.DT <- merge(gwas.DT,shrink.DT[,.(pid,shrinkage=get(`method`))],by='pid')
   ## where possible compute se_beta
   ## sometimes our input will be for a quantitative trait
-  if(any(names(gwas.DT)=='or')){
-    gwas.DT[,seb:=abs(log(or)/qnorm(p.value/2,lower.tail=FALSE))]
-  }else if(any(names(gwas.DT)=='beta')){
-    gwas.DT[,seb:=abs(beta/qnorm(p.value/2,lower.tail=FALSE))]
-  }else{
-    message("Cannot find required summary statistics aborting")
-    return()
+  if(!any(names(gwas.DT)=='seb')){
+    if(any(names(gwas.DT)=='or')){
+      gwas.DT[,seb:=abs(log(or)/qnorm(p.value/2,lower.tail=FALSE))]
+    }else if(any(names(gwas.DT)=='beta')){
+      gwas.DT[,seb:=abs(beta/qnorm(p.value/2,lower.tail=FALSE))]
+    }else{
+      message("Cannot find required summary statistics aborting")
+      return()
+    }
   }
   gwas.DT[!is.finite(seb),seb:=0]
   gwas.DT[,c('chr','pos'):=tstrsplit(pid,':')]
