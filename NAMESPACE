@@ -3,6 +3,7 @@
 export(align_alleles)
 export(compute_proj_var)
 export(compute_seb_proj_var)
+export(compute_seb_proj_var_sparse)
 export(compute_shrinkage_metrics)
 export(control_prior_shape)
 export(create_basis)

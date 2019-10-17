@@ -30,7 +30,7 @@ This package is concerned with steps 4 and 5, and whilst the other steps are non
 
 ## Installing cupcake
 
-You will need to have the `devtool` R package installed after which the latest version of the package can be installed as follows 
+You will need to have the `devtool` R package installed after which the latest version of the package can be installed as follows
 ```{r,eval=FALSE}
 library(devtools)
 install_github("ollyburren/cupcake",build_vignettes = TRUE)
@@ -56,7 +56,7 @@ NOSHRINK_BASIS_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_trait_sparse_b
 
 During this vignette we will create a `sparse' basis relevant to immune mediated diseases (IMD). This sparse basis incorporates data about a small subset of SNPs ($n<500$) that is sufficient to capture the relationships between the input traits with over 99% accuracy as compared to a full basis where $n \approx 300,000$. We have found such a sparse basis to be sufficient for most analyses.
 
-If you wish to create your own basis for a set of related traits you should be able to follow this vignette, please note that you will need to define your own set of input files as detailed below. 
+If you wish to create your own basis for a set of related traits you should be able to follow this vignette, please note that you will need to define your own set of input files as detailed below.
 
 ## Input files
 
@@ -64,7 +64,7 @@ The package expects two manifest files, one describing the SNPs to include  in t
 
 ### SNP Manifest
 
-Each row of this file  (see `r SNP_MANIFEST_FILE`) describes a non redundant (see above) set of SNPs to include in the basis. Note that for *de novo* basis creation this should represent the maximal number of SNPs for which data is available across all basis studies. 
+Each row of this file  (see `r SNP_MANIFEST_FILE`) describes a non redundant (see above) set of SNPs to include in the basis. Note that for *de novo* basis creation this should represent the maximal number of SNPs for which data is available across all basis studies.
 
 ```{r}
 readRDS(SNP_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
@@ -96,7 +96,7 @@ fread(TRAIT_MANIFEST_FILE) %>% head(.,n=5) %>% knitr::kable()
 
 ## GWAS source file
 
-Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in  `SNP_MANIFEST_FILE`. SNPs that are not found in the `SNP_MANIFEST_FILE` are excluded, SNPs missing in the input file or for which odds ratio estimates $\in \{0,1\}$ are set to zero. 
+Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in  `SNP_MANIFEST_FILE`. SNPs that are not found in the `SNP_MANIFEST_FILE` are excluded, SNPs missing in the input file or for which odds ratio estimates $\in \{0,1\}$ are set to zero.
 
 ```{r}
 file.path(GWAS_DATA_DIR,fread(TRAIT_MANIFEST_FILE)[1,]$file) %>% fread %>% head(.,n=5) %>% knitr::kable()
@@ -110,7 +110,7 @@ file.path(GWAS_DATA_DIR,fread(TRAIT_MANIFEST_FILE)[1,]$file) %>% fread %>% head(
 4. or - Odds ration with respect to a2.
 5. p.value
 
-**N.B If creating your own basis it is critical that odds ratios are aligned, failure to do so will result in a junk basis.** 
+**N.B If creating your own basis it is critical that odds ratios are aligned, failure to do so will result in a junk basis.**
 
 ## Loading in data
 
@@ -136,7 +136,7 @@ shrink.DT<-compute_shrinkage_metrics(gwas.DT)
 head(shrink.DT,n=10) %>% knitr::kable()
 ```
 
-**Note** that this shrinkage object is for illustrative purposes only and it should **not** be generated from a sparse map of SNPs such as the one included in this package. 
+**Note** that this shrinkage object is for illustrative purposes only and it should **not** be generated from a sparse map of SNPs such as the one included in this package.
 
 
 
@@ -144,7 +144,7 @@ head(shrink.DT,n=10) %>% knitr::kable()
 
 The final step is to create a basis. This can be done using the `create_basis` command. Note there is an `apply.shrinkage` option that allows the creation of a basis without the application of any shrinkage.
 
-The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a row of zeroes to 
+The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using `create_ds_matrix`. Next we add a null or `control` study in order to anchor the basis. In practice this means adding a row of zeroes to
 
 ```{r}
 ## create a basis without using the shrinkages
@@ -176,7 +176,7 @@ with(plot.DT,text(PC1,PC2,labels=trait, cex= 0.8, adj=c(0,0)))
 with(plot.DT,points(PC1,PC2,cex=0.5))
 ```
 
-In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis. 
+In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis.
 
 # Projecting data onto the basis
 
@@ -194,10 +194,70 @@ rbind(sle.proj,basis.noshrink$x) %>% dist %>% hclust %>% plot(.,main="No shrinka
 rbind(sle.proj,basis$x) %>% dist %>% hclust %>% plot(.,main="With shrinkage")
 ```
 
-Here we can see that with 'No shrinkage', relationships between basis traits seem less clear and UKBB:SLE cluster with 'control'. 'With shrinkage' our hypothesis is bourne out such that UKBB:SLE projection clusters with the basis SLE.
+Here we can see that with 'No shrinkage', relationships between basis traits seem less clear and UKBB:SLE cluster with 'control'. 'With shrinkage' our hypothesis is borne out such that UKBB:SLE projection clusters with the basis SLE.
+
+# Testing projection for significant deviation from pseudo-control
+
+In order to prioritise individual components we might wish to assess the significance for a projected trait. One approach is to assess, for a given component, whether the projected score under consideration differs significantly from the pseudo-control. This requires an estimation of the standard error of the projected trait score $\sigma_{\text{proj}}$, which in turn depends on the variance of the traits estimated effect sizes ($\sigma_{\hat{\beta}}$) for each basis SNP as well as their covariance.
+
+In the absence of reported $\sigma_{\hat{\beta}}$ this can be back calculated (albeit with a loss of precision) by $\sigma_{\hat{\beta}} = \frac{\hat{\beta}}{\Phi^{-1}(p/2)}$, where $p$ is the $p$-value reported and $\Phi^{-1}(p/2)$ is the inverse cumulative normal distribution. The covariance of these can be computed by using a set of reference genotypes to estimate genotypic correlation, here we use individuals of European ancestry from 1000 genomes reference genotypes in snpMatrix format.
+
+```{r}
+## load in reference genotypes - note these are 
+REF_GT <- file.path(SPARSE_BASIS_EXTDATA,'support/1KG_reference_genotypes.RDS')
+sm.1kg <- readRDS(REF_GT)
+## convert basis rotation matrix to data.table
+w.DT <- data.table(pid=rownames(basis$rotation),basis$rotation)
+## compute variance associated with projecting sle.DT dataset
+var.seb <- compute_seb_proj_var_sparse(sle.DT,shrink.DT,w.DT,sm.1kg,method='shrinkage',quiet=TRUE)
+```
+
+We can use this variance estimation to assess significance such that $Z = \frac{\text{PC}_{\text{proj}} - \text{PC}_{\text{control}}}{\sigma_{\text{proj}}}$
+
+```{r}
+Z.pcs <- (sle.proj - basis$x['control',])/sqrt(var.seb)
+p.pcs <- pnorm(abs(Z.pcs),lower.tail=FALSE) * 2
+## note pcs which are significant taking into account multiple testing
+keep.pcs <- colnames(p.pcs)[p.adjust(p.pcs,method='bonferroni') < 0.05]
+```
+
+## Graphical summary
+
+```{r}
+library(ggplot2)
+## combine projected with basis traits and centre to control disease
+dat <- rbind(apply(basis$x,1,function(x) x-basis$x['control',]) %>% t,sle.proj - basis$x['control',])
+## convert to data.table and remove control
+dat.DT <- data.table(trait=rownames(dat),dat)[trait!='control',]
+## short fat table to long thin keeping only significant pcs
+dat.DT <- melt(dat.DT,id.vars='trait')[variable %in% keep.pcs,]
+setnames(dat.DT,c('variable','value'),c('pc','delta'))
+## compute confidence intervals for projected dataset.
+ci <- (var.seb[keep.pcs] %>% sqrt) * 1.96
+dat.DT[trait=='UKBB:SLE',ci:=ci]
+## order them by pc scores on 
+par(mfrow=c(1,2))
+for(p in keep.pcs){
+  plot.DT <- dat.DT[pc==p,]
+  plot.DT <- plot.DT[order(delta),]
+  xl <- range(plot.DT$delta-ci,plot.DT$delta+ci)
+  idx <- which(!is.na(plot.DT$ci))
+  cols <- rep('black',nrow(plot.DT))
+  cols[idx] <- 'red'
+  {
+    with(plot.DT,dotchart(delta,labels=trait,xlim=xl,pch=19,
+                          main=p,xlab="Delta PC score",ylab="Trait",
+                          col=cols))
+    ## add 95% confidence intervals
+    with(plot.DT[idx,],arrows(delta-ci, idx, delta+ci, idx, length=0.05, angle=90, code=3,col='red'))
+    abline(v=0,col='red',lty=2)
+  }
+}
+```
+
+
 
 ## To Do
 
-1. Significance testing. 
 2. Separate vignette on aligning external dataset.
 3. Nice plotting functions (Chris?).
