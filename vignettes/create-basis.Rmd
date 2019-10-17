@@ -33,7 +33,7 @@ This package is concerned with steps 4 and 5, and whilst the other steps are non
 You will need to have the `devtool` R package installed after which the latest version of the package can be installed as follows
 ```{r,eval=FALSE}
 library(devtools)
-install_github("ollyburren/cupcake",build_vignettes = TRUE)
+install_github("ollyburren/cupcake",build_vignettes = FALSE)
 ```
 
 # Constructing a basis
@@ -165,7 +165,7 @@ xlim <- with(plot.no.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.no.DT,c(min(PC2),max(PC2)) * 1.2)
 with(plot.no.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim,main="No shrinkage"))
 with(plot.no.DT,text(PC1,PC2,labels=trait, cex= 0.8,adj=c(0,0)))
-with(plot.no.DT,points(PC1,PC2,cex=0.5))
+with(plot.no.DT,points(PC1,PC2,cex=0.5,pch=19))
 
 #plot shrinkage
 plot.DT <- data.table(trait=rownames(basis$x),basis$x)
@@ -173,7 +173,7 @@ xlim <- with(plot.DT,c(min(PC1),max(PC1)) * 1.2)
 ylim <- with(plot.DT,c(min(PC2),max(PC2)) * 1.2)
 with(plot.DT,plot(PC1,PC2,type='n',xlim=xlim,ylim=ylim,main="With shrinkage"))
 with(plot.DT,text(PC1,PC2,labels=trait, cex= 0.8, adj=c(0,0)))
-with(plot.DT,points(PC1,PC2,cex=0.5))
+with(plot.DT,points(PC1,PC2,cex=0.5,pch=19))
 ```
 
 In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis.
@@ -212,7 +212,7 @@ w.DT <- data.table(pid=rownames(basis$rotation),basis$rotation)
 var.seb <- compute_seb_proj_var_sparse(sle.DT,shrink.DT,w.DT,sm.1kg,method='shrinkage',quiet=TRUE)
 ```
 
-We can use this variance estimation to assess significance such that $Z = \frac{\text{PC}_{\text{proj}} - \text{PC}_{\text{control}}}{\sigma_{\text{proj}}}$
+We can use this variance estimation to assess significance such that $Z = \frac{\text{PC}_{\text{proj}} - \text{PC}_{\text{control}}}{\sigma_{\text{proj}}}$, which can be used to compute a $p$-value.
 
 ```{r}
 Z.pcs <- (sle.proj - basis$x['control',])/sqrt(var.seb)
@@ -221,10 +221,9 @@ p.pcs <- pnorm(abs(Z.pcs),lower.tail=FALSE) * 2
 keep.pcs <- colnames(p.pcs)[p.adjust(p.pcs,method='bonferroni') < 0.05]
 ```
 
-## Graphical summary
+From this we can see that our projected dataset has two significant components `r paste(keep.pcs,sep=' and ', collapse='and ')`. We can summarise graphically out findings in the context of basis traits as follows. **N.B** note that as basis traits are used to create the basis they have no associated confidence intervals.
 
-```{r}
-library(ggplot2)
+```{r fig.width = 7,fig.height=4}
 ## combine projected with basis traits and centre to control disease
 dat <- rbind(apply(basis$x,1,function(x) x-basis$x['control',]) %>% t,sle.proj - basis$x['control',])
 ## convert to data.table and remove control
@@ -235,18 +234,17 @@ setnames(dat.DT,c('variable','value'),c('pc','delta'))
 ## compute confidence intervals for projected dataset.
 ci <- (var.seb[keep.pcs] %>% sqrt) * 1.96
 dat.DT[trait=='UKBB:SLE',ci:=ci]
-## order them by pc scores on 
+## plotting code
 par(mfrow=c(1,2))
 for(p in keep.pcs){
-  plot.DT <- dat.DT[pc==p,]
-  plot.DT <- plot.DT[order(delta),]
+  plot.DT <- dat.DT[pc==p,][order(delta,decreasing = TRUE),]
   xl <- range(plot.DT$delta-ci,plot.DT$delta+ci)
   idx <- which(!is.na(plot.DT$ci))
   cols <- rep('black',nrow(plot.DT))
   cols[idx] <- 'red'
   {
     with(plot.DT,dotchart(delta,labels=trait,xlim=xl,pch=19,
-                          main=p,xlab="Delta PC score",ylab="Trait",
+                          main=p,xlab="Delta PC score",
                           col=cols))
     ## add 95% confidence intervals
     with(plot.DT[idx,],arrows(delta-ci, idx, delta+ci, idx, length=0.05, angle=90, code=3,col='red'))
@@ -254,10 +252,3 @@ for(p in keep.pcs){
   }
 }
 ```
-
-
-
-## To Do
-
-2. Separate vignette on aligning external dataset.
-3. Nice plotting functions (Chris?).
