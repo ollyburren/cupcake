@@ -346,11 +346,33 @@ create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
 #' @return a matrix of PC scores for the projection.
 #' @export
 
-project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait'){
+project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shrinkage=TRUE){
   tmp <- merge(gwas.DT,shrink.DT,by='pid',all.y=TRUE)
-  tmp$metric <- tmp[['ws_emp_shrinkage']] * log(tmp$or)
-  ## where snp is missing or infinite make it zero
-  tmp[is.na(metric) | !is.finite(metric),metric:=0]
+  ##check how many SNPs missing
+  #if((!is.na(tmp$shrinkage) %>% sum) < 0.95 * nrow(shrink.DT))
+  #  warning("more than 5% variants are missing")
+  ## check to see we need to create beta
+  if(!any(names(tmp)=='beta')){
+     if(any(names(tmp)=='or')){
+    	tmp[,beta:=log(or)]
+     }else{
+        stop("GWAS input must have either an or or beta column")
+     }
+  } 
+  ## check beta
+  missing<-tmp[is.na(beta) | !is.finite(beta),]$pid 
+  lmiss <- length(missing)
+  if(lmiss){
+    sprintf("%d (%.1f%%) SNPs have missing or infinite betas setting these to 0",lmiss,(lmiss/nrow(shrink.DT))*100) %>% message() 
+    ## where snp is missing or infinite make it zero
+    tmp[missing,beta:=0]
+  }
+  if(apply.shrinkage){
+    tmp[,metric:=shrinkage * beta]
+  }else{
+    warning("no shrinkage will be applied")
+    tmp[,metric:=beta]
+  }
   tmp[,trait:= traitname]
   B <- dcast(tmp,pid ~ trait,value.var='metric')
   snames <- B[,1]$pid
@@ -359,6 +381,14 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait'){
   if(!identical(colnames(mat.emp),rownames(pc$rotation)))
     stop("Something wrong basis and projection matrix don't match")
   all.proj <- predict(pc,newdata=mat.emp)
+  if(any(names(tmp)=='seb')){
+    tmp <- tmp[,.(pid,beta,seb,p.value,shrinkage,trait)]
+  }else{
+    tmp <- tmp[,.(pid,beta,p.value,shrinkage,trait)]
+  }
+  if(lmiss>0)
+    tmp <- tmp[!pid %in% missing,] 
+  list(proj=all.proj,data=tmp,missing=missing)
 }
 
 #' A streamlined function to project a trait onto a sparse basis
