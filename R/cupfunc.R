@@ -90,18 +90,8 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
 
 ws_shrinkage <- function(DT,pi_i=1e-4){
   tmp <- DT[,list(pid=pid,ppi=wakefield_pp(p.value,maf,n,n1/n,pi_i)),by=c('trait','ld.block')]
-  wj <- tmp[,list(wj=sum(ppi)),by=c('trait','ld.block')]
-  wj[,list(ws_ppi=sum(ppi * wj)/sum(wj)),by=c('pid','ld.block')]
-  ### begin removed code
-  #S <- tmp[,list(S=sum(ppi)),by='ld.block']
-  #setkey(wj,ld.block)
-  #setkey(S,ld.block)
-  #wj <- wj[S]
-  #setkeyv(wj,c('trait','ld.block'))
-  #setkeyv(tmp,c('trait','ld.block'))
-  #wj <- tmp[wj]
-  ### end removed code
-  wj[,list(ws_ppi=sum(ppi * wj)/unique(S)),by=c('pid','ld.block')]
+  tmp[,wj:=sum(ppi),by=c('trait','ld.block')]
+  tmp[,list(ws_ppi=sum(ppi * wj)/sum(wj)),by=c('pid','ld.block')]
 }
 
 
