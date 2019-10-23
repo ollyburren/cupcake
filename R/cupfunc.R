@@ -382,8 +382,7 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait'){
 #'   \item LD - Matrix of covariance between basis SNPs
 #' }
 #' This function assumes that the order snps in arguments is the same. Whilst missing SNPs
-#' are allowed this will degrade and projection when more than 5% of SNPs are missing a warnings
-#' will be generated
+#' are allowed this will degrade the projection a warining is issued when more than 5% of SNPs are missing
 #' @returns  a data.table with the following columns:
 #' \itemize{
 #'   \item PC - principal component label
