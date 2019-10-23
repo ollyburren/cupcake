@@ -1,5 +1,60 @@
 library(snpStats)
 
+#' A streamlined function to project a trait onto a sparse basis
+#' \code{project_sparse}
+#' @param beta a vector of beta estimates
+#' @param seb a vector of standard error of the beta estimates
+#' @param pids a vector of primary identifiers for SNPs with the same order as beta and seb
+#' @section Notes:
+#' This function assumes that the following objects are defined in the current environment
+#' \itemize{
+#'   \item rot.pca - Matrix of rotations, usually obtained from PCA via prcomp.
+#'   \item beta.centers - Vector of basis SNP beta centres, labelled by pid.
+#'   \item shrinkage - Vector of basis SNP shrinkage values, labelled by pid.
+#'   \item LD - Matrix of covariance between basis SNPs
+#' }
+#' This function assumes that the order snps in arguments is the same. Whilst missing SNPs
+#' are allowed this will degrade and projection when more than 5% of SNPs are missing a warnings
+#' will be generated
+#' @returns  a data.table with the following columns:
+#' \itemize{
+#'   \item PC - principal component label
+#'   \item var.proj - Variance of the projection score.
+#'   \item delta - The difference between projection score and pseudo control score.
+#'   \item p.overall - The p value over all components for the projection score.
+#'   \item z - z score for projection score
+#'   \item z - p value for projection score.
+#' }
+
+
+project_sparse <- function(beta,seb,pids) {
+###' assumes basis-sparse-13-0.999.RData has been loaded and that LD,
+###' rot.pca, beta.centers, shrinkage are defined in current environment
+###' beta = new beta, seb=se(beta), pids=snp ids in order of beta
+    require(Matrix)
+    if(length(beta)!=length(seb) || length(beta)!=length(pids) || !length(beta))
+        stop("arguments must be equal length vectors > 0")
+    if(!all(pids %in% SNP.manifest$pid))
+        stop("all pids must be members of sparse basis (SNP.manifest$pid)")
+    if(length(pids) < 0.95 * nrow(rot.pca))
+        warning("more than 5% sparse basis snps missing")
+    b <- beta * shrinkage[pids] - beta.centers[pids] # * shrinkage[pids]
+    proj <- b %*% rot.pca[pids,]
+    v <- seb * shrinkage[pids] * rot.pca[pids,]
+    var.proj  <- t(v) %*% LD[pids,pids] %*% v
+    ctl <-  (-beta.centers[pids])  %*% rot.pca[pids,]
+    delta <- (proj-ctl)[1,]
+    chi2 <- (t(delta) %*% solve(var.proj) %*% delta)[1,1]
+    ret <- data.table(PC=colnames(proj),
+                      proj=proj[1,],
+                      var.proj=diag(var.proj),
+                      delta=delta,
+                      p.overall=pchisq(chi2,df=13,lower.tail=FALSE))
+    ret$z=ret$delta/sqrt(ret$var.proj)
+    ret$p=pnorm(abs(ret$z),lower.tail=FALSE) * 2
+    copy(ret)
+}
+
 
 #' An internal helper function to get obtain standard error of beta estimates from a GWAS.DT data.frame object
 #' \code{get_seb}
