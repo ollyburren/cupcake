@@ -415,13 +415,13 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #'   \item z - z score for projection score
 #'   \item z - p value for projection score.
 #' }
+#' @export
 
 
 project_sparse <- function(beta,seb,pids) {
 ###' assumes basis-sparse-13-0.999.RData has been loaded and that LD,
 ###' rot.pca, beta.centers, shrinkage are defined in current environment
 ###' beta = new beta, seb=se(beta), pids=snp ids in order of beta
-    require(Matrix)
     if(length(beta)!=length(seb) || length(beta)!=length(pids) || !length(beta))
         stop("arguments must be equal length vectors > 0")
     if(!all(pids %in% SNP.manifest$pid))
@@ -435,9 +435,9 @@ project_sparse <- function(beta,seb,pids) {
     ctl <-  (-beta.centers[pids])  %*% rot.pca[pids,]
     delta <- (proj-ctl)[1,]
     chi2 <- (t(delta) %*% solve(var.proj) %*% delta)[1,1]
-    ret <- data.table(PC=colnames(proj),
+    ret <- data.table::data.table(PC=colnames(proj),
                       proj=proj[1,],
-                      var.proj=diag(var.proj),
+                      var.proj=Matrix::diag(var.proj),
                       delta=delta,
                       p.overall=pchisq(chi2,df=13,lower.tail=FALSE))
     ret$z=ret$delta/sqrt(ret$var.proj)
