@@ -347,6 +347,10 @@ create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
 #' @export
 
 project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shrinkage=TRUE){
+  ## if there is already a shrinkage column this will cause an issue
+  tmp <- copy(gwas.DT)
+  if(any(names(gwas.DT)=='shrinkage'))
+    stop("gwas.DT already contains a column named 'shrinkage' please remove or rename")
   tmp <- merge(gwas.DT,shrink.DT,by='pid',all.y=TRUE)
   ##check how many SNPs missing
   #if((!is.na(tmp$shrinkage) %>% sum) < 0.95 * nrow(shrink.DT))
