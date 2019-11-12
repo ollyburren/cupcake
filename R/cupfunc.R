@@ -362,12 +362,12 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
      }else{
         stop("GWAS input must have either an or or beta column")
      }
-  } 
+  }
   ## check beta
-  missing<-tmp[is.na(beta) | !is.finite(beta),]$pid 
+  missing<-tmp[is.na(beta) | !is.finite(beta),]$pid
   lmiss <- length(missing)
   if(lmiss){
-    sprintf("%d (%.1f%%) SNPs have missing or infinite betas setting these to 0",lmiss,(lmiss/nrow(shrink.DT))*100) %>% message() 
+    sprintf("%d (%.1f%%) SNPs have missing or infinite betas setting these to 0",lmiss,(lmiss/nrow(shrink.DT))*100) %>% message()
     ## where snp is missing or infinite make it zero
     tmp[missing,beta:=0]
   }
@@ -391,7 +391,7 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
     tmp <- tmp[,.(pid,beta,p.value,shrinkage,trait)]
   }
   if(lmiss>0)
-    tmp <- tmp[!pid %in% missing,] 
+    tmp <- tmp[!pid %in% missing,]
   list(proj=all.proj,data=tmp,missing=missing)
 }
 
