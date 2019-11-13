@@ -410,7 +410,7 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #' }
 #' This function assumes that the order snps in arguments is the same. Whilst missing SNPs
 #' are allowed this will degrade the projection a warining is issued when more than 5% of SNPs are missing
-#' @returns  a data.table with the following columns:
+#' @return  a data.table with the following columns:
 #' \itemize{
 #'   \item PC - principal component label
 #'   \item var.proj - Variance of the projection score.

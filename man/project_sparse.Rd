@@ -14,6 +14,17 @@ project_sparse(beta, seb, pids)
 
 \item{pids}{a vector of primary identifiers for SNPs with the same order as beta and seb}
 }
+\value{
+a data.table with the following columns:
+\itemize{
+  \item PC - principal component label
+  \item var.proj - Variance of the projection score.
+  \item delta - The difference between projection score and pseudo control score.
+  \item p.overall - The p value over all components for the projection score.
+  \item z - z score for projection score
+  \item z - p value for projection score.
+}
+}
 \description{
 A streamlined function to project a trait onto a sparse basis
 \code{project_sparse}
