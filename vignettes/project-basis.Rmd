@@ -13,15 +13,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
 library(cupcake)
-#library(devtools)
-#install_github('ollyburren/cupcake')
-#load_all("~/git/cupcake")
-```
-
-```{r eval=FALSE}
-library(devtools)
-#install_github('ollyburren/cupcake')
-load_all("~/git/cupcake")
 ```
 
 
