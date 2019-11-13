@@ -1,0 +1,85 @@
+---
+title: "Projecting your data onto an exisiting basis"
+author: "Olly Burren"
+date: "12/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(magrittr)
+library(cupcake)
+library(devtools)
+load_all("~/git/cupcake")
+```
+
+## Introduction
+
+This vignette shows you how to project summary GWAS statistics from your study onto a prexisting basis. As part of the paper we created a basis from 13 immune-mediated diseases, this basis is sparse and contains only a few 100 SNPs. In fact the loading matrix is so small that we have bundled it with this package allowing you to conduct your own analysis.
+
+To illustrate this process we will use a cut down set of variants for summary statistics from [Genome-wide association study of eosinophilic granulomatosis with polyangiitis reveals genomic loci stratified by ANCA status](https://www.nature.com/articles/s41467-019-12515-9)
+
+## Data preprocessing
+
+First we load the data and see what we have:
+```{r}
+data(lyons_egpa)
+head(lyons_egpa,n=10) %>% knitr::kable()
+```
+Next lets load in the basis as used in Burren et al. whilst many objects are loaded we are most interested in the manifest file.
+```{r}
+data(burren_imd_13_traits)
+head(SNP.manifest,n=10) %>% knitr::kable()
+```
+
+The first job is to work out the intersect between the egpa data and the SNPs that we wish to include in the basis.
+
+```{r}
+#first add a pid column to the egpa dataset
+lyons_egpa[,pid:=paste(CHR,BP,sep=':')]
+# check to see whether there are manifest SNPs missing
+M <- merge(SNP.manifest,lyons_egpa,by='pid')
+# in this case there are no missing values. 
+M[is.na(or),]
+```
+In this particular example there are are no missing values, if you find that over 5% of values are missing you might wish to consider imputing missing values either by going back and imputing your GWAS or using a tool such as [ssimp](https://github.com/zkutalik/ssimp_software). The next task is to harmonise OR so that both basis and EGPA datasets are with respect to the same allele. Please note that for the lyons_egpa dataset allele 1 (a1) is the effect allele, for your dataset this might be different in which case you will need to flip when alleles match the manifest file rather than when they are discordant as shown below.
+
+```{r cars}
+M[,flip_allele:=NA][]
+## in this case if we need do nothing as these are already aligned
+M[ref_a1==a1 & ref_a2==a2,flip_allele:=FALSE]
+## in this case the effect allele is the wrong way around and so we need to flip
+M[ref_a1==a2 & ref_a2==a1,flip_allele:=TRUE][,c('a1','a2','or'):=list(a2,a1,1/or)][]
+```
+
+In this simple case the alleles were easy to align however in you dataset things will probably be different and it is worth considering using something such as annotSnpStats that has more sophisticated routines for aligning alleles. Here is some example code:
+
+```{r eval=FALSE}
+library(annotSnpStats) #see https://github.com/chr1swallace/annotSnpStats
+alleles <- data.table(pid=M$pid,al.x = paste(M$ref_a1,M$ref_a2,sep='/'),al.y=paste(M$a1,M$a2,sep='/'))
+align.class <- rep('match',nrow(alleles))
+idx<-which(alleles$al.x!=alleles$al.y)
+x.alleles <- alleles[idx,]$al.x
+names(x.alleles)<-alleles[idx,]$pid
+y.alleles <-  alleles[idx,]$al.y
+names(y.alleles)<-names(x.alleles)
+align.class[idx] <- g.class(x.alleles,y.alleles)
+print(table(align.class))
+alleles[,g.class:=align.class]
+idx<-which(alleles$g.class=='impossible')
+if(length(idx) >0){
+    M <- M[-idx,]
+    alleles <- alleles[-idx,]
+}
+M <- merge(M,alleles[,.(pid,g.class)],by='pid',all.x=TRUE)
+M <- M[!duplicated(pid),]
+M <- M[g.class=='match',or:=1/or]
+```
+
+##Projecting onto the basis
+
+We convert odds ratio estimates to the log odds ratio scale and us the cupcake function project_sparse to project the dataset.
+
+```{r}
+cupcake::project_sparse(beta=log(M$or),seb=M$seb,pids=M$pid)[,trait:='EGPA'][]
+```

@@ -5,7 +5,8 @@
 \title{This function projects an aligned trait onto the basis
 \code{project_basis} projects an external trait into basis space}
 \usage{
-project_basis(gwas.DT, shrink.DT, pc, traitname = "test_trait")
+project_basis(gwas.DT, shrink.DT, pc, traitname = "test_trait",
+  apply.shrinkage = TRUE)
 }
 \arguments{
 \item{gwas.DT}{data.table object representing summary statistics from external GWAS with columns as defined in \code{\link{get_gwas_data}}}
