@@ -4,7 +4,7 @@ author: "Olly Burren"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{IMD basis projection}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -203,7 +203,7 @@ In order to prioritise individual components we might wish to assess the signifi
 In the absence of reported $\sigma_{\hat{\beta}}$ this can be back calculated (albeit with a loss of precision) by $\sigma_{\hat{\beta}} = \frac{\hat{\beta}}{\Phi^{-1}(p/2)}$, where $p$ is the $p$-value reported and $\Phi^{-1}(p/2)$ is the inverse cumulative normal distribution. The covariance of these can be computed by using a set of reference genotypes to estimate genotypic correlation, here we use individuals of European ancestry from 1000 genomes reference genotypes in snpMatrix format.
 
 ```{r}
-## load in reference genotypes - note these are 
+## load in reference genotypes - note these are
 REF_GT <- file.path(SPARSE_BASIS_EXTDATA,'support/1KG_reference_genotypes.RDS')
 sm.1kg <- readRDS(REF_GT)
 ## convert basis rotation matrix to data.table
