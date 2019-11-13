@@ -15,8 +15,7 @@ project_sparse(beta, seb, pids)
 \item{pids}{a vector of primary identifiers for SNPs with the same order as beta and seb}
 }
 \value{
-a data.table with the following columns:
-\itemize{
+a data.table with the following columns#' \itemize{
   \item PC - principal component label
   \item var.proj - Variance of the projection score.
   \item delta - The difference between projection score and pseudo control score.

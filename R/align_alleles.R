@@ -37,7 +37,6 @@ ambiguous<-function(a1,a2){
 #' @param ref.DT a data.table of reference alleles (see details)
 #' @param check boolean scalar whether to add column of transformations for checking
 #' @return gwas.DT with allele aligned DT
-#' @export
 
 #' @details this routine lines up on reference `a1` this is arbitrary but as long as consistency is maintained
 #' then the basis can be correctly created

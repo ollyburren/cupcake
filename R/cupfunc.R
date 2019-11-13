@@ -322,8 +322,6 @@ create_ds_matrix <- function(bDT,sDT,method){
 #' @return a prcomp object representing the basis
 #' @export
 
-
-
 create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
   if(apply.shrinkage){
     basis.mat.emp <- create_ds_matrix(gwas.DT,shrink.DT,'shrinkage')
@@ -410,8 +408,7 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #' }
 #' This function assumes that the order snps in arguments is the same. Whilst missing SNPs
 #' are allowed this will degrade the projection a warining is issued when more than 5% of SNPs are missing
-#' @return  a data.table with the following columns:
-#' \itemize{
+#' @return  a data.table with the following columns#' \itemize{
 #'   \item PC - principal component label
 #'   \item var.proj - Variance of the projection score.
 #'   \item delta - The difference between projection score and pseudo control score.
@@ -421,11 +418,10 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #' }
 #' @export
 
-
-project_sparse <- function(beta,seb,pids) {
-###' assumes basis-sparse-13-0.999.RData has been loaded and that LD,
-###' rot.pca, beta.centers, shrinkage are defined in current environment
-###' beta = new beta, seb=se(beta), pids=snp ids in order of beta
+project_sparse <- function(beta,seb,pids){
+### assumes basis-sparse-13-0.999.RData has been loaded and that LD,
+### rot.pca, beta.centers, shrinkage are defined in current environment
+### beta = new beta, seb=se(beta), pids=snp ids in order of beta
     if(length(beta)!=length(seb) || length(beta)!=length(pids) || !length(beta))
         stop("arguments must be equal length vectors > 0")
     if(!all(pids %in% SNP.manifest$pid))
