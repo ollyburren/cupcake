@@ -22,7 +22,7 @@ a data.table with the following columns:
   \item delta - The difference between projection score and pseudo control score.
   \item p.overall - The p value over all components for the projection score.
   \item z - z score for projection score
-  \item z - p value for projection score.
+  \item p - p value for projection score.
 }
 }
 \description{

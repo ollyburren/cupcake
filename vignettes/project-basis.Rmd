@@ -95,7 +95,7 @@ M <- M[g.class=='match',or:=1/or]
 We convert odds ratio estimates to the log odds ratio scale and use the cupcake function *project_sparse* to project the dataset.
 
 ```{r}
-proj.dt <- cupcake::project_sparse(beta=log(M$or),seb=M$seb,pids=M$pid)[,trait:='EGPA'][]
+proj.dt <- project_sparse(beta=log(M$or),seb=M$seb,pids=M$pid)[,trait:='EGPA'][]
 ```
 
 Overall we can see that this trait is significant as `r proj.dt$p.overall` We can check to see if which of the components differ significantly from control as follows:
