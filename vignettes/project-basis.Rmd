@@ -1,8 +1,12 @@
 ---
 title: "Projecting your data onto an exisiting basis"
 author: "Olly Burren"
-date: "12/11/2019"
-output: html_document
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup}
@@ -49,7 +53,7 @@ The first job is to work out the intersect between the egpa data and the SNPs th
 lyons_egpa[,pid:=paste(CHR,BP,sep=':')]
 # check to see whether there are manifest SNPs missing
 M <- merge(SNP.manifest,lyons_egpa,by='pid')
-# in this case there are no missing values. 
+# in this case there are no missing values.
 M[is.na(or),]
 ```
 In this particular example there are are no missing values, if you find that over 5% of values are missing you might wish to consider imputing missing values either by going back and imputing your GWAS or using a tool such as [ssimp](https://github.com/zkutalik/ssimp_software). The next task is to harmonise OR so that both basis and EGPA datasets are with respect to the same allele. Please note that for the lyons_egpa dataset allele 1 (a1) is the effect allele, for your dataset this might be different in which case you will need to flip when alleles match the manifest file (rather than when they are discordant as is shown below).
