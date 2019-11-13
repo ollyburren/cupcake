@@ -17,19 +17,21 @@ load_all("~/git/cupcake")
 
 This vignette shows you how to project summary GWAS statistics from your study onto a prexisting basis. As part of the paper we created a basis from 13 immune-mediated diseases, this basis is sparse and contains only a few 100 SNPs. In fact the loading matrix is so small that we have bundled it with this package allowing you to conduct your own analysis.
 
-To illustrate this process we will use a cut down set of variants for summary statistics from [Genome-wide association study of eosinophilic granulomatosis with polyangiitis reveals genomic loci stratified by ANCA status](https://www.nature.com/articles/s41467-019-12515-9)
+To illustrate this process we will use a cut down set of variants for summary statistics from Lyons et al. Nat Commun 10, 5120 (2019)  "[Genome-wide association study of eosinophilic granulomatosis with polyangiitis reveals genomic loci stratified by ANCA status](https://www.nature.com/articles/s41467-019-12515-9)".
 
 ## Data preprocessing
 
 First we load the data and see what we have:
 ```{r}
 data(lyons_egpa)
-head(lyons_egpa,n=10) %>% knitr::kable()
+head(lyons_egpa,n=10)[]
 ```
-Next lets load in the basis as used in Burren et al. whilst many objects are loaded we are most interested in the manifest file.
+
+Next let's load in the basis as used in Burren et al. whilst many objects are loaded for data preprocessing we are most interested in the manifest file.
+
 ```{r}
 data(burren_imd_13_traits)
-head(SNP.manifest,n=10) %>% knitr::kable()
+head(SNP.manifest,n=10)[]
 ```
 
 The first job is to work out the intersect between the egpa data and the SNPs that we wish to include in the basis.
@@ -42,7 +44,7 @@ M <- merge(SNP.manifest,lyons_egpa,by='pid')
 # in this case there are no missing values. 
 M[is.na(or),]
 ```
-In this particular example there are are no missing values, if you find that over 5% of values are missing you might wish to consider imputing missing values either by going back and imputing your GWAS or using a tool such as [ssimp](https://github.com/zkutalik/ssimp_software). The next task is to harmonise OR so that both basis and EGPA datasets are with respect to the same allele. Please note that for the lyons_egpa dataset allele 1 (a1) is the effect allele, for your dataset this might be different in which case you will need to flip when alleles match the manifest file rather than when they are discordant as shown below.
+In this particular example there are are no missing values, if you find that over 5% of values are missing you might wish to consider imputing missing values either by going back and imputing your GWAS or using a tool such as [ssimp](https://github.com/zkutalik/ssimp_software). The next task is to harmonise OR so that both basis and EGPA datasets are with respect to the same allele. Please note that for the lyons_egpa dataset allele 1 (a1) is the effect allele, for your dataset this might be different in which case you will need to flip when alleles match the manifest file (rather than when they are discordant as is shown below).
 
 ```{r cars}
 M[,flip_allele:=NA][]
@@ -76,10 +78,52 @@ M <- M[!duplicated(pid),]
 M <- M[g.class=='match',or:=1/or]
 ```
 
-##Projecting onto the basis
+## Projecting onto the basis
 
-We convert odds ratio estimates to the log odds ratio scale and us the cupcake function project_sparse to project the dataset.
+We convert odds ratio estimates to the log odds ratio scale and use the cupcake function *project_sparse* to project the dataset.
 
 ```{r}
-cupcake::project_sparse(beta=log(M$or),seb=M$seb,pids=M$pid)[,trait:='EGPA'][]
+proj.dt <- cupcake::project_sparse(beta=log(M$or),seb=M$seb,pids=M$pid)[,trait:='EGPA'][]
+```
+
+Overall we can see that this trait is significant as `r proj.dt$p.overall` We can check to see if which of the components differ significantly from control as follows:
+
+```{r}
+proj.dt[p<0.05/.N,][]
+```
+
+PC13 seems the most interesting and we can plot this in context like so, and see that at least for this component EGPA looks most like Asthma.
+
+
+```{r fig.width = 7,fig.height=4}
+SPARSE_BASIS_EXTDATA <- '../inst/extdata/sparse_imd_basis'
+SNP_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_snp_manifest.RDS')
+TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_trait_manifest.tab')
+SHRINKAGE_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_trait_sparse_shrinkage.RDS')
+BASIS_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_trait_sparse_basis.RDS')
+GWAS_DATA_DIR <- file.path(SPARSE_BASIS_EXTDATA,'/gwas_data/')
+gwas.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)
+
+## project on original basis traits to characterise PCs
+gwas.DT[,c('beta','seb'):=list(log(or),1) ]
+bt.proj <- lapply(split(gwas.DT,gwas.DT$trait),function(x){
+    tt <- x$trait %>% unique
+    cupcake::project_sparse(beta=x$beta,seb=x$seb,pids=x$pid)[,trait:=tt]
+}) %>% rbindlist
+
+comb.dt <- rbind(bt.proj[,.(PC,delta,var.proj=0,trait)],proj.dt[,.(PC,delta,var.proj,trait)])
+comb.dt[var.proj!=0,ci:=sqrt(var.proj) * 1.96]
+plot.DT <- comb.dt[PC=='PC13',][order(delta,decreasing = TRUE),]
+idx <- which(!is.na(plot.DT$ci))
+cols <- rep('black',nrow(plot.DT))
+cols[idx] <- 'red'
+{
+    with(plot.DT,dotchart(delta,labels=trait,xlim=c(-0.1,0.05),pch=19,
+                          main='PC13',xlab="Delta PC score",
+                          col=cols))
+    ## add 95% confidence intervals
+    with(plot.DT[idx,],arrows(delta-ci, idx, delta+ci, idx, length=0.05, angle=90, code=3,col='red'))
+    abline(v=0,col='red',lty=2)
+}
+
 ```
