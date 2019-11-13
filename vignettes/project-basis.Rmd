@@ -5,13 +5,21 @@ date: "12/11/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 library(magrittr)
 library(cupcake)
+#library(devtools)
+#install_github('ollyburren/cupcake')
+#load_all("~/git/cupcake")
+```
+
+```{r eval=FALSE}
 library(devtools)
+#install_github('ollyburren/cupcake')
 load_all("~/git/cupcake")
 ```
+
 
 ## Introduction
 

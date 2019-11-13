@@ -112,24 +112,6 @@
 #' data(burren_imd_13_traits)
 "SNP.manifest"
 
-#' Burren sparse basis files
-#'
-#' Burren sparse basis files
-#'
-#' @docType data
-#'
-#' @usage data(burren_imd_13_traits)
-#'
-#' @format TODO
-#'
-#' @keywords datasets
-#'
-#' @references TODO
-#'
-#'
-#' @examples
-#' data(burren_imd_13_traits)
-"project.sparse"
 
 #' Burren sparse basis files
 #'
