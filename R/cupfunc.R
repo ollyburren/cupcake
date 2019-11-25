@@ -320,6 +320,7 @@ create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
 #' @param shrink.DT data.table object of matching shrinkage estimates returned by \code{\link{compute_shrinkage_metrics}}
 #' @param pc prcomp object returned by \code{\link{create_basis}}
 #' @param traitname character label for this trait defaults to 'test_trait'
+#' @param apply.shrinkage - boolean value on whether to apply shrinkage prior to projection.
 #' @return a matrix of PC scores for the projection.
 #' @export
 

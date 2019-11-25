@@ -20,7 +20,7 @@ get_seb <- function(gwas.DT){
 }
 
 #' analytically compute the variance of a projection given a standard error of beta for a given trait for sparse basis
-#' \code{compute_proj_var}
+#' \code{compute_seb_proj_var_sparse}
 #'
 #' @param gwas.DT a data.table - variants and summary statistics
 #' @param shrink.DT a data.table - as returned by \code{\link{compute_shrinkage_metrics}}
@@ -55,7 +55,7 @@ compute_seb_proj_var_sparse <- function(gwas.DT,shrink.DT,w.DT,sm,method='shrink
 
 
 #' analytically compute the variance of a projection given a standard error of beta for a given trait
-#' \code{compute_proj_var}
+#' \code{compute_seb_proj_var}
 #'
 #' @param gwas.DT a data.table - variants and summary statistics
 #' @param shrink.DT a data.table - as returned by \code{\link{compute_shrinkage_metrics}}

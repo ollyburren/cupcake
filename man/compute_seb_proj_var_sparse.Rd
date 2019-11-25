@@ -3,7 +3,7 @@
 \name{compute_seb_proj_var_sparse}
 \alias{compute_seb_proj_var_sparse}
 \title{analytically compute the variance of a projection given a standard error of beta for a given trait for sparse basis
-\code{compute_proj_var}}
+\code{compute_seb_proj_var_sparse}}
 \usage{
 compute_seb_proj_var_sparse(gwas.DT, shrink.DT, w.DT, sm,
   method = "shrinkage", quiet = FALSE)
@@ -26,5 +26,5 @@ a scalar of variances for each principal component
 }
 \description{
 analytically compute the variance of a projection given a standard error of beta for a given trait for sparse basis
-\code{compute_proj_var}
+\code{compute_seb_proj_var_sparse}
 }

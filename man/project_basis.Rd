@@ -16,6 +16,8 @@ project_basis(gwas.DT, shrink.DT, pc, traitname = "test_trait",
 \item{pc}{prcomp object returned by \code{\link{create_basis}}}
 
 \item{traitname}{character label for this trait defaults to 'test_trait'}
+
+\item{apply.shrinkage}{- boolean value on whether to apply shrinkage prior to projection.}
 }
 \value{
 a matrix of PC scores for the projection.
