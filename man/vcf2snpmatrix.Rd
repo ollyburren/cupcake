@@ -5,12 +5,12 @@
 \title{convert a vcf file to snpMatrix object
 \code{vcf2snpmatrix} convert a vcf file to snpMatrix object}
 \usage{
-vcf2snpmatrix(vcf, bcf_tools, region_file, quiet = TRUE)
+vcf2snpmatrix(vcf, bcft, region_file, quiet = TRUE)
 }
 \arguments{
 \item{vcf}{a scalar - path to vcf file}
 
-\item{bcf_tools}{a scalar - path to bcftools binary}
+\item{bcft}{a scalar - path to bcftools binary}
 
 \item{region_file}{a scalar - path to a file satisfying -R bcftools criteria (optional)}
 

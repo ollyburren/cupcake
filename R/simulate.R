@@ -33,31 +33,32 @@ mvs_sigma<-function(r,quiet=TRUE){
     if(!quiet)
       message(sprintf("Found %s where R^2 is NA",sum(is.na(r))))
     r[is.na(r)]<-0
-  return(as(corpcor::make.positive.definite(r),"Matrix"))
+  return(methods::as(corpcor::make.positive.definite(r),"Matrix"))
 }
 
 #' convert a vcf file to snpMatrix object
 #' \code{vcf2snpmatrix} convert a vcf file to snpMatrix object
 #'
 #' @param vcf a scalar - path to vcf file
-#' @param bcf_tools a scalar - path to bcftools binary
+#' @param bcft a scalar - path to bcftools binary
 #' @param region_file a scalar - path to a file satisfying -R bcftools criteria (optional)
 #' @param quiet a boolean - if set to false then debug information shown (default = FALSE)
 #' @return a list with two slots. sm is the snpMatrix object and info is a data.table describes SNPs
 #' @export
 
-vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
-  header_cmd <- sprintf("%s view -h %s",bcft,vcf.file)
+vcf2snpmatrix <- function(vcf,bcft,region_file,quiet=TRUE){
+  CHROM <- POS <- pid <- NULL
+  header_cmd <- sprintf("%s view -h %s",bcft,vcf)
   if(!quiet)
     message(header_cmd)
   my.pipe<-pipe(header_cmd)
-  header<-tail(scan(my.pipe,what=character(),sep="\n",quiet=TRUE),n=1)
+  header<-utils::tail(scan(my.pipe,what=character(),sep="\n",quiet=TRUE),n=1)
   close(my.pipe)
   cnames<-unlist(strsplit(header,"\t"))
   if(!missing(region_file)){
-    vcftools_cmd<-sprintf("%s view -R %s -O v %s | grep -v '^#'",bcft,region_file ,vcf.file)
+    vcftools_cmd<-sprintf("%s view -R %s -O v %s | grep -v '^#'",bcft,region_file ,vcf)
   }else{
-    vcftools_cmd<-sprintf("%s view -O v %s | grep -v '^#'",bcft,vcf.file)
+    vcftools_cmd<-sprintf("%s view -O v %s | grep -v '^#'",bcft,vcf)
   }
   if(!quiet)
     message(vcftools_cmd)
@@ -78,7 +79,7 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
   info[,pid:=paste(CHROM,POS,sep=':')]
   colnames(sm)<-info$pid
   rownames(sm)<-colnames(gt)
-  return(list(sm=new("SnpMatrix", sm),info=info))
+  return(list(sm=methods::new("SnpMatrix", sm),info=info))
 }
 
 #' simulate betas for an ld block
@@ -94,11 +95,11 @@ vcf2snpmatrix <- function(vcf,bcf_tools,region_file,quiet=TRUE){
 simulate_beta <- function(sm,lor,se_lor,lor_shrink=1,n_sims){
   beta_hat<-lor * lor_shrink
   if(length(lor)==1)
-    return(t(rnorm(n_sims,mean=beta_hat,sd=se_lor)))
+    return(t(stats::rnorm(n_sims,mean=beta_hat,sd=se_lor)))
   # compute R statistic
   r<-snpStats::ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
-  r<-as.matrix(mvs_sigma(Matrix(r)))
+  r<-as.matrix(mvs_sigma(Matrix::Matrix(r)))
   ## for beta the covariance matrix is estimates by sigma x SE * SE^T
   cov_se<-tcrossprod(se_lor)
   cov.beta<-cov_se * r
@@ -121,7 +122,7 @@ cov_beta <- function(sm,se_lor){
   #r<-ld(sm,sm,stats="R.squared")
   r<-snpStats::ld(sm,sm,stats="R")
   # compute closest pos-def covariance matrix
-  r<-as.matrix(mvs_sigma(Matrix(r)))
+  r<-as.matrix(mvs_sigma(Matrix::Matrix(r)))
   ## for beta the covariance matrix is estimates by sigma x SE * SE^T
   cov_se<-tcrossprod(se_lor)
   return(cov_se * r)
@@ -140,6 +141,7 @@ cov_beta <- function(sm,se_lor){
 #' @export
 
 simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
+  pid <- value <- trait <- variable <- NULL
   s.DT <- split(DT,DT$chr)
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
@@ -170,7 +172,7 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
       dat <- by.ld[[block]]
       setkey(dat,pid)
       #info <-sm$info[pid %in% dat$pid ,.(pid,order)]
-      linfo <- info[pid %in% dat$pid ,.(pid,order)]
+      linfo <- info[pid %in% dat$pid ,list(pid,order)]
       setkey(linfo,pid)
       dat <- dat[linfo][order(order),]
       if(shrink_beta){
@@ -207,7 +209,7 @@ simulate_study <- function(DT,ref_gt_dir,shrink_beta=TRUE,n_sims=10,quiet=TRUE){
 
 compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage_ws_emp',quiet=TRUE){
   M <- merge(man.DT,w.DT,by='pid')
-  M <- merge(M,shrink.DT[,.(pid,shrink=get(`method`))],by='pid')
+  M <- merge(M,shrink.DT[,list(pid,shrink=get(`method`))],by='pid')
   M <- M[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ## create a set of analytical se_beta_maf
   beta_se_maf <- function(f) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
@@ -242,7 +244,7 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage_
       # compute closest pos-def covariance matrix
       Sigma <- as.matrix(mvs_sigma(Matrix(r)))
       pc.cols <- which(grepl("^PC[0-9]+$",names(M)))
-      sapply(names(M)[pc.cols],function(pc) (tcrossprod(block[,.(tot=get(`pc`) * shrink * beta_se_maf)]$tot) * Sigma) %>% sum)
+      sapply(names(M)[pc.cols],function(pc) (tcrossprod(block[,list(tot=get(`pc`) * shrink * beta_se_maf)]$tot) * Sigma) %>% sum)
     })
     colSums(do.call('rbind',chr.var))
   })

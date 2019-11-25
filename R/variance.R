@@ -6,11 +6,12 @@ library(snpStats)
 #' @return a data.table with seb column added if not already present
 
 get_seb <- function(gwas.DT){
+  seb <- or <- p.value <- NULL
   if(!any(names(gwas.DT)=='seb')){
     if(any(names(gwas.DT)=='or')){
-      gwas.DT[,seb:=abs(log(or)/qnorm(p.value/2,lower.tail=FALSE))]
+      gwas.DT[,seb:=abs(log(or)/stats::qnorm(p.value/2,lower.tail=FALSE))]
     }else if(any(names(gwas.DT)=='beta')){
-      gwas.DT[,seb:=abs(beta/qnorm(p.value/2,lower.tail=FALSE))]
+      gwas.DT[,seb:=abs(beta/stats::qnorm(p.value/2,lower.tail=FALSE))]
     }else{
       message("Cannot find required summary statistics aborting")
       return()
@@ -32,9 +33,10 @@ get_seb <- function(gwas.DT){
 #' @export
 
 compute_seb_proj_var_sparse <- function(gwas.DT,shrink.DT,w.DT,sm,method='shrinkage',quiet=FALSE){
+  shrinkage <- seb <- pid <- ld <- NULL
   if(method=='none')
     message("Warning: Method 'none' selected no weighting applied")
-  gwas.DT <- merge(gwas.DT,shrink.DT[,.(pid,shrinkage=get(`method`))],by='pid')
+  gwas.DT <- merge(gwas.DT,shrink.DT[,list(pid,shrinkage=get(`method`))],by='pid')
   gwas.DT <- get_seb(gwas.DT)
   gwas.DT[,c('chr','pos'):=tstrsplit(pid,':')]
   gwas.DT <- merge(gwas.DT,w.DT,by='pid')
@@ -43,13 +45,13 @@ compute_seb_proj_var_sparse <- function(gwas.DT,shrink.DT,w.DT,sm,method='shrink
   if(any(is.na(sm.map))){
     message("SNPs in manifest that don't have genotypes")
   }
-  r <- ld(sm[,sm.map],sm[,sm.map],stats="R")
+  r <- snpStats::ld(sm[,sm.map],sm[,sm.map],stats="R")
   if(any(is.na(r)))
     if(!quiet)
       message(sprintf("Found %s where R^2 is NA",sum(is.na(r))))
   r[is.na(r)]<-0
   pc.cols <- which(grepl("^PC[0-9]+$",names(gwas.DT)))
-  sapply(names(gwas.DT)[pc.cols],function(pc) (tcrossprod(gwas.DT[,.(tot=get(`pc`) * shrinkage * seb)]$tot) * r) %>% sum)
+  sapply(names(gwas.DT)[pc.cols],function(pc) (tcrossprod(gwas.DT[,list(tot=get(`pc`) * shrinkage * seb)]$tot) * r) %>% sum)
 }
 
 
@@ -70,9 +72,10 @@ compute_seb_proj_var_sparse <- function(gwas.DT,shrink.DT,w.DT,sm,method='shrink
 ## for testing
 
 compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method='shrinkage',quiet=FALSE){
+  shrinkage <- pid <- ld.block <- seb <- NULL
   if(method=='none')
     message("Warning: Method 'none' selected no weighting applied")
-  gwas.DT <- merge(gwas.DT,shrink.DT[,.(pid,shrinkage=get(`method`))],by='pid')
+  gwas.DT <- merge(gwas.DT,shrink.DT[,list(pid,shrinkage=get(`method`))],by='pid')
   ## where possible compute se_beta
   ## sometimes our input will be for a quantitative trait
   # if(!any(names(gwas.DT)=='seb')){
@@ -89,14 +92,14 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
   gwas.DT <- get_seb(gwas.DT)
   gwas.DT[,c('chr','pos'):=tstrsplit(pid,':')]
   ## next add ld.block information
-  gwas.DT <- merge(gwas.DT,man.DT[,.(pid,ld.block)],by='pid')
+  gwas.DT <- merge(gwas.DT,man.DT[,list(pid,ld.block)],by='pid')
   ## finally add rotations
   gwas.DT <- merge(gwas.DT,w.DT,by='pid')
   s.DT <- split(gwas.DT,gwas.DT$chr)
   all.chr <- lapply(names(s.DT),function(chr){
     if(!quiet)
       message(sprintf("Processing %s",chr))
-    ss.file<-file.path(REF_GT_DIR,sprintf("%s.RDS",chr))
+    ss.file<-file.path(ref_gt_dir,sprintf("%s.RDS",chr))
     if(!quiet)
       message(ss.file)
     sm <- readRDS(ss.file)
@@ -118,7 +121,7 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
       if(any(is.na(sm.map))){
         message("SNPs in manifest that don't have genotypes")
       }
-      r <- ld(sm[,sm.map],sm[,sm.map],stats="R")
+      r <- snpStats::ld(sm[,sm.map],sm[,sm.map],stats="R")
       if(any(is.na(r)))
         if(!quiet)
           message(sprintf("Found %s where R^2 is NA",sum(is.na(r))))
@@ -126,7 +129,7 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
       # compute closest pos-def covariance matrix
       #Sigma <- as.matrix(mvs_sigma(Matrix(r)))
       pc.cols <- which(grepl("^PC[0-9]+$",names(block)))
-      sapply(names(block)[pc.cols],function(pc) (tcrossprod(block[,.(tot=get(`pc`) * shrinkage * seb)]$tot) * r) %>% sum)
+      sapply(names(block)[pc.cols],function(pc) (tcrossprod(block[,list(tot=get(`pc`) * shrinkage * seb)]$tot) * r) %>% sum)
     })
     colSums(do.call('rbind',chr.var))
   })
@@ -146,8 +149,9 @@ compute_seb_proj_var <- function(gwas.DT,shrink.DT,man.DT,w.DT,ref_gt_dir,method
 #' @export
 
 compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage',quiet=TRUE){
+  shrink <- pid <- ld.block <- seb <- beta_se_maf <- maf <- ref_a1.af <- Sigma <- NULL
   M <- merge(man.DT,w.DT,by='pid')
-  M <- merge(M,shrink.DT[,.(pid,shrink=get(`method`))],by='pid')
+  M <- merge(M,shrink.DT[,list(pid,shrink=get(`method`))],by='pid')
   M <- M[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
   ## create a set of analytical se_beta_maf
   beta_se_maf <- function(f) sqrt(1/f + 1/(1-f)) * sqrt(1/2)
@@ -178,7 +182,7 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage'
       if(any(is.na(sm.map))){
         message("SNPs in manifest that don't have genotypes")
       }
-      r <- ld(sm[,sm.map],sm[,sm.map],stats="R")
+      r <- snpStats::ld(sm[,sm.map],sm[,sm.map],stats="R")
       if(any(is.na(r)))
         if(!quiet)
           message(sprintf("Found %s where R^2 is NA",sum(is.na(r))))
@@ -186,7 +190,7 @@ compute_proj_var <- function(man.DT,w.DT,shrink.DT,ref_gt_dir,method='shrinkage'
       # compute closest pos-def covariance matrix
       #Sigma <- as.matrix(mvs_sigma(Matrix(r)))
       pc.cols <- which(grepl("^PC[0-9]+$",names(M)))
-      sapply(names(M)[pc.cols],function(pc) (tcrossprod(block[,.(tot=get(`pc`) * shrink * beta_se_maf)]$tot) * Sigma) %>% sum)
+      sapply(names(M)[pc.cols],function(pc) (tcrossprod(block[,list(tot=get(`pc`) * shrink * beta_se_maf)]$tot) * Sigma) %>% sum)
     })
     colSums(do.call('rbind',chr.var))
   })

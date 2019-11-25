@@ -5,12 +5,12 @@
 \title{convert p value  to a signed Z score
 \code{p2z} p value to a signed Z score}
 \usage{
-p2z(p, lor)
+p2z(p.val, lor)
 }
 \arguments{
-\item{p}{a vector of p values}
-
 \item{lor}{a vector of log odds ratios}
+
+\item{p}{a vector of p values}
 }
 \value{
 a vector of signed Z scores

@@ -1,5 +1,6 @@
 #' @import data.table
-
+#' @import magrittr
+#' @importFrom data.table .N .I ':='
 
 library(data.table)
 
@@ -36,7 +37,7 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     # compute V
     V <- 1 / (2 * N * f * (1 - f) * s * (1 - s))
     # convert p vals to z
-    z <- qnorm(0.5 * p, lower.tail = FALSE)
+    z <- stats::qnorm(0.5 * p, lower.tail = FALSE)
     ## Shrinkage factor: ratio of the prior variance to the total variance
     r <- sd.prior^2 / (sd.prior^2 + V)
     ## Approximate BF
@@ -69,7 +70,7 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
     # compute V
     V <- 1 / (2 * N * f * (1 - f) * s * (1 - s))
     # convert p vals to z
-    z <- qnorm(0.5 * p, lower.tail = FALSE)
+    z <- stats::qnorm(0.5 * p, lower.tail = FALSE)
     ## Shrinkage factor: ratio of the prior variance to the total variance
     r <- sd.prior^2 / (sd.prior^2 + V)
     ## Approximate BF  # I want ln scale to compare in log natural scale with LR diff
@@ -89,6 +90,7 @@ wakefield_null_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
 #' @return data.table object
 
 ws_shrinkage <- function(DT,pi_i=1e-4){
+  pid <- p.value <- maf <- n <- n1 <- wj <- ppi <- NULL
   tmp <- DT[,list(pid=pid,ppi=wakefield_pp(p.value,maf,n,n1/n,pi_i)),by=c('trait','ld.block')]
   tmp[,wj:=sum(ppi),by=c('trait','ld.block')]
   tmp[,list(ws_ppi=sum(ppi * wj)/sum(wj)),by=c('pid','ld.block')]
@@ -137,7 +139,7 @@ maf_se_estimate <- function(f){
 #' @return a numeric vector
 
 maf_se_estimate_sample_size <- function(N,p,theta,f){
-  Z <- qnorm(p/2,lower.tail=FALSE)
+  Z <- stats::qnorm(p/2,lower.tail=FALSE)
   se.beta <- log(theta)/Z
   se_maf_ss <- sqrt(2 * N) * se.beta
   ## can get numeric errors if theta = 1 or such like in this case compute using maf_se estimate under null
@@ -153,8 +155,8 @@ maf_se_estimate_sample_size <- function(N,p,theta,f){
 #' @param lor a vector of log odds ratios
 #' @return a vector of signed Z scores
 
-p2z <- function(p,lor){
-  z <- qnorm(0.5 * p.val, lower.tail = FALSE)
+p2z <- function(p.val,lor){
+  z <- stats::qnorm(0.5 * p.val, lower.tail = FALSE)
   if(missing(lor))
     return(z)
   return(z * sign(lor))
@@ -167,7 +169,7 @@ p2z <- function(p,lor){
 #' @return a vector of p values
 
 z2p <- function(z){
-  2* pnorm(abs(z), lower.tail = FALSE)
+  2* stats::pnorm(abs(z), lower.tail = FALSE)
 }
 
 # this function gets adds reference data from a snp support data.table to GWAS summ stats
@@ -177,13 +179,14 @@ z2p <- function(z){
 #' @return data.table object
 
 add_ref_annotations <- function(ss,DT){
+  maf <- ref_a1.af <- pid <- ld.block <- or <- NULL
   #if(!file.exists(snp_support_file))
   #  stop(sprintf("Cannot find file %s",snp_support_file))
   #ss<-fread(snp_support_file)
   ## use data table to merge the two files
   #ss[,pid:=paste(chr,position,sep=':')]
   ss[,maf:=ifelse(ref_a1.af>0.5,1-ref_a1.af,ref_a1.af)]
-  ss<-ss[,.(pid,maf,ld.block)]
+  ss<-ss[,list(pid,maf,ld.block)]
   setkey(ss,pid)
   # we filter here as this allows us to use this to
   # knock traits where we have surplus SNPs into the correct format
@@ -206,21 +209,17 @@ add_ref_annotations <- function(ss,DT){
 #' @export
 
 get_gwas_data <- function(trait_manifest_file,snp_manifest_file,data_dir,filter_snps_by_manifest=FALSE){
-  #if(missing(trait_list)){
-  #  man<-fread(manifest_file)[basis_trait==1 & include=='Y',]
-  #}else{
-  #  man<-fread(manifest_file)[trait %in% trait_list & include=='Y',]
-  #}
+  trait <- cases <- controls <- pid <- NULL
   if(!file.exists(trait_manifest_file))
     stop(sprintf("Cannot find trait manifest file %s",trait_manifest_file))
   man.DT <- fread(trait_manifest_file)
   if(nrow(man.DT)==0)
-    stop(sprintf("Cannot find any traits in manifest %s for %s",manifest_file,paste(trait_list,collapse=',')))
+    stop(sprintf("Cannot find any traits in manifest %s.",snp_manifest_file))
   man.DT[,file:=file.path(data_dir,file)]
   ret<-rbindlist(lapply(1:nrow(man.DT),function(i){
     message(sprintf("Processing %s",man.DT[i,]$trait))
     tDT<-fread(man.DT[i,]$file)
-    tDT[,c('trait','n','n1') := man.DT[i,.(trait,cases+controls,cases)]]
+    tDT[,c('trait','n','n1') := man.DT[i,list(trait,cases+controls,cases)]]
   }))
   setkey(ret,pid)
   ss <- readRDS(snp_manifest_file)
@@ -252,6 +251,7 @@ get_gwas_data <- function(trait_manifest_file,snp_manifest_file,data_dir,filter_
 #' @export
 
 compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
+  pid <- n <- pid <- p.value <- or <- maf <- ss_emp_maf_se <- shrinkage <- ws_ppi <- recip.ss_emp_maf_se <- NULL
   message("Computing maf_se_estimated using or, sample size and p.value ")
   ss_est_maf_se.DT<-DT[,list(pid=pid,ss_emp_maf_se=maf_se_estimate_sample_size(n,p.value,or,maf)),by=pid][,list(ss_emp_maf_se=mean(abs(ss_emp_maf_se))),by=pid]
   ss_est_maf_se.DT[,recip.ss_emp_maf_se:=1/ss_emp_maf_se]
@@ -262,7 +262,7 @@ compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
   shrinkage.DT <- ss_est_maf_se.DT[ws.DT]
   shrinkage.DT[,shrinkage:=ws_ppi/ss_emp_maf_se,by=pid]
   setkey(shrinkage.DT,pid)
-  return(shrinkage.DT[,.(pid,shrinkage)])
+  return(shrinkage.DT[,list(pid,shrinkage)])
 }
 
 #' This function creates a trait snp matrix
@@ -275,6 +275,7 @@ compute_shrinkage_metrics<-function(DT,pi_i=1e-4){
 #' @export
 
 create_ds_matrix <- function(bDT,sDT,method){
+  none <- NULL
   if(missing(method)){
     method='shrinkage'
   }
@@ -310,7 +311,7 @@ create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
   }
   ## need to add control where beta is zero
   basis.mat.emp<-rbind(basis.mat.emp,control=rep(0,ncol(basis.mat.emp)))
-  prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
+  stats::prcomp(basis.mat.emp,center=TRUE,scale=FALSE)
 }
 
 #' This function projects an aligned trait onto the basis
@@ -325,6 +326,7 @@ create_basis <- function(gwas.DT,shrink.DT,apply.shrinkage=TRUE){
 #' @export
 
 project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shrinkage=TRUE){
+  or <- metric <- shrinkage <- trait <- pid <- seb <- p.value <- NULL
   ## if there is already a shrinkage column this will cause an issue
   tmp <- copy(gwas.DT)
   if(any(names(gwas.DT)=='shrinkage'))
@@ -362,11 +364,11 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
   colnames(mat.emp) <- snames
   if(!identical(colnames(mat.emp),rownames(pc$rotation)))
     stop("Something wrong basis and projection matrix don't match")
-  all.proj <- predict(pc,newdata=mat.emp)
+  all.proj <- stats::predict(pc,newdata=mat.emp)
   if(any(names(tmp)=='seb')){
-    tmp <- tmp[,.(pid,beta,seb,p.value,shrinkage,trait)]
+    tmp <- tmp[,list(pid,beta,seb,p.value,shrinkage,trait)]
   }else{
-    tmp <- tmp[,.(pid,beta,p.value,shrinkage,trait)]
+    tmp <- tmp[,list(pid,beta,p.value,shrinkage,trait)]
   }
   if(lmiss>0)
     tmp <- tmp[!pid %in% missing,]
@@ -399,9 +401,7 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #' @export
 
 project_sparse <- function(beta,seb,pids){
-### assumes basis-sparse-13-0.999.RData has been loaded and that LD,
-### rot.pca, beta.centers, shrinkage are defined in current environment
-### beta = new beta, seb=se(beta), pids=snp ids in order of beta
+    message(pids)
     if(length(beta)!=length(seb) || length(beta)!=length(pids) || !length(beta))
         stop("arguments must be equal length vectors > 0")
     if(!all(pids %in% SNP.manifest$pid))
@@ -419,8 +419,8 @@ project_sparse <- function(beta,seb,pids){
                       proj=proj[1,],
                       var.proj=Matrix::diag(var.proj),
                       delta=delta,
-                      p.overall=pchisq(chi2,df=13,lower.tail=FALSE))
+                      p.overall=stats::pchisq(chi2,df=13,lower.tail=FALSE))
     ret$z=ret$delta/sqrt(ret$var.proj)
-    ret$p=pnorm(abs(ret$z),lower.tail=FALSE) * 2
+    ret$p=stats::pnorm(abs(ret$z),lower.tail=FALSE) * 2
     copy(ret)
 }

@@ -43,8 +43,8 @@ e_lor <- function(b1,a0,b0,a1){
 #' @return scalar - P(sim.or>target.or)
 
 lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
-    b1 <- optimise(e_lor,c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
-    p1 <- rbeta(nsim,shape1=a1,shape2=b1)
+    b1 <- stats::optimise(e_lor,c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    p1 <- stats::rbeta(nsim,shape1=a1,shape2=b1)
     lor <- log(p0) - log(1-p0) + log(1-p1) - log(p1)
     mean(abs(lor) > log(target.or))
 }
@@ -60,7 +60,7 @@ lor_constraint <- function(a1,a0,b0,p0,target.or,nsim){
 
 est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
     # get an independendent sample of the prior of f_0
-    p0 <- rbeta(nsim,shape1 = a0 ,shape2 = b0)
+    p0 <- stats::rbeta(nsim,shape1 = a0 ,shape2 = b0)
     ## estimate compatible a1 shape parameter for f1 given target OR and probability
     a1 <- 1
     while((pr <- lor_constraint(a1,a0,b0,p0,target.or,nsim)) > target.prob){
@@ -70,7 +70,7 @@ est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
         }
         a1 <- a1 + 1
     }
-    b1 <- optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
+    b1 <- stats::optimise(e_lor,interval=c(1,b0),a1=a1,a0=a0,b0=b0)$minimum
     list(a1=a1,b1=b1)
 }
 
@@ -87,7 +87,7 @@ est_a1b1 <- function(a0,b0,target.or,target.prob,nsim){
 post_lor <- function(gt=c(0,1,2),a1,b1,p0,nsim){
     posta <- 2-gt + a1
     postb <- gt + b1
-    p1 <- rbeta(nsim,shape1=posta,shape2=postb)
+    p1 <- stats::rbeta(nsim,shape1=posta,shape2=postb)
     list(lor=log(p0*(1-p1)/(p1*(1-p0))),p1=p1)
 }
 
@@ -136,8 +136,8 @@ lor_f <- function(f0,n,target.or,target.prob,n.steps){
 opt_a1b1 <- function(a0,b0,target.or,target.prob,n.steps){
     ## estimate compatible a1 shape parameter for f1 given target OR and probability
     p <- seq(1,n.steps)/(n.steps+1) # will integrate over a grid of p x p
-    a1 <- uniroot(fopt,interval=c(0.1/a0,a0),target.prob=target.prob,p=p,a0=a0,b0=b0,target.or=target.or)$root
-    b1 <- uniroot(e_lor,interval=c(1e-16,2*b0),a1=a1,a0=a0,b0=b0)$root
+    a1 <- stats::uniroot(fopt,interval=c(0.1/a0,a0),target.prob=target.prob,p=p,a0=a0,b0=b0,target.or=target.or)$root
+    b1 <- stats::uniroot(e_lor,interval=c(1e-16,2*b0),a1=a1,a0=a0,b0=b0)$root
     list(a1=a1,b1=b1)
 }
 
@@ -156,13 +156,13 @@ opt_a1b1 <- function(a0,b0,target.or,target.prob,n.steps){
 
 
 fopt <- function(a1,target.prob,target.or,p,a0,b0) {
-    b1 <- uniroot(e_lor,interval=c(1e-16,2*b0),a0=a0,b0=b0,a1=a1)$root
-    denom <- dbeta(p,shape1=a0,shape2=b0)
+    b1 <- stats::uniroot(e_lor,interval=c(1e-16,2*b0),a0=a0,b0=b0,a1=a1)$root
+    denom <- stats::dbeta(p,shape1=a0,shape2=b0)
     py <- sapply(p,function(x){
       l <- x/(target.or * (1-x) + x)
       u <- x/((1-x)/target.or + x)
-      pbl <- pbeta(l,shape1=a1,shape2=b1,lower.tail=TRUE)
-      pbu <- pbeta(u,shape1=a1,shape2=b1,lower.tail=FALSE)
+      pbl <- stats::pbeta(l,shape1=a1,shape2=b1,lower.tail=TRUE)
+      pbu <- stats::pbeta(u,shape1=a1,shape2=b1,lower.tail=FALSE)
       (pbl + pbu)
     })
     log(sum(py*denom)/sum(denom)) - log(target.prob)

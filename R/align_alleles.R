@@ -25,6 +25,7 @@ comp<-function(cv){
 #' @return a boolean vector
 
 ambiguous<-function(a1,a2){
+  amb <- NULL
   tmp<-data.table(a1=a1,a2=a2,amb=FALSE)
   tmp[(a1=='A' & a2=='T') | (a1=='T' & a2=='A'),amb:=TRUE]
   tmp[(a1=='G' & a2=='C') | (a1=='C' & a2=='G'),amb:=TRUE]
@@ -43,13 +44,14 @@ ambiguous<-function(a1,a2){
 
 
 align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
+  a1 <- a2 <- or <- id <- chr <- position <- p.val <- risk.allele <- other.allele <- ambig <- pid <- NULL
   ## first make it so that a1 and a2 on gwas.DT are converted to risk.allele and other.allele
   #gwas.DT[,c('risk.allele','other.allele'):=list(a1,a2)]
   gwas.DT[,c('risk.allele','other.allele','ambig'):=list(a2,a1,ambiguous(a1,a2))]
   #gwas.DT[or>1,c('risk.allele','other.allele','or'):=list(a2,a1,1/or)]
   gwas.DT[or<1,c('risk.allele','other.allele','or'):=list(a1,a2,1/or)]
   ## next merge in ref information
-  gwas.DT <- gwas.DT[,.(id,chr,position,p.val,or,risk.allele,other.allele,ambig)]
+  gwas.DT <- gwas.DT[,list(id,chr,position,p.val,or,risk.allele,other.allele,ambig)]
   ref.DT[,pid:=paste(chr,position,sep=':')]
   gwas.DT[,pid:=paste(chr,position,sep=':')]
   setkey(ref.DT,pid)
@@ -64,10 +66,10 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
   rev.comp.idx<-with(gwas.DT,which(comp(risk.allele) == a2 & comp(other.allele) ==a1))
   gwas.DT <- gwas.DT[rev.comp.idx,c('risk.allele','other.allele','check'):=list(a1,a2,'comp')]
   if(!check){
-    return(gwas.DT[,.(id,chr,position,p.val,or)])
+    return(gwas.DT[,list(id,chr,position,p.val,or)])
   }else{
     gwas.DT[is.na(check),check:='none']
-    return(gwas.DT[,.(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2,ambig)])
+    return(gwas.DT[,list(id,chr,position,p.val,or,check,risk.allele,other.allele,a1,a2,ambig)])
   }
 }
 
@@ -79,12 +81,13 @@ align_alleles<-function(gwas.DT,ref.DT,check=FALSE){
 #' @export
 
 flip_allele<-function(DT,ref.DT){
+   i.a1 <- i.a2 <- a1 <- a2 <- position <- chr  <- pid <- NULL
    ref.DT[,pid:=paste(chr,position,sep=':')]
    DT[,pid:=paste(chr,position,sep=':')]
    setkey(ref.DT,pid)
    setkey(DT,pid)
    # a1 is from dataset i.a1 is from reference
-   gwas.DT<-DT[ref.DT][,.(pid,a1,a2,i.a1,i.a2)]
+   gwas.DT<-DT[ref.DT][,list(pid,a1,a2,i.a1,i.a2)]
    no.change.pid<-gwas.DT[a1==i.a1 & a2==i.a2,]$pid
    flip.pid <- gwas.DT[a2==i.a1 & a1==i.a2,]$pid
    rev.no.change.pid <- gwas.DT[comp(a1)==i.a1 & comp(a2)==i.a2,]$pid
