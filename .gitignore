@@ -28,3 +28,5 @@ vignettes/*.pdf
 ## Atom Temp files
 ._*
 inst/doc
+doc
+Meta
