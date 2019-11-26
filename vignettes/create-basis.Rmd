@@ -7,6 +7,7 @@ vignette: >
   %\VignetteIndexEntry{IMD basis projection}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{methods}
 ---
 
 ```{r setup, include = FALSE}

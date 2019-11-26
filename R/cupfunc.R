@@ -1,8 +1,4 @@
-#' @import data.table
-#' @import magrittr
-#' @importFrom data.table .N .I ':='
-
-library(data.table)
+#library(data.table)
 
 #' helper function to sum logs without loss of precision
 #' \code{logsum} sums logs without loss of precision
@@ -151,7 +147,7 @@ maf_se_estimate_sample_size <- function(N,p,theta,f){
 #' convert p value  to a signed Z score
 #' \code{p2z} p value to a signed Z score
 #'
-#' @param p a vector of p values
+#' @param p.val a vector of p values
 #' @param lor a vector of log odds ratios
 #' @return a vector of signed Z scores
 
@@ -401,7 +397,6 @@ project_basis <- function(gwas.DT,shrink.DT,pc,traitname='test_trait',apply.shri
 #' @export
 
 project_sparse <- function(beta,seb,pids){
-    message(pids)
     if(length(beta)!=length(seb) || length(beta)!=length(pids) || !length(beta))
         stop("arguments must be equal length vectors > 0")
     if(!all(pids %in% SNP.manifest$pid))

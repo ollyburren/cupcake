@@ -1,16 +1,19 @@
 Package: cupcake
 Title: PCA for GWAS
 Version: 0.1.0.0
-Authors@R: person("Olly", "Burren", email = "ob219@cam.ac.uk", role = "cre")
-Description: cupcake provides a set of functions that makes GWAS summary statistics amenable to PCA
-Depends: R (>= 3.3.0),data.table,
-Imports: GenomicRanges,
+Authors@R: c(
+  person("Olly", "Burren", email = "ob219@cam.ac.uk", role = c("aut","cre")),
+  person("Chris", "Wallace", email = "cew54@cam.ac.uk", role = "aut"))
+Description: Cupcake provides a set of functions that makes GWAS summary statistics amenable to PCA.
+Depends: R (>= 3.5.0),data.table
+Imports:
   magrittr,
   snpStats,
   Matrix,
   corpcor,
-  mvtnorm
-License: MIT
+  mvtnorm,
+  methods
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1

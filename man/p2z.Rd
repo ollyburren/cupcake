@@ -8,9 +8,9 @@
 p2z(p.val, lor)
 }
 \arguments{
-\item{lor}{a vector of log odds ratios}
+\item{p.val}{a vector of p values}
 
-\item{p}{a vector of p values}
+\item{lor}{a vector of log odds ratios}
 }
 \value{
 a vector of signed Z scores
