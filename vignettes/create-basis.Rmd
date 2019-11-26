@@ -4,10 +4,9 @@ author: "Olly Burren"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{IMD basis projection}
+  %\VignetteIndexEntry{create-basis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{methods}
 ---
 
 ```{r setup, include = FALSE}
