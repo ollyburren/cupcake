@@ -33,8 +33,8 @@ head(lyons_egpa,n=10)[]
 Next let's load in the basis as used in Burren et al. whilst many objects are loaded for data preprocessing we are most interested in the manifest file.
 
 ```{r}
-data(burren_imd_13_traits)
-head(SNP.manifest,n=10)[]
+#data(burren_imd_13_traits)
+head(cupcake::SNP.manifest,n=10)[]
 ```
 
 The first job is to work out the intersect between the egpa data and the SNPs that we wish to include in the basis.
@@ -43,7 +43,7 @@ The first job is to work out the intersect between the egpa data and the SNPs th
 #first add a pid column to the egpa dataset
 lyons_egpa[,pid:=paste(CHR,BP,sep=':')]
 # check to see whether there are manifest SNPs missing
-M <- merge(SNP.manifest,lyons_egpa,by='pid')
+M <- merge(cupcake::SNP.manifest,lyons_egpa,by='pid')
 # in this case there are no missing values.
 M[is.na(or),]
 ```
@@ -99,29 +99,15 @@ PC13 seems the most interesting and we can plot this in context like so, and see
 
 
 ```{r fig.width = 7,fig.height=4}
-SPARSE_BASIS_EXTDATA <- '../inst/extdata/sparse_imd_basis'
-SNP_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_snp_manifest.RDS')
-TRAIT_MANIFEST_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/sparse_trait_manifest.tab')
-SHRINKAGE_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_trait_sparse_shrinkage.RDS')
-BASIS_FILE <- file.path(SPARSE_BASIS_EXTDATA,'support/13_trait_sparse_basis.RDS')
-GWAS_DATA_DIR <- file.path(SPARSE_BASIS_EXTDATA,'/gwas_data/')
-gwas.DT<-get_gwas_data(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)
 
-## project on original basis traits to characterise PCs
-gwas.DT[,c('beta','seb'):=list(log(or),1) ]
-bt.proj <- lapply(split(gwas.DT,gwas.DT$trait),function(x){
-    tt <- x$trait %>% unique
-    cupcake::project_sparse(beta=x$beta,seb=x$seb,pids=x$pid)[,trait:=tt]
-}) %>% rbindlist
-
-comb.dt <- rbind(bt.proj[,.(PC,delta,var.proj=0,trait)],proj.dt[,.(PC,delta,var.proj,trait)])
+comb.dt <- rbind(cupcake::basis.trait.proj[,.(PC,delta,var.proj=0,trait)],proj.dt[,.(PC,delta,var.proj,trait)])
 comb.dt[var.proj!=0,ci:=sqrt(var.proj) * 1.96]
 plot.DT <- comb.dt[PC=='PC13',][order(delta,decreasing = TRUE),]
 idx <- which(!is.na(plot.DT$ci))
 cols <- rep('black',nrow(plot.DT))
 cols[idx] <- 'red'
 {
-    with(plot.DT,dotchart(delta,labels=trait,xlim=c(-0.1,0.05),pch=19,
+    with(plot.DT,dotchart(delta,labels=trait,xlim=c(-0.01,0.1),pch=19,
                           main='PC13',xlab="Delta PC score",
                           col=cols))
     ## add 95% confidence intervals

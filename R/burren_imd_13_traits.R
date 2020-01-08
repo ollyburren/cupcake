@@ -130,4 +130,4 @@
 #'
 #' @examples
 #' data(burren_imd_13_traits)
-"stats"
+"basis.trait.proj"
