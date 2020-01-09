@@ -19,6 +19,9 @@
     <loc>http://chr1swallace.github.io/cupcake/reference/ambiguous.html</loc>
   </url>
   <url>
+    <loc>http://chr1swallace.github.io/cupcake/reference/basis.trait.proj.html</loc>
+  </url>
+  <url>
     <loc>http://chr1swallace.github.io/cupcake/reference/beta.centers.html</loc>
   </url>
   <url>
@@ -116,9 +119,6 @@
   </url>
   <url>
     <loc>http://chr1swallace.github.io/cupcake/reference/simulate_study.html</loc>
-  </url>
-  <url>
-    <loc>http://chr1swallace.github.io/cupcake/reference/stats.html</loc>
   </url>
   <url>
     <loc>http://chr1swallace.github.io/cupcake/reference/use.pca.html</loc>
