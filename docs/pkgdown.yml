@@ -1,0 +1,10 @@
+pandoc: 1.19.2.4
+pkgdown: 1.4.1
+pkgdown_sha: ~
+articles:
+  create-basis: create-basis.html
+  project-basis: project-basis.html
+urls:
+  reference: http://chr1swallace.github.io/cupcake/reference
+  article: http://chr1swallace.github.io/cupcake/articles
+
