@@ -9,3 +9,7 @@ library(devtools)
 install_github('ollyburren/cupcake',build_vignettes=TRUE)
 vignette('create-basis',package='cupcake')
 ````
+
+# Documentation
+
+Please see online documentation and vignettes for common use cases [here](https://ollyburren.github.io/cupcake).
