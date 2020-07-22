@@ -78,7 +78,7 @@
       <h1>Projecting your data onto an exisiting basis</h1>
                         <h4 class="author">Olly Burren</h4>
             
-            <h4 class="date">2020-01-08</h4>
+            <h4 class="date">2020-01-17</h4>
       
       
       <div class="hidden name"><code>project-basis.Rmd</code></div>
@@ -87,22 +87,22 @@
 
     
     
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">TRUE</span>)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cupcake)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">echo =</span> <span class="ot">TRUE</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cupcake)</span></code></pre></div>
 <pre><code>## Loading required package: data.table</code></pre>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>This vignette shows you how to project summary GWAS statistics from your study onto a prexisting basis. As part of the paper we created a basis from 13 immune-mediated diseases, this basis is sparse and contains only a few 100 SNPs. In fact the loading matrix is so small that we have bundled it with this package allowing you to conduct your own analysis.</p>
-<p>To illustrate this process we will use a cut down set of variants for summary statistics from Lyons et al. Nat Commun 10, 5120 (2019) “<a href="https://www.nature.com/articles/s41467-019-12515-9">Genome-wide association study of eosinophilic granulomatosis with polyangiitis reveals genomic loci stratified by ANCA status</a>”.</p>
+<p>To illustrate this process we will use a cut down set of variants for summary statistics from Lyons et al. Nat Commun 10, 5120 (2019) “<a href="https://www.nature.com/articles/s41467-019-12515-9">Genome-wide association study of eosinophilic granulomatosis with polyangiitis reveals genomic loci stratified by ANCA status</a>”.</p>
 </div>
 <div id="data-preprocessing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#data-preprocessing" class="anchor"></a>Data preprocessing</h2>
 <p>First we load the data and see what we have:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(lyons_egpa)
-<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(lyons_egpa,<span class="dt">n=</span><span class="dv">10</span>)[]</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(lyons_egpa)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(lyons_egpa,<span class="dt">n=</span><span class="dv">10</span>)[]</span></code></pre></div>
 <pre><code>##     CHR      BP a1 a2        or        seb p.value
 ##  1:   1 1239953  A  G 0.9540296 0.13277346    0.52
 ##  2:   1 1744812  A  G 1.1077122 0.21219596    0.52
@@ -114,9 +114,9 @@
 ##  8:   1 6548056  G  A 0.9044554 0.08667750    0.17
 ##  9:   1 8180210  G  A 1.0756336 0.07048286    0.33
 ## 10:   1 8469789  C  T 0.9891649 0.06197632    0.81</code></pre>
-<p>Next let’s load in the basis as used in Burren et al. whilst many objects are loaded for data preprocessing we are most interested in the manifest file.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(burren_imd_<span class="dv">13</span>_traits)
-<span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(SNP.manifest,<span class="dt">n=</span><span class="dv">10</span>)[]</code></pre></div>
+<p>Next let’s load in the basis as used in Burren et al. whilst many objects are loaded for data preprocessing we are most interested in the manifest file.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#data(burren_imd_13_traits)</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(cupcake<span class="op">::</span>SNP.manifest,<span class="dt">n=</span><span class="dv">10</span>)[]</span></code></pre></div>
 <pre><code>##              pid ref_a1 ref_a2 ref_a1.af ld.block chr
 ##  1: 10:101291593      T      C  0.480825     1984  10
 ##  2: 10:112186148      C      T  0.648373     1992  10
@@ -129,15 +129,15 @@
 ##  9:  10:59893930      C      T  0.695451     1940  10
 ## 10:   10:6087295      G      T  0.770167     1875  10</code></pre>
 <p>The first job is to work out the intersect between the egpa data and the SNPs that we wish to include in the basis.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#first add a pid column to the egpa dataset</span>
-lyons_egpa[,pid<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(CHR,BP,<span class="dt">sep=</span><span class="st">':'</span>)]
-<span class="co"># check to see whether there are manifest SNPs missing</span>
-M &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(SNP.manifest,lyons_egpa,<span class="dt">by=</span><span class="st">'pid'</span>)
-<span class="co"># in this case there are no missing values.</span>
-M[<span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(or),]</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co">#first add a pid column to the egpa dataset</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>lyons_egpa[,pid<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(CHR,BP,<span class="dt">sep=</span><span class="st">':'</span>)]</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># check to see whether there are manifest SNPs missing</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>M &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(cupcake<span class="op">::</span>SNP.manifest,lyons_egpa,<span class="dt">by=</span><span class="st">'pid'</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># in this case there are no missing values.</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>M[<span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(or),]</span></code></pre></div>
 <pre><code>## Empty data.table (0 rows and 13 cols): pid,ref_a1,ref_a2,ref_a1.af,ld.block,chr...</code></pre>
 <p>In this particular example there are are no missing values, if you find that over 5% of values are missing you might wish to consider imputing missing values either by going back and imputing your GWAS or using a tool such as <a href="https://github.com/zkutalik/ssimp_software">ssimp</a>. The next task is to harmonise OR so that both basis and EGPA datasets are with respect to the same allele. Please note that for the lyons_egpa dataset allele 1 (a1) is the effect allele, for your dataset this might be different in which case you will need to flip when alleles match the manifest file (rather than when they are discordant as is shown below).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">M[,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">NA</span>][]</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>M[,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">NA</span>][]</span></code></pre></div>
 <pre><code>##               pid ref_a1 ref_a2 ref_a1.af ld.block chr CHR        BP a1 a2
 ##   1: 10:101291593      T      C  0.480825     1984  10  10 101291593  T  C
 ##   2: 10:112186148      C      T  0.648373     1992  10  10 112186148  C  T
@@ -162,10 +162,10 @@ M[<span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(or)
 ## 481: 0.9445537 0.05623896  0.2900          NA
 ## 482: 1.0734127 0.06206261  0.5500          NA
 ## 483: 0.9686060 0.06904879  0.7400          NA</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## in this case if we need do nothing as these are already aligned
-M[ref_a1<span class="op">==</span>a1 <span class="op">&amp;</span><span class="st"> </span>ref_a2<span class="op">==</span>a2,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">FALSE</span>]
-## in this case the effect allele is the wrong way around and so we need to flip
-M[ref_a1<span class="op">==</span>a2 <span class="op">&amp;</span><span class="st"> </span>ref_a2<span class="op">==</span>a1,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">TRUE</span>][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'a1'</span>,<span class="st">'a2'</span>,<span class="st">'or'</span>)<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(a2,a1,<span class="dv">1</span><span class="op">/</span>or)][]</code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">## in this case if we need do nothing as these are already aligned</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>M[ref_a1<span class="op">==</span>a1 <span class="op">&amp;</span><span class="st"> </span>ref_a2<span class="op">==</span>a2,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">FALSE</span>]</span>
+<span id="cb11-3"><a href="#cb11-3"></a><span class="co">## in this case the effect allele is the wrong way around and so we need to flip</span></span>
+<span id="cb11-4"><a href="#cb11-4"></a>M[ref_a1<span class="op">==</span>a2 <span class="op">&amp;</span><span class="st"> </span>ref_a2<span class="op">==</span>a1,flip_allele<span class="op">:</span><span class="er">=</span><span class="ot">TRUE</span>][,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'a1'</span>,<span class="st">'a2'</span>,<span class="st">'or'</span>)<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(a2,a1,<span class="dv">1</span><span class="op">/</span>or)][]</span></code></pre></div>
 <pre><code>##               pid ref_a1 ref_a2 ref_a1.af ld.block chr CHR        BP a1 a2
 ##   1: 10:101291593      T      C  0.480825     1984  10  10 101291593  C  T
 ##   2: 10:112186148      C      T  0.648373     1992  10  10 112186148  T  C
@@ -191,113 +191,56 @@ M[ref_a1<span class="op">==</span>a2 <span class="op">&amp;</span><span class="s
 ## 482: 0.9316081 0.06206261  0.5500       FALSE
 ## 483: 1.0324116 0.06904879  0.7400       FALSE</code></pre>
 <p>In this simple case the alleles were easy to align however in you dataset things will probably be different and it is worth considering using something such as annotSnpStats that has more sophisticated routines for aligning alleles. Here is some example code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(annotSnpStats) <span class="co">#see https://github.com/chr1swallace/annotSnpStats</span>
-alleles &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">pid=</span>M<span class="op">$</span>pid,<span class="dt">al.x =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(M<span class="op">$</span>ref_a1,M<span class="op">$</span>ref_a2,<span class="dt">sep=</span><span class="st">'/'</span>),<span class="dt">al.y=</span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(M<span class="op">$</span>a1,M<span class="op">$</span>a2,<span class="dt">sep=</span><span class="st">'/'</span>))
-align.class &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'match'</span>,<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(alleles))
-idx&lt;-<span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(alleles<span class="op">$</span>al.x<span class="op">!=</span>alleles<span class="op">$</span>al.y)
-x.alleles &lt;-<span class="st"> </span>alleles[idx,]<span class="op">$</span>al.x
-<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(x.alleles)&lt;-alleles[idx,]<span class="op">$</span>pid
-y.alleles &lt;-<span class="st">  </span>alleles[idx,]<span class="op">$</span>al.y
-<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(y.alleles)&lt;-<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(x.alleles)
-align.class[idx] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/annotSnpStats/man/g.class.html">g.class</a></span>(x.alleles,y.alleles)
-<span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>(align.class))
-alleles[,g.class<span class="op">:</span><span class="er">=</span>align.class]
-idx&lt;-<span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(alleles<span class="op">$</span>g.class<span class="op">==</span><span class="st">'impossible'</span>)
-<span class="cf">if</span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(idx) <span class="op">&gt;</span><span class="dv">0</span>){
-    M &lt;-<span class="st"> </span>M[<span class="op">-</span>idx,]
-    alleles &lt;-<span class="st"> </span>alleles[<span class="op">-</span>idx,]
-}
-M &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(M,alleles[,.(pid,g.class)],<span class="dt">by=</span><span class="st">'pid'</span>,<span class="dt">all.x=</span><span class="ot">TRUE</span>)
-M &lt;-<span class="st"> </span>M[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span>(pid),]
-M &lt;-<span class="st"> </span>M[g.class<span class="op">==</span><span class="st">'match'</span>,or<span class="op">:</span><span class="er">=</span><span class="dv">1</span><span class="op">/</span>or]</code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(annotSnpStats) <span class="co">#see https://github.com/chr1swallace/annotSnpStats</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>alleles &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">pid=</span>M<span class="op">$</span>pid,<span class="dt">al.x =</span> <span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(M<span class="op">$</span>ref_a1,M<span class="op">$</span>ref_a2,<span class="dt">sep=</span><span class="st">'/'</span>),<span class="dt">al.y=</span><span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(M<span class="op">$</span>a1,M<span class="op">$</span>a2,<span class="dt">sep=</span><span class="st">'/'</span>))</span>
+<span id="cb13-3"><a href="#cb13-3"></a>align.class &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'match'</span>,<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(alleles))</span>
+<span id="cb13-4"><a href="#cb13-4"></a>idx&lt;-<span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(alleles<span class="op">$</span>al.x<span class="op">!=</span>alleles<span class="op">$</span>al.y)</span>
+<span id="cb13-5"><a href="#cb13-5"></a>x.alleles &lt;-<span class="st"> </span>alleles[idx,]<span class="op">$</span>al.x</span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(x.alleles)&lt;-alleles[idx,]<span class="op">$</span>pid</span>
+<span id="cb13-7"><a href="#cb13-7"></a>y.alleles &lt;-<span class="st">  </span>alleles[idx,]<span class="op">$</span>al.y</span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(y.alleles)&lt;-<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(x.alleles)</span>
+<span id="cb13-9"><a href="#cb13-9"></a>align.class[idx] &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/annotSnpStats/man/g.class.html">g.class</a></span>(x.alleles,y.alleles)</span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="kw"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/table.html">table</a></span>(align.class))</span>
+<span id="cb13-11"><a href="#cb13-11"></a>alleles[,g.class<span class="op">:</span><span class="er">=</span>align.class]</span>
+<span id="cb13-12"><a href="#cb13-12"></a>idx&lt;-<span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(alleles<span class="op">$</span>g.class<span class="op">==</span><span class="st">'impossible'</span>)</span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="cf">if</span>(<span class="kw"><a href="https://rdrr.io/r/base/length.html">length</a></span>(idx) <span class="op">&gt;</span><span class="dv">0</span>){</span>
+<span id="cb13-14"><a href="#cb13-14"></a>    M &lt;-<span class="st"> </span>M[<span class="op">-</span>idx,]</span>
+<span id="cb13-15"><a href="#cb13-15"></a>    alleles &lt;-<span class="st"> </span>alleles[<span class="op">-</span>idx,]</span>
+<span id="cb13-16"><a href="#cb13-16"></a>}</span>
+<span id="cb13-17"><a href="#cb13-17"></a>M &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/merge.html">merge</a></span>(M,alleles[,.(pid,g.class)],<span class="dt">by=</span><span class="st">'pid'</span>,<span class="dt">all.x=</span><span class="ot">TRUE</span>)</span>
+<span id="cb13-18"><a href="#cb13-18"></a>M &lt;-<span class="st"> </span>M[<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/duplicated.html">duplicated</a></span>(pid),]</span>
+<span id="cb13-19"><a href="#cb13-19"></a>M &lt;-<span class="st"> </span>M[g.class<span class="op">==</span><span class="st">'match'</span>,or<span class="op">:</span><span class="er">=</span><span class="dv">1</span><span class="op">/</span>or]</span></code></pre></div>
 </div>
 <div id="projecting-onto-the-basis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#projecting-onto-the-basis" class="anchor"></a>Projecting onto the basis</h2>
 <p>We convert odds ratio estimates to the log odds ratio scale and use the cupcake function <em>project_sparse</em> to project the dataset.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proj.dt &lt;-<span class="st"> </span>cupcake<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cupcake/man/project_sparse.html">project_sparse</a></span>(<span class="dt">beta=</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(M<span class="op">$</span>or),<span class="dt">seb=</span>M<span class="op">$</span>seb,<span class="dt">pids=</span>M<span class="op">$</span>pid)[,trait<span class="op">:</span><span class="er">=</span><span class="st">'EGPA'</span>][]</code></pre></div>
-<pre><code>## Warning in cupcake::project_sparse(beta = log(M$or), seb = M$seb, pids = M$pid):
-## more than 5% sparse basis snps missing</code></pre>
-<p>Overall we can see that this trait is significant as 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10}, 2.254018210^{-10} We can check to see if which of the components differ significantly from control as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">proj.dt[p<span class="op">&lt;</span><span class="fl">0.05</span><span class="op">/</span>.N,][]</code></pre></div>
-<pre><code>##      PC       proj     var.proj      delta    p.overall        z            p
-## 1: PC12 0.04222382 5.534777e-05 0.02428538 2.254018e-10 3.264336 1.097211e-03
-## 2: PC13 0.02394193 6.163415e-05 0.05441644 2.254018e-10 6.931375 4.167685e-12
-##    trait
-## 1:  EGPA
-## 2:  EGPA</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>proj.dt &lt;-<span class="st"> </span>cupcake<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cupcake/man/project_sparse.html">project_sparse</a></span>(<span class="dt">beta=</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(M<span class="op">$</span>or),<span class="dt">seb=</span>M<span class="op">$</span>seb,<span class="dt">pids=</span>M<span class="op">$</span>pid)[,trait<span class="op">:</span><span class="er">=</span><span class="st">'EGPA'</span>][]</span></code></pre></div>
+<pre><code>## Warning in cupcake::project_sparse(beta = log(M$or), seb = M$seb, pids =
+## M$pid): more than 5% sparse basis snps missing</code></pre>
+<p>Overall we can see that this trait is significant as 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10}, 2.2540182^{-10} We can check to see if which of the components differ significantly from control as follows:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>proj.dt[p<span class="op">&lt;</span><span class="fl">0.05</span><span class="op">/</span>.N,][]</span></code></pre></div>
+<pre><code>##      PC       proj     var.proj      delta    p.overall        z
+## 1: PC12 0.04222382 5.534777e-05 0.02428538 2.254018e-10 3.264336
+## 2: PC13 0.02394193 6.163415e-05 0.05441644 2.254018e-10 6.931375
+##               p trait
+## 1: 1.097211e-03  EGPA
+## 2: 4.167685e-12  EGPA</code></pre>
 <p>PC13 seems the most interesting and we can plot this in context like so, and see that at least for this component EGPA looks most like Asthma.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">SPARSE_BASIS_EXTDATA &lt;-<span class="st"> '../inst/extdata/sparse_imd_basis'</span>
-SNP_MANIFEST_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/sparse_snp_manifest.RDS'</span>)
-TRAIT_MANIFEST_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/sparse_trait_manifest.tab'</span>)
-SHRINKAGE_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/13_trait_sparse_shrinkage.RDS'</span>)
-BASIS_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/13_trait_sparse_basis.RDS'</span>)
-GWAS_DATA_DIR &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'/gwas_data/'</span>)
-gwas.DT&lt;-<span class="kw"><a href="../reference/get_gwas_data.html">get_gwas_data</a></span>(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)</code></pre></div>
-<pre><code>## Processing VIT</code></pre>
-<pre><code>## Processing UC</code></pre>
-<pre><code>## Processing CD</code></pre>
-<pre><code>## Processing RA</code></pre>
-<pre><code>## Processing SLE</code></pre>
-<pre><code>## Processing T1D</code></pre>
-<pre><code>## Processing PSC</code></pre>
-<pre><code>## Processing asthma</code></pre>
-<pre><code>## Processing PBC</code></pre>
-<pre><code>## Processing CEL</code></pre>
-<pre><code>## Processing MS</code></pre>
-<pre><code>## Adding reference snp manifest annotations</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## project on original basis traits to characterise PCs
-gwas.DT[,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'beta'</span>,<span class="st">'seb'</span>)<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Log.html">log</a></span>(or),<span class="dv">1</span>) ]
-bt.proj &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/split.html">split</a></span>(gwas.DT,gwas.DT<span class="op">$</span>trait),<span class="cf">function</span>(x){
-    tt &lt;-<span class="st"> </span>x<span class="op">$</span>trait <span class="op">%&gt;%</span><span class="st"> </span>unique
-    cupcake<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/cupcake/man/project_sparse.html">project_sparse</a></span>(<span class="dt">beta=</span>x<span class="op">$</span>beta,<span class="dt">seb=</span>x<span class="op">$</span>seb,<span class="dt">pids=</span>x<span class="op">$</span>pid)[,trait<span class="op">:</span><span class="er">=</span>tt]
-}) <span class="op">%&gt;%</span><span class="st"> </span>rbindlist</code></pre></div>
-<pre><code>## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing
-
-## Warning in cupcake::project_sparse(beta = x$beta, seb = x$seb, pids = x$pid):
-## more than 5% sparse basis snps missing</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">comb.dt &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(bt.proj[,.(PC,delta,<span class="dt">var.proj=</span><span class="dv">0</span>,trait)],proj.dt[,.(PC,delta,var.proj,trait)])
-comb.dt[var.proj<span class="op">!=</span><span class="dv">0</span>,ci<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(var.proj) <span class="op">*</span><span class="st"> </span><span class="fl">1.96</span>]
-plot.DT &lt;-<span class="st"> </span>comb.dt[PC<span class="op">==</span><span class="st">'PC13'</span>,][<span class="kw"><a href="https://rdrr.io/r/base/order.html">order</a></span>(delta,<span class="dt">decreasing =</span> <span class="ot">TRUE</span>),]
-idx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(plot.DT<span class="op">$</span>ci))
-cols &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'black'</span>,<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(plot.DT))
-cols[idx] &lt;-<span class="st"> 'red'</span>
-{
-    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/dotchart.html">dotchart</a></span>(delta,<span class="dt">labels=</span>trait,<span class="dt">xlim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">0.1</span>,<span class="fl">0.05</span>),<span class="dt">pch=</span><span class="dv">19</span>,
-                          <span class="dt">main=</span><span class="st">'PC13'</span>,<span class="dt">xlab=</span><span class="st">"Delta PC score"</span>,
-                          <span class="dt">col=</span>cols))
-    ## add 95% confidence intervals
-    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT[idx,],<span class="kw"><a href="https://rdrr.io/r/graphics/arrows.html">arrows</a></span>(delta<span class="op">-</span>ci, idx, delta<span class="op">+</span>ci, idx, <span class="dt">length=</span><span class="fl">0.05</span>, <span class="dt">angle=</span><span class="dv">90</span>, <span class="dt">code=</span><span class="dv">3</span>,<span class="dt">col=</span><span class="st">'red'</span>))
-    <span class="kw"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="dt">v=</span><span class="dv">0</span>,<span class="dt">col=</span><span class="st">'red'</span>,<span class="dt">lty=</span><span class="dv">2</span>)
-}</code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>comb.dt &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(cupcake<span class="op">::</span>basis.trait.proj[,.(PC,delta,<span class="dt">var.proj=</span><span class="dv">0</span>,trait)],proj.dt[,.(PC,delta,var.proj,trait)])</span>
+<span id="cb18-2"><a href="#cb18-2"></a>comb.dt[var.proj<span class="op">!=</span><span class="dv">0</span>,ci<span class="op">:</span><span class="er">=</span><span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(var.proj) <span class="op">*</span><span class="st"> </span><span class="fl">1.96</span>]</span>
+<span id="cb18-3"><a href="#cb18-3"></a>plot.DT &lt;-<span class="st"> </span>comb.dt[PC<span class="op">==</span><span class="st">'PC13'</span>,][<span class="kw"><a href="https://rdrr.io/r/base/order.html">order</a></span>(delta,<span class="dt">decreasing =</span> <span class="ot">TRUE</span>),]</span>
+<span id="cb18-4"><a href="#cb18-4"></a>idx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(plot.DT<span class="op">$</span>ci))</span>
+<span id="cb18-5"><a href="#cb18-5"></a>cols &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'black'</span>,<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(plot.DT))</span>
+<span id="cb18-6"><a href="#cb18-6"></a>cols[idx] &lt;-<span class="st"> 'red'</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>{</span>
+<span id="cb18-8"><a href="#cb18-8"></a>    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/dotchart.html">dotchart</a></span>(delta,<span class="dt">labels=</span>trait,<span class="dt">xlim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">0.01</span>,<span class="fl">0.1</span>),<span class="dt">pch=</span><span class="dv">19</span>,</span>
+<span id="cb18-9"><a href="#cb18-9"></a>                          <span class="dt">main=</span><span class="st">'PC13'</span>,<span class="dt">xlab=</span><span class="st">"Delta PC score"</span>,</span>
+<span id="cb18-10"><a href="#cb18-10"></a>                          <span class="dt">col=</span>cols))</span>
+<span id="cb18-11"><a href="#cb18-11"></a>    <span class="co">## add 95% confidence intervals</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a>    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT[idx,],<span class="kw"><a href="https://rdrr.io/r/graphics/arrows.html">arrows</a></span>(delta<span class="op">-</span>ci, idx, delta<span class="op">+</span>ci, idx, <span class="dt">length=</span><span class="fl">0.05</span>, <span class="dt">angle=</span><span class="dv">90</span>, <span class="dt">code=</span><span class="dv">3</span>,<span class="dt">col=</span><span class="st">'red'</span>))</span>
+<span id="cb18-13"><a href="#cb18-13"></a>    <span class="kw"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="dt">v=</span><span class="dv">0</span>,<span class="dt">col=</span><span class="st">'red'</span>,<span class="dt">lty=</span><span class="dv">2</span>)</span>
+<span id="cb18-14"><a href="#cb18-14"></a>}</span></code></pre></div>
 <p><img src="project-basis_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 </div>
   </div>
