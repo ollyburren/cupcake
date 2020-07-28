@@ -6,19 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Creating a basis using cupcake • cupcake</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Creating a basis using cupcake">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="cupcake">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -72,13 +72,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="create-basis_files/header-attrs-2.3/header-attrs.js"></script><script src="create-basis_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Creating a basis using cupcake</h1>
+      <h1 data-toc-skip>Creating a basis using cupcake</h1>
                         <h4 class="author">Olly Burren</h4>
             
-            <h4 class="date">2020-01-17</h4>
+            <h4 class="date">2020-07-28</h4>
       
       
       <div class="hidden name"><code>create-basis.Rmd</code></div>
@@ -104,8 +104,8 @@
 <h2 class="hasAnchor">
 <a href="#installing-cupcake" class="anchor"></a>Installing cupcake</h2>
 <p>You will need to have the <code>devtool</code> R package installed after which the latest version of the package can be installed as follows</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(devtools)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">"ollyburren/cupcake"</span>,<span class="dt">build_vignettes =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">devtools</span>)
+<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">"ollyburren/cupcake"</span>,<span class="kw">build_vignettes</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
 </div>
 <div id="constructing-a-basis" class="section level1">
 <h1 class="hasAnchor">
@@ -114,16 +114,16 @@
 <h2 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h2>
 <p>Here we load cupcake and other useful packages and define the locations of various data files that we will need to construct a basis.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(cupcake)</span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="co">#&gt; Loading required package: data.table</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</span>
-<span id="cb2-4"><a href="#cb2-4"></a>SPARSE_BASIS_EXTDATA &lt;-<span class="st"> '../inst/extdata/sparse_imd_basis'</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a>SNP_MANIFEST_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/sparse_snp_manifest.RDS'</span>)</span>
-<span id="cb2-6"><a href="#cb2-6"></a>TRAIT_MANIFEST_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/sparse_trait_manifest.tab'</span>)</span>
-<span id="cb2-7"><a href="#cb2-7"></a>SHRINKAGE_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/13_trait_sparse_shrinkage.RDS'</span>)</span>
-<span id="cb2-8"><a href="#cb2-8"></a>BASIS_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/13_trait_sparse_basis.RDS'</span>)</span>
-<span id="cb2-9"><a href="#cb2-9"></a>GWAS_DATA_DIR &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'/gwas_data/'</span>)</span>
-<span id="cb2-10"><a href="#cb2-10"></a>NOSHRINK_BASIS_FILE &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/13_trait_sparse_basis_noshrink.RDS'</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cupcake</span>)
+<span class="co">#&gt; Loading required package: data.table</span>
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">magrittr</span>)
+<span class="no">SPARSE_BASIS_EXTDATA</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/find.package.html">path.package</a></span>(<span class="st">"cupcake"</span>),<span class="st">"extdata"</span>,<span class="st">"sparse_imd_basis"</span>)
+<span class="no">SNP_MANIFEST_FILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/sparse_snp_manifest.RDS'</span>)
+<span class="no">TRAIT_MANIFEST_FILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/sparse_trait_manifest.tab'</span>)
+<span class="no">SHRINKAGE_FILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/13_trait_sparse_shrinkage.RDS'</span>)
+<span class="no">BASIS_FILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/13_trait_sparse_basis.RDS'</span>)
+<span class="no">GWAS_DATA_DIR</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'/gwas_data/'</span>)
+<span class="no">NOSHRINK_BASIS_FILE</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/13_trait_sparse_basis_noshrink.RDS'</span>)</pre></body></html></div>
 <p>During this vignette we will create a `sparse’ basis relevant to immune mediated diseases (IMD). This sparse basis incorporates data about a small subset of SNPs (<span class="math inline">\(n&lt;500\)</span>) that is sufficient to capture the relationships between the input traits with over 99% accuracy as compared to a full basis where <span class="math inline">\(n \approx 300,000\)</span>. We have found such a sparse basis to be sufficient for most analyses.</p>
 <p>If you wish to create your own basis for a set of related traits you should be able to follow this vignette, please note that you will need to define your own set of input files as detailed below.</p>
 </div>
@@ -134,8 +134,8 @@
 <div id="snp-manifest" class="section level3">
 <h3 class="hasAnchor">
 <a href="#snp-manifest" class="anchor"></a>SNP Manifest</h3>
-<p>Each row of this file (see ../inst/extdata/sparse_imd_basis/support/sparse_snp_manifest.RDS) describes a non redundant (see above) set of SNPs to include in the basis. Note that for <em>de novo</em> basis creation this should represent the maximal number of SNPs for which data is available across all basis studies.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(SNP_MANIFEST_FILE) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(.,<span class="dt">n=</span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</span></code></pre></div>
+<p>Each row of this file (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/support/sparse_snp_manifest.RDS) describes a non redundant (see above) set of SNPs to include in the basis. Note that for <em>de novo</em> basis creation this should represent the maximal number of SNPs for which data is available across all basis studies.</p>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">SNP_MANIFEST_FILE</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">.</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">pid</th>
@@ -189,16 +189,16 @@
 <li>ref_a1.af - The allele frequency of ref_a1 (estimated from a suitable reference population).</li>
 <li>ld.block - A number grouping a block of SNPs in high LD (see note).</li>
 </ol>
-<p>The ld.block column assigns each SNP to an approximately LD independent block. We have derived ours from HapMap recombination data and these are available in ../inst/extdata/sparse_imd_basis/hapmap.ld.tab.</p>
+<p>The ld.block column assigns each SNP to an approximately LD independent block. We have derived ours from HapMap recombination data and these are available in /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/hapmap.ld.tab.</p>
 </div>
 <div id="trait-manifest" class="section level3">
 <h3 class="hasAnchor">
 <a href="#trait-manifest" class="anchor"></a>Trait Manifest</h3>
-<p>Each row of this file describes a trait (see ../inst/extdata/sparse_imd_basis/support/sparse_trait_manifest.tab) toinclude in basis creation.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">fread</span>(TRAIT_MANIFEST_FILE) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(.,<span class="dt">n=</span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</span></code></pre></div>
+<p>Each row of this file describes a trait (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/support/sparse_trait_manifest.tab) toinclude in basis creation.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu">fread</span>(<span class="no">TRAIT_MANIFEST_FILE</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">.</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
-<th align="center">trait</th>
+<th align="left">trait</th>
 <th align="left">disease</th>
 <th align="right">cases</th>
 <th align="right">controls</th>
@@ -207,7 +207,7 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="center">VIT</td>
+<td align="left">VIT</td>
 <td align="left">vitiligo_jin</td>
 <td align="right">4680</td>
 <td align="right">39586</td>
@@ -215,7 +215,7 @@
 <td align="left">vitiligo_jin.tab</td>
 </tr>
 <tr class="even">
-<td align="center">UC</td>
+<td align="left">UC</td>
 <td align="left">uc_delaange</td>
 <td align="right">12366</td>
 <td align="right">33609</td>
@@ -223,7 +223,7 @@
 <td align="left">uc_delaange.tab</td>
 </tr>
 <tr class="odd">
-<td align="center">CD</td>
+<td align="left">CD</td>
 <td align="left">cd_delaange</td>
 <td align="right">12194</td>
 <td align="right">28072</td>
@@ -231,7 +231,7 @@
 <td align="left">cd_delaange.tab</td>
 </tr>
 <tr class="even">
-<td align="center">RA</td>
+<td align="left">RA</td>
 <td align="left">ra_okada</td>
 <td align="right">14361</td>
 <td align="right">43923</td>
@@ -239,7 +239,7 @@
 <td align="left">ra_okada.tab</td>
 </tr>
 <tr class="odd">
-<td align="center">SLE</td>
+<td align="left">SLE</td>
 <td align="left">sle_bentham</td>
 <td align="right">4036</td>
 <td align="right">6959</td>
@@ -261,7 +261,7 @@
 <h2 class="hasAnchor">
 <a href="#gwas-source-file" class="anchor"></a>GWAS source file</h2>
 <p>Each row of this file describes the effect and signficance for a set of alleles for a trait which can be derived from the set of GWAS summary statistics for a trait. Effect alleles are expected to match the snp manifest and are duplicated to allow checking. The file should contain either a matching or superset of SNPs described in <code>SNP_MANIFEST_FILE</code>. SNPs that are not found in the <code>SNP_MANIFEST_FILE</code> are excluded, SNPs missing in the input file or for which odds ratio estimates <span class="math inline">\(\in \{0,1\}\)</span> are set to zero.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(GWAS_DATA_DIR,<span class="kw">fread</span>(TRAIT_MANIFEST_FILE)[<span class="dv">1</span>,]<span class="op">$</span>file) <span class="op">%&gt;%</span><span class="st"> </span>fread <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(.,<span class="dt">n=</span><span class="dv">5</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</span></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">GWAS_DATA_DIR</span>,<span class="fu">fread</span>(<span class="no">TRAIT_MANIFEST_FILE</span>)[<span class="fl">1</span>,]$<span class="no">file</span>) <span class="kw">%&gt;%</span> <span class="no">fread</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">.</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">pid</th>
@@ -321,21 +321,21 @@
 <h2 class="hasAnchor">
 <a href="#loading-in-data" class="anchor"></a>Loading in data</h2>
 <p>The loading of data is handled through <code>get_gwas_data</code> routine like so</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>gwas.DT&lt;-<span class="kw"><a href="../reference/get_gwas_data.html">get_gwas_data</a></span>(TRAIT_MANIFEST_FILE,SNP_MANIFEST_FILE,GWAS_DATA_DIR)</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">#&gt; Processing VIT</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co">#&gt; Processing UC</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a><span class="co">#&gt; Processing CD</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="co">#&gt; Processing RA</span></span>
-<span id="cb6-6"><a href="#cb6-6"></a><span class="co">#&gt; Processing SLE</span></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#&gt; Processing T1D</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a><span class="co">#&gt; Processing PSC</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a><span class="co">#&gt; Processing asthma</span></span>
-<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#&gt; Processing PBC</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a><span class="co">#&gt; Processing CEL</span></span>
-<span id="cb6-12"><a href="#cb6-12"></a><span class="co">#&gt; Processing MS</span></span>
-<span id="cb6-13"><a href="#cb6-13"></a><span class="co">#&gt; Adding reference snp manifest annotations</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">gwas.DT</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/get_gwas_data.html">get_gwas_data</a></span>(<span class="no">TRAIT_MANIFEST_FILE</span>,<span class="no">SNP_MANIFEST_FILE</span>,<span class="no">GWAS_DATA_DIR</span>)
+<span class="co">#&gt; Processing VIT</span>
+<span class="co">#&gt; Processing UC</span>
+<span class="co">#&gt; Processing CD</span>
+<span class="co">#&gt; Processing RA</span>
+<span class="co">#&gt; Processing SLE</span>
+<span class="co">#&gt; Processing T1D</span>
+<span class="co">#&gt; Processing PSC</span>
+<span class="co">#&gt; Processing asthma</span>
+<span class="co">#&gt; Processing PBC</span>
+<span class="co">#&gt; Processing CEL</span>
+<span class="co">#&gt; Processing MS</span>
+<span class="co">#&gt; Adding reference snp manifest annotations</span></pre></body></html></div>
 <p>The <code>data.table</code> object <code>gwas.DT</code> contains all the data required for the next step of calculating the shrinkage values to appy to the <span class="math inline">\(\beta\)</span> of all traits.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(gwas.DT,<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</span></code></pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">gwas.DT</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">10</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">pid</th>
@@ -343,7 +343,7 @@
 <th align="left">a2</th>
 <th align="right">or</th>
 <th align="right">p.value</th>
-<th align="center">trait</th>
+<th align="left">trait</th>
 <th align="right">n</th>
 <th align="right">n1</th>
 <th align="right">maf</th>
@@ -356,7 +356,7 @@
 <td align="left">C</td>
 <td align="right">0.990</td>
 <td align="right">6.52e-01</td>
-<td align="center">VIT</td>
+<td align="left">VIT</td>
 <td align="right">44266</td>
 <td align="right">4680</td>
 <td align="right">0.480825</td>
@@ -368,7 +368,7 @@
 <td align="left">C</td>
 <td align="right">0.862</td>
 <td align="right">0.00e+00</td>
-<td align="center">UC</td>
+<td align="left">UC</td>
 <td align="right">45975</td>
 <td align="right">12366</td>
 <td align="right">0.480825</td>
@@ -380,7 +380,7 @@
 <td align="left">C</td>
 <td align="right">0.850</td>
 <td align="right">0.00e+00</td>
-<td align="center">CD</td>
+<td align="left">CD</td>
 <td align="right">40266</td>
 <td align="right">12194</td>
 <td align="right">0.480825</td>
@@ -392,7 +392,7 @@
 <td align="left">C</td>
 <td align="right">1.000</td>
 <td align="right">8.30e-01</td>
-<td align="center">RA</td>
+<td align="left">RA</td>
 <td align="right">58284</td>
 <td align="right">14361</td>
 <td align="right">0.480825</td>
@@ -404,7 +404,7 @@
 <td align="left">C</td>
 <td align="right">1.000</td>
 <td align="right">8.79e-01</td>
-<td align="center">SLE</td>
+<td align="left">SLE</td>
 <td align="right">10995</td>
 <td align="right">4036</td>
 <td align="right">0.480825</td>
@@ -416,7 +416,7 @@
 <td align="left">C</td>
 <td align="right">0.966</td>
 <td align="right">1.62e-01</td>
-<td align="center">T1D</td>
+<td align="left">T1D</td>
 <td align="right">14742</td>
 <td align="right">5913</td>
 <td align="right">0.480825</td>
@@ -428,7 +428,7 @@
 <td align="left">C</td>
 <td align="right">0.876</td>
 <td align="right">1.52e-05</td>
-<td align="center">PSC</td>
+<td align="left">PSC</td>
 <td align="right">24751</td>
 <td align="right">4796</td>
 <td align="right">0.480825</td>
@@ -440,7 +440,7 @@
 <td align="left">C</td>
 <td align="right">0.987</td>
 <td align="right">3.25e-01</td>
-<td align="center">asthma</td>
+<td align="left">asthma</td>
 <td align="right">127669</td>
 <td align="right">19954</td>
 <td align="right">0.480825</td>
@@ -452,7 +452,7 @@
 <td align="left">C</td>
 <td align="right">1.010</td>
 <td align="right">8.61e-01</td>
-<td align="center">PBC</td>
+<td align="left">PBC</td>
 <td align="right">13239</td>
 <td align="right">2764</td>
 <td align="right">0.480825</td>
@@ -464,7 +464,7 @@
 <td align="left">C</td>
 <td align="right">0.981</td>
 <td align="right">4.57e-01</td>
-<td align="center">CEL</td>
+<td align="left">CEL</td>
 <td align="right">15283</td>
 <td align="right">4533</td>
 <td align="right">0.480825</td>
@@ -477,10 +477,10 @@
 <h2 class="hasAnchor">
 <a href="#computing-shrinkage-for-illustrative-purposes-only" class="anchor"></a>computing shrinkage (for illustrative purposes only)</h2>
 <p>Next we use the <code>data.table</code> created to compute shrinkages like so</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>shrink.DT&lt;-<span class="kw"><a href="../reference/compute_shrinkage_metrics.html">compute_shrinkage_metrics</a></span>(gwas.DT)</span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; Computing maf_se_estimated using or, sample size and p.value</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; Computing weighted pp shrinkage</span></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="kw"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(shrink.DT,<span class="dt">n=</span><span class="dv">10</span>) <span class="op">%&gt;%</span><span class="st"> </span>knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</span></code></pre></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">shrink.DT</span><span class="kw">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/compute_shrinkage_metrics.html">compute_shrinkage_metrics</a></span>(<span class="no">gwas.DT</span>)
+<span class="co">#&gt; Computing maf_se_estimated using or, sample size and p.value</span>
+<span class="co">#&gt; Computing weighted pp shrinkage</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">shrink.DT</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">10</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left">pid</th>
@@ -536,34 +536,34 @@
 <a href="#creating-the-basis" class="anchor"></a>Creating the basis</h2>
 <p>The final step is to create a basis. This can be done using the <code>create_basis</code> command. Note there is an <code>apply.shrinkage</code> option that allows the creation of a basis without the application of any shrinkage.</p>
 <p>The final step is to create a basis from the two input traits, firstly we apply shrinkages and line up variants across studies using <code>create_ds_matrix</code>. Next we add a null or <code>control</code> study in order to anchor the basis. In practice this means adding a row of zeroes to</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">## create a basis without using the shrinkages</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a>basis.noshrink &lt;-<span class="st"> </span><span class="kw"><a href="../reference/create_basis.html">create_basis</a></span>(gwas.DT,shrink.DT,<span class="dt">apply.shrinkage=</span><span class="ot">FALSE</span>)</span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt; Warning: No shrinkage will be applied!</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt; Using none</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a>basis &lt;-<span class="st"> </span><span class="kw"><a href="../reference/create_basis.html">create_basis</a></span>(gwas.DT,shrink.DT)</span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; Using shrinkage</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co">## create a basis without using the shrinkages</span>
+<span class="no">basis.noshrink</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/create_basis.html">create_basis</a></span>(<span class="no">gwas.DT</span>,<span class="no">shrink.DT</span>,<span class="kw">apply.shrinkage</span><span class="kw">=</span><span class="fl">FALSE</span>)
+<span class="co">#&gt; Warning: No shrinkage will be applied!</span>
+<span class="co">#&gt; Using none</span>
+<span class="no">basis</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/create_basis.html">create_basis</a></span>(<span class="no">gwas.DT</span>,<span class="no">shrink.DT</span>)
+<span class="co">#&gt; Using shrinkage</span></pre></body></html></div>
 </div>
 <div id="visualising-basis" class="section level2">
 <h2 class="hasAnchor">
 <a href="#visualising-basis" class="anchor"></a>Visualising basis</h2>
 <p>We can look at a simple biplot of the first two principal components (PCs) of both bases to look at broad differences between them.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb10-2"><a href="#cb10-2"></a></span>
-<span id="cb10-3"><a href="#cb10-3"></a><span class="co">#plot no shrinkage</span></span>
-<span id="cb10-4"><a href="#cb10-4"></a>plot.no.DT &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">trait=</span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(basis.noshrink<span class="op">$</span>x),basis.noshrink<span class="op">$</span>x)</span>
-<span id="cb10-5"><a href="#cb10-5"></a>xlim &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.no.DT,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(PC1),<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(PC1)) <span class="op">*</span><span class="st"> </span><span class="fl">1.2</span>)</span>
-<span id="cb10-6"><a href="#cb10-6"></a>ylim &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.no.DT,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(PC2),<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(PC2)) <span class="op">*</span><span class="st"> </span><span class="fl">1.2</span>)</span>
-<span id="cb10-7"><a href="#cb10-7"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.no.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(PC1,PC2,<span class="dt">type=</span><span class="st">'n'</span>,<span class="dt">xlim=</span>xlim,<span class="dt">ylim=</span>ylim,<span class="dt">main=</span><span class="st">"No shrinkage"</span>))</span>
-<span id="cb10-8"><a href="#cb10-8"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.no.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(PC1,PC2,<span class="dt">labels=</span>trait, <span class="dt">cex=</span> <span class="fl">0.8</span>,<span class="dt">adj=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,<span class="dv">0</span>)))</span>
-<span id="cb10-9"><a href="#cb10-9"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.no.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(PC1,PC2,<span class="dt">cex=</span><span class="fl">0.5</span>,<span class="dt">pch=</span><span class="dv">19</span>))</span>
-<span id="cb10-10"><a href="#cb10-10"></a></span>
-<span id="cb10-11"><a href="#cb10-11"></a><span class="co">#plot shrinkage</span></span>
-<span id="cb10-12"><a href="#cb10-12"></a>plot.DT &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">trait=</span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(basis<span class="op">$</span>x),basis<span class="op">$</span>x)</span>
-<span id="cb10-13"><a href="#cb10-13"></a>xlim &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(PC1),<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(PC1)) <span class="op">*</span><span class="st"> </span><span class="fl">1.2</span>)</span>
-<span id="cb10-14"><a href="#cb10-14"></a>ylim &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(PC2),<span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(PC2)) <span class="op">*</span><span class="st"> </span><span class="fl">1.2</span>)</span>
-<span id="cb10-15"><a href="#cb10-15"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(PC1,PC2,<span class="dt">type=</span><span class="st">'n'</span>,<span class="dt">xlim=</span>xlim,<span class="dt">ylim=</span>ylim,<span class="dt">main=</span><span class="st">"With shrinkage"</span>))</span>
-<span id="cb10-16"><a href="#cb10-16"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(PC1,PC2,<span class="dt">labels=</span>trait, <span class="dt">cex=</span> <span class="fl">0.8</span>, <span class="dt">adj=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">0</span>,<span class="dv">0</span>)))</span>
-<span id="cb10-17"><a href="#cb10-17"></a><span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(PC1,PC2,<span class="dt">cex=</span><span class="fl">0.5</span>,<span class="dt">pch=</span><span class="dv">19</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
+
+<span class="co">#plot no shrinkage</span>
+<span class="no">plot.no.DT</span> <span class="kw">&lt;-</span> <span class="fu">data.table</span>(<span class="kw">trait</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">basis.noshrink</span>$<span class="no">x</span>),<span class="no">basis.noshrink</span>$<span class="no">x</span>)
+<span class="no">xlim</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.no.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">PC1</span>),<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">PC1</span>)) * <span class="fl">1.2</span>)
+<span class="no">ylim</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.no.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">PC2</span>),<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">PC2</span>)) * <span class="fl">1.2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.no.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">'n'</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="no">xlim</span>,<span class="kw">ylim</span><span class="kw">=</span><span class="no">ylim</span>,<span class="kw">main</span><span class="kw">=</span><span class="st">"No shrinkage"</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.no.DT</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">labels</span><span class="kw">=</span><span class="no">trait</span>, <span class="kw">cex</span><span class="kw">=</span> <span class="fl">0.8</span>,<span class="kw">adj</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0</span>)))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.no.DT</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">cex</span><span class="kw">=</span><span class="fl">0.5</span>,<span class="kw">pch</span><span class="kw">=</span><span class="fl">19</span>))
+
+<span class="co">#plot shrinkage</span>
+<span class="no">plot.DT</span> <span class="kw">&lt;-</span> <span class="fu">data.table</span>(<span class="kw">trait</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">basis</span>$<span class="no">x</span>),<span class="no">basis</span>$<span class="no">x</span>)
+<span class="no">xlim</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">PC1</span>),<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">PC1</span>)) * <span class="fl">1.2</span>)
+<span class="no">ylim</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">PC2</span>),<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">PC2</span>)) * <span class="fl">1.2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">type</span><span class="kw">=</span><span class="st">'n'</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="no">xlim</span>,<span class="kw">ylim</span><span class="kw">=</span><span class="no">ylim</span>,<span class="kw">main</span><span class="kw">=</span><span class="st">"With shrinkage"</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">labels</span><span class="kw">=</span><span class="no">trait</span>, <span class="kw">cex</span><span class="kw">=</span> <span class="fl">0.8</span>, <span class="kw">adj</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>,<span class="fl">0</span>)))
+<span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">PC1</span>,<span class="no">PC2</span>,<span class="kw">cex</span><span class="kw">=</span><span class="fl">0.5</span>,<span class="kw">pch</span><span class="kw">=</span><span class="fl">19</span>))</pre></body></html></div>
 <p><img src="create-basis_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>In this case they are broadly similar which we might expect given that the SNPs used in the sparse basis have been preselected based on their shrinkages. There are more subtle differences, for example PC2 scores across most traits are attenuated (relatively) for the shrunk basis compared to the unshrunk basis.</p>
 </div>
@@ -572,15 +572,15 @@
 <h1 class="hasAnchor">
 <a href="#projecting-data-onto-the-basis" class="anchor"></a>Projecting data onto the basis</h1>
 <p>Whilst the basis created has some interest its primary purpose is to project on an external dataset. Here we project on summary statistics from UK Biobank for self-reported SLE status (obtained from <a href="http://www.nealelab.is/uk-biobank">Neale Laboratory UKBB round 2</a> using the <code>project_basis</code> command. To do this we use a pregenerated sparse basis based on 13 IMD diseases. One hypothesis might be that we expect this projected SLE dataset to sit closer to the basis SLE projection than other traits. Here we perform this analysis using bases with both with and without shrinkage using standard aglommerative hierarchical clustering in order to compare PC scores across traits.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>basis &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(BASIS_FILE)</span>
-<span id="cb11-2"><a href="#cb11-2"></a>basis.noshrink &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(NOSHRINK_BASIS_FILE)</span>
-<span id="cb11-3"><a href="#cb11-3"></a>shrink.DT &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(SHRINKAGE_FILE)</span>
-<span id="cb11-4"><a href="#cb11-4"></a>sle.DT &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(GWAS_DATA_DIR,<span class="st">'ukbb_neale_srd_sle.tab'</span>) <span class="op">%&gt;%</span><span class="st"> </span>fread</span>
-<span id="cb11-5"><a href="#cb11-5"></a>sle.proj &lt;-<span class="st"> </span><span class="kw"><a href="../reference/project_basis.html">project_basis</a></span>(sle.DT,shrink.DT,basis,<span class="dt">traitname=</span><span class="st">'UKBB:SLE'</span>)</span>
-<span id="cb11-6"><a href="#cb11-6"></a>sle.noshrink.proj &lt;-<span class="st"> </span><span class="kw"><a href="../reference/project_basis.html">project_basis</a></span>(sle.DT,shrink.DT,basis.noshrink,<span class="dt">traitname=</span><span class="st">'UKBB:SLE'</span>)</span>
-<span id="cb11-7"><a href="#cb11-7"></a><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb11-8"><a href="#cb11-8"></a><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(sle.proj<span class="op">$</span>proj,basis.noshrink<span class="op">$</span>x) <span class="op">%&gt;%</span><span class="st"> </span>dist <span class="op">%&gt;%</span><span class="st"> </span>hclust <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.,<span class="dt">main=</span><span class="st">"No shrinkage"</span>)</span>
-<span id="cb11-9"><a href="#cb11-9"></a><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(sle.proj<span class="op">$</span>proj,basis<span class="op">$</span>x) <span class="op">%&gt;%</span><span class="st"> </span>dist <span class="op">%&gt;%</span><span class="st"> </span>hclust <span class="op">%&gt;%</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(.,<span class="dt">main=</span><span class="st">"With shrinkage"</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">basis</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">BASIS_FILE</span>)
+<span class="no">basis.noshrink</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">NOSHRINK_BASIS_FILE</span>)
+<span class="no">shrink.DT</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">SHRINKAGE_FILE</span>)
+<span class="no">sle.DT</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">GWAS_DATA_DIR</span>,<span class="st">'ukbb_neale_srd_sle.tab'</span>) <span class="kw">%&gt;%</span> <span class="no">fread</span>
+<span class="no">sle.proj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/project_basis.html">project_basis</a></span>(<span class="no">sle.DT</span>,<span class="no">shrink.DT</span>,<span class="no">basis</span>,<span class="kw">traitname</span><span class="kw">=</span><span class="st">'UKBB:SLE'</span>)
+<span class="no">sle.noshrink.proj</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/project_basis.html">project_basis</a></span>(<span class="no">sle.DT</span>,<span class="no">shrink.DT</span>,<span class="no">basis.noshrink</span>,<span class="kw">traitname</span><span class="kw">=</span><span class="st">'UKBB:SLE'</span>)
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">sle.proj</span>$<span class="no">proj</span>,<span class="no">basis.noshrink</span>$<span class="no">x</span>) <span class="kw">%&gt;%</span> <span class="no">dist</span> <span class="kw">%&gt;%</span> <span class="no">hclust</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">.</span>,<span class="kw">main</span><span class="kw">=</span><span class="st">"No shrinkage"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="no">sle.proj</span>$<span class="no">proj</span>,<span class="no">basis</span>$<span class="no">x</span>) <span class="kw">%&gt;%</span> <span class="no">dist</span> <span class="kw">%&gt;%</span> <span class="no">hclust</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">.</span>,<span class="kw">main</span><span class="kw">=</span><span class="st">"With shrinkage"</span>)</pre></body></html></div>
 <p><img src="create-basis_files/figure-html/unnamed-chunk-11-1.png" width="672"></p>
 <p>Here we can see that with ‘No shrinkage’, relationships between basis traits seem less clear and UKBB:SLE cluster with ‘control’. ‘With shrinkage’ our hypothesis is borne out such that UKBB:SLE projection clusters with the basis SLE.</p>
 </div>
@@ -589,75 +589,55 @@
 <a href="#testing-projection-for-significant-deviation-from-pseudo-control" class="anchor"></a>Testing projection for significant deviation from pseudo-control</h1>
 <p>In order to prioritise individual components we might wish to assess the significance for a projected trait. One approach is to assess, for a given component, whether the projected score under consideration differs significantly from the pseudo-control. This requires an estimation of the standard error of the projected trait score <span class="math inline">\(\sigma_{\text{proj}}\)</span>, which in turn depends on the variance of the traits estimated effect sizes (<span class="math inline">\(\sigma_{\hat{\beta}}\)</span>) for each basis SNP as well as their covariance.</p>
 <p>In the absence of reported <span class="math inline">\(\sigma_{\hat{\beta}}\)</span> this can be back calculated (albeit with a loss of precision) by <span class="math inline">\(\sigma_{\hat{\beta}} = \frac{\hat{\beta}}{\Phi^{-1}(p/2)}\)</span>, where <span class="math inline">\(p\)</span> is the <span class="math inline">\(p\)</span>-value reported and <span class="math inline">\(\Phi^{-1}(p/2)\)</span> is the inverse cumulative normal distribution. The covariance of these can be computed by using a set of reference genotypes to estimate genotypic correlation, here we use individuals of European ancestry from 1000 genomes reference genotypes in snpMatrix format.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co">## load in reference genotypes - note these are</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a>REF_GT &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(SPARSE_BASIS_EXTDATA,<span class="st">'support/1KG_reference_genotypes.RDS'</span>)</span>
-<span id="cb12-3"><a href="#cb12-3"></a>sm<span class="fl">.1</span>kg &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(REF_GT)</span>
-<span id="cb12-4"><a href="#cb12-4"></a><span class="co">## convert basis rotation matrix to data.table</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>w.DT &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">pid=</span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(basis<span class="op">$</span>rotation),basis<span class="op">$</span>rotation)</span>
-<span id="cb12-6"><a href="#cb12-6"></a><span class="co">## compute variance associated with projecting sle.DT dataset</span></span>
-<span id="cb12-7"><a href="#cb12-7"></a>var.seb &lt;-<span class="st"> </span><span class="kw"><a href="../reference/compute_seb_proj_var_sparse.html">compute_seb_proj_var_sparse</a></span>(sle.DT,shrink.DT,w.DT,sm<span class="fl">.1</span>kg,<span class="dt">method=</span><span class="st">'shrinkage'</span>,<span class="dt">quiet=</span><span class="ot">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co">## load in reference genotypes - note these are</span>
+<span class="no">REF_GT</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">SPARSE_BASIS_EXTDATA</span>,<span class="st">'support/1KG_reference_genotypes.RDS'</span>)
+<span class="no">sm.1kg</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">REF_GT</span>)
+<span class="co">## convert basis rotation matrix to data.table</span>
+<span class="no">w.DT</span> <span class="kw">&lt;-</span> <span class="fu">data.table</span>(<span class="kw">pid</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">basis</span>$<span class="no">rotation</span>),<span class="no">basis</span>$<span class="no">rotation</span>)
+<span class="co">## compute variance associated with projecting sle.DT dataset</span>
+<span class="no">var.seb</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cupcake/man/compute_seb_proj_var_sparse.html">compute_seb_proj_var_sparse</a></span>(<span class="no">sle.DT</span>,<span class="no">shrink.DT</span>,<span class="no">w.DT</span>,<span class="no">sm.1kg</span>,<span class="kw">method</span><span class="kw">=</span><span class="st">'shrinkage'</span>,<span class="kw">quiet</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
 <p>We can use this variance estimation to assess significance such that <span class="math inline">\(Z = \frac{\text{PC}_{\text{proj}} - \text{PC}_{\text{control}}}{\sigma_{\text{proj}}}\)</span>, which can be used to compute a <span class="math inline">\(p\)</span>-value.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>Z.pcs &lt;-<span class="st"> </span>(sle.proj<span class="op">$</span>proj <span class="op">-</span><span class="st"> </span>basis<span class="op">$</span>x[<span class="st">'control'</span>,])<span class="op">/</span><span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(var.seb)</span>
-<span id="cb13-2"><a href="#cb13-2"></a>p.pcs &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(Z.pcs),<span class="dt">lower.tail=</span><span class="ot">FALSE</span>) <span class="op">*</span><span class="st"> </span><span class="dv">2</span></span>
-<span id="cb13-3"><a href="#cb13-3"></a><span class="co">## note pcs which are significant taking into account multiple testing</span></span>
-<span id="cb13-4"><a href="#cb13-4"></a>keep.pcs &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(p.pcs)[<span class="kw"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(p.pcs,<span class="dt">method=</span><span class="st">'bonferroni'</span>) <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>]</span></code></pre></div>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">Z.pcs</span> <span class="kw">&lt;-</span> (<span class="no">sle.proj</span>$<span class="no">proj</span> - <span class="no">basis</span>$<span class="no">x</span>[<span class="st">'control'</span>,])/<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="no">var.seb</span>)
+<span class="no">p.pcs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">Z.pcs</span>),<span class="kw">lower.tail</span><span class="kw">=</span><span class="fl">FALSE</span>) * <span class="fl">2</span>
+<span class="co">## note pcs which are significant taking into account multiple testing</span>
+<span class="no">keep.pcs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">p.pcs</span>)[<span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span>(<span class="no">p.pcs</span>,<span class="kw">method</span><span class="kw">=</span><span class="st">'bonferroni'</span>) <span class="kw">&lt;</span> <span class="fl">0.05</span>]</pre></body></html></div>
 <p>From this we can see that our projected dataset has two significant components PC1and PC2. We can summarise graphically out findings in the context of basis traits as follows. <strong>N.B</strong> note that as basis traits are used to create the basis they have no associated confidence intervals.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="co">## combine projected with basis traits and centre to control disease</span></span>
-<span id="cb14-2"><a href="#cb14-2"></a>dat &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(basis<span class="op">$</span>x,<span class="dv">1</span>,<span class="cf">function</span>(x) x<span class="op">-</span>basis<span class="op">$</span>x[<span class="st">'control'</span>,]) <span class="op">%&gt;%</span><span class="st"> </span>t,sle.proj<span class="op">$</span>proj <span class="op">-</span><span class="st"> </span>basis<span class="op">$</span>x[<span class="st">'control'</span>,])</span>
-<span id="cb14-3"><a href="#cb14-3"></a><span class="co">## convert to data.table and remove control</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a>dat.DT &lt;-<span class="st"> </span><span class="kw">data.table</span>(<span class="dt">trait=</span><span class="kw"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(dat),dat)[trait<span class="op">!=</span><span class="st">'control'</span>,]</span>
-<span id="cb14-5"><a href="#cb14-5"></a><span class="co">## short fat table to long thin keeping only significant pcs</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a>dat.DT &lt;-<span class="st"> </span><span class="kw">melt</span>(dat.DT,<span class="dt">id.vars=</span><span class="st">'trait'</span>)[variable <span class="op">%in%</span><span class="st"> </span>keep.pcs,]</span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="kw">setnames</span>(dat.DT,<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'variable'</span>,<span class="st">'value'</span>),<span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'pc'</span>,<span class="st">'delta'</span>))</span>
-<span id="cb14-8"><a href="#cb14-8"></a><span class="co">## compute confidence intervals for projected dataset.</span></span>
-<span id="cb14-9"><a href="#cb14-9"></a>ci &lt;-<span class="st"> </span>(var.seb[keep.pcs] <span class="op">%&gt;%</span><span class="st"> </span>sqrt) <span class="op">*</span><span class="st"> </span><span class="fl">1.96</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a>dat.DT[trait<span class="op">==</span><span class="st">'UKBB:SLE'</span>,ci<span class="op">:</span><span class="er">=</span>ci]</span>
-<span id="cb14-11"><a href="#cb14-11"></a><span class="co">## plotting code</span></span>
-<span id="cb14-12"><a href="#cb14-12"></a><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mfrow=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb14-13"><a href="#cb14-13"></a><span class="cf">for</span>(p <span class="cf">in</span> keep.pcs){</span>
-<span id="cb14-14"><a href="#cb14-14"></a>  plot.DT &lt;-<span class="st"> </span>dat.DT[pc<span class="op">==</span>p,][<span class="kw"><a href="https://rdrr.io/r/base/order.html">order</a></span>(delta,<span class="dt">decreasing =</span> <span class="ot">TRUE</span>),]</span>
-<span id="cb14-15"><a href="#cb14-15"></a>  xl &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/range.html">range</a></span>(plot.DT<span class="op">$</span>delta<span class="op">-</span>ci,plot.DT<span class="op">$</span>delta<span class="op">+</span>ci)</span>
-<span id="cb14-16"><a href="#cb14-16"></a>  idx &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(plot.DT<span class="op">$</span>ci))</span>
-<span id="cb14-17"><a href="#cb14-17"></a>  cols &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'black'</span>,<span class="kw"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(plot.DT))</span>
-<span id="cb14-18"><a href="#cb14-18"></a>  cols[idx] &lt;-<span class="st"> 'red'</span></span>
-<span id="cb14-19"><a href="#cb14-19"></a>  {</span>
-<span id="cb14-20"><a href="#cb14-20"></a>    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT,<span class="kw"><a href="https://rdrr.io/r/graphics/dotchart.html">dotchart</a></span>(delta,<span class="dt">labels=</span>trait,<span class="dt">xlim=</span>xl,<span class="dt">pch=</span><span class="dv">19</span>,</span>
-<span id="cb14-21"><a href="#cb14-21"></a>                          <span class="dt">main=</span>p,<span class="dt">xlab=</span><span class="st">"Delta PC score"</span>,</span>
-<span id="cb14-22"><a href="#cb14-22"></a>                          <span class="dt">col=</span>cols))</span>
-<span id="cb14-23"><a href="#cb14-23"></a>    <span class="co">## add 95% confidence intervals</span></span>
-<span id="cb14-24"><a href="#cb14-24"></a>    <span class="kw"><a href="https://rdrr.io/r/base/with.html">with</a></span>(plot.DT[idx,],<span class="kw"><a href="https://rdrr.io/r/graphics/arrows.html">arrows</a></span>(delta<span class="op">-</span>ci, idx, delta<span class="op">+</span>ci, idx, <span class="dt">length=</span><span class="fl">0.05</span>, <span class="dt">angle=</span><span class="dv">90</span>, <span class="dt">code=</span><span class="dv">3</span>,<span class="dt">col=</span><span class="st">'red'</span>))</span>
-<span id="cb14-25"><a href="#cb14-25"></a>    <span class="kw"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="dt">v=</span><span class="dv">0</span>,<span class="dt">col=</span><span class="st">'red'</span>,<span class="dt">lty=</span><span class="dv">2</span>)</span>
-<span id="cb14-26"><a href="#cb14-26"></a>  }</span>
-<span id="cb14-27"><a href="#cb14-27"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co">## combine projected with basis traits and centre to control disease</span>
+<span class="no">dat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">basis</span>$<span class="no">x</span>,<span class="fl">1</span>,<span class="kw">function</span>(<span class="no">x</span>) <span class="no">x</span>-<span class="no">basis</span>$<span class="no">x</span>[<span class="st">'control'</span>,]) <span class="kw">%&gt;%</span> <span class="no">t</span>,<span class="no">sle.proj</span>$<span class="no">proj</span> - <span class="no">basis</span>$<span class="no">x</span>[<span class="st">'control'</span>,])
+<span class="co">## convert to data.table and remove control</span>
+<span class="no">dat.DT</span> <span class="kw">&lt;-</span> <span class="fu">data.table</span>(<span class="kw">trait</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">dat</span>),<span class="no">dat</span>)[<span class="no">trait</span><span class="kw">!=</span><span class="st">'control'</span>,]
+<span class="co">## short fat table to long thin keeping only significant pcs</span>
+<span class="no">dat.DT</span> <span class="kw">&lt;-</span> <span class="fu">melt</span>(<span class="no">dat.DT</span>,<span class="kw">id.vars</span><span class="kw">=</span><span class="st">'trait'</span>)[<span class="no">variable</span> <span class="kw">%in%</span> <span class="no">keep.pcs</span>,]
+<span class="fu">setnames</span>(<span class="no">dat.DT</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'variable'</span>,<span class="st">'value'</span>),<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'pc'</span>,<span class="st">'delta'</span>))
+<span class="co">## compute confidence intervals for projected dataset.</span>
+<span class="no">ci</span> <span class="kw">&lt;-</span> (<span class="no">var.seb</span>[<span class="no">keep.pcs</span>] <span class="kw">%&gt;%</span> <span class="no">sqrt</span>) * <span class="fl">1.96</span>
+<span class="no">dat.DT</span>[<span class="no">trait</span><span class="kw">==</span><span class="st">'UKBB:SLE'</span>,<span class="no">ci</span><span class="kw">:=</span><span class="no">ci</span>]
+<span class="co">## plotting code</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>))
+<span class="kw">for</span>(<span class="no">p</span> <span class="kw">in</span> <span class="no">keep.pcs</span>){
+  <span class="no">plot.DT</span> <span class="kw">&lt;-</span> <span class="no">dat.DT</span>[<span class="no">pc</span><span class="kw">==</span><span class="no">p</span>,][<span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="no">delta</span>,<span class="kw">decreasing</span> <span class="kw">=</span> <span class="fl">TRUE</span>),]
+  <span class="no">xl</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span>(<span class="no">plot.DT</span>$<span class="no">delta</span>-<span class="no">ci</span>,<span class="no">plot.DT</span>$<span class="no">delta</span>+<span class="no">ci</span>)
+  <span class="no">idx</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">plot.DT</span>$<span class="no">ci</span>))
+  <span class="no">cols</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="st">'black'</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">plot.DT</span>))
+  <span class="no">cols</span>[<span class="no">idx</span>] <span class="kw">&lt;-</span> <span class="st">'red'</span>
+  {
+    <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>,<span class="fu"><a href="https://rdrr.io/r/graphics/dotchart.html">dotchart</a></span>(<span class="no">delta</span>,<span class="kw">labels</span><span class="kw">=</span><span class="no">trait</span>,<span class="kw">xlim</span><span class="kw">=</span><span class="no">xl</span>,<span class="kw">pch</span><span class="kw">=</span><span class="fl">19</span>,
+                          <span class="kw">main</span><span class="kw">=</span><span class="no">p</span>,<span class="kw">xlab</span><span class="kw">=</span><span class="st">"Delta PC score"</span>,
+                          <span class="kw">col</span><span class="kw">=</span><span class="no">cols</span>))
+    <span class="co">## add 95% confidence intervals</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/with.html">with</a></span>(<span class="no">plot.DT</span>[<span class="no">idx</span>,],<span class="fu"><a href="https://rdrr.io/r/graphics/arrows.html">arrows</a></span>(<span class="no">delta</span>-<span class="no">ci</span>, <span class="no">idx</span>, <span class="no">delta</span>+<span class="no">ci</span>, <span class="no">idx</span>, <span class="kw">length</span><span class="kw">=</span><span class="fl">0.05</span>, <span class="kw">angle</span><span class="kw">=</span><span class="fl">90</span>, <span class="kw">code</span><span class="kw">=</span><span class="fl">3</span>,<span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>))
+    <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span>(<span class="kw">v</span><span class="kw">=</span><span class="fl">0</span>,<span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>,<span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)
+  }
+}</pre></body></html></div>
 <p><img src="create-basis_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#introduction">Introduction</a></li>
-      <li><a href="#installing-cupcake">Installing cupcake</a></li>
-      <li>
-<a href="#constructing-a-basis">Constructing a basis</a>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#setup">Setup</a></li>
-      <li><a href="#input-files">Input files</a></li>
-      <li><a href="#gwas-source-file">GWAS source file</a></li>
-      <li><a href="#loading-in-data">Loading in data</a></li>
-      <li><a href="#computing-shrinkage-for-illustrative-purposes-only">computing shrinkage (for illustrative purposes only)</a></li>
-      <li><a href="#creating-the-basis">Creating the basis</a></li>
-      <li><a href="#visualising-basis">Visualising basis</a></li>
-      </ul>
-</li>
-      <li><a href="#projecting-data-onto-the-basis">Projecting data onto the basis</a></li>
-      <li><a href="#testing-projection-for-significant-deviation-from-pseudo-control">Testing projection for significant deviation from pseudo-control</a></li>
-      </ul>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
 
@@ -668,7 +648,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
