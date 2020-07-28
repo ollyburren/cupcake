@@ -124,6 +124,40 @@ lor_f <- function(f0,n,target.or,target.prob,n.steps){
     "11"=digamma(a0) - digamma(b0) - digamma(a1) + digamma(2+b1))
 }
 
+#' This function calculates the posterior expectation of the log odds ratio for a number of case genotypes given control allele frequency
+#' @param f0 a scalar - allele frequency in controls
+#' @param n0 a scalar - number of control individuals sampled
+#' @param g a vector of length 3 given the number of 00, 01 and 11 genotypes seen
+#' @param target.or a scalar - an odds ratio threshold to compute P(sim.or > target.or)
+#' @param target.prob a scalar - a probability that a sampled variant will exceed target.or
+#' @param n.steps an integer - length of search grid to employ - larger gives a more accurate integral estimate
+#' @return a list object
+#' \enumerate{
+#' \item 00 - mean lor for reference hom
+#' \item 01 - mean lor for het
+#' \item 11 - mean lor for alternative hom
+#' \item quant00 - quantiles for posterior distribution of allele frequency in cases for ref hom
+#' \item quant01 - quantiles for posterior distribution of allele frequency in cases for het
+#' \item quant11 - quantiles for posterior distribution of allele frequency in cases for alt hom
+#' }
+#' @export
+
+lor_nf <- function(f0,n0,g,target.or=2,target.prob=0.05,n.steps=10) {
+  # params for control distribution
+  p0.shape <- control_prior_shape(f0,n0)
+  a0 <- p0.shape$a0
+  b0 <- p0.shape$b0
+  # prior for case distribution
+  a1b1 <- opt_a1b1(a0,b0,target.or,target.prob,n.steps)
+  a1 <- a1b1$a1
+  b1 <- a1b1$b1
+# posterior for case distribution
+  a2 = a1 + g[2] + 2*g[3]
+  b2 = b1 + g[2] + 2*g[1]
+# posterior expectation 
+digamma(a0) - digamma(b0) - digamma(a2) + digamma(b2)
+}
+
 #' This function estimates shape parameters for a prior distribution of control allele frequencies
 #' \code{opt_a1b1} estimate shape parameters a1,b1
 #' @param a0 a scalar - beta distribution alpha shape parameter for prior on allele frequency in controls

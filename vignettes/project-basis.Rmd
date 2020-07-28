@@ -54,7 +54,8 @@ M[,flip_allele:=NA][]
 ## in this case if we need do nothing as these are already aligned
 M[ref_a1==a1 & ref_a2==a2,flip_allele:=FALSE]
 ## in this case the effect allele is the wrong way around and so we need to flip
-M[ref_a1==a2 & ref_a2==a1,flip_allele:=TRUE][,c('a1','a2','or'):=list(a2,a1,1/or)][]
+M[ref_a1==a2 & ref_a2==a1,c('flip_allele','a1','a2','or'):=list(TRUE, a2,a1,1/or)]
+#M[ref_a1==a2 & ref_a2==a1,flip_allele:=TRUE][,c('a1','a2','or'):=list(a2,a1,1/or)][]
 ```
 
 In this simple case the alleles were easy to align however in you dataset things will probably be different and it is worth considering using something such as annotSnpStats that has more sophisticated routines for aligning alleles. Here is some example code:
