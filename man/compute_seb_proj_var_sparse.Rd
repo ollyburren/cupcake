@@ -5,8 +5,14 @@
 \title{analytically compute the variance of a projection given a standard error of beta for a given trait for sparse basis
 \code{compute_seb_proj_var_sparse}}
 \usage{
-compute_seb_proj_var_sparse(gwas.DT, shrink.DT, w.DT, sm,
-  method = "shrinkage", quiet = FALSE)
+compute_seb_proj_var_sparse(
+  gwas.DT,
+  shrink.DT,
+  w.DT,
+  sm,
+  method = "shrinkage",
+  quiet = FALSE
+)
 }
 \arguments{
 \item{gwas.DT}{a data.table - variants and summary statistics}

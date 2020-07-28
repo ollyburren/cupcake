@@ -5,8 +5,15 @@
 \title{analytically compute the variance of a projection given a standard error of beta for a given trait
 \code{compute_seb_proj_var}}
 \usage{
-compute_seb_proj_var(gwas.DT, shrink.DT, man.DT, w.DT, ref_gt_dir,
-  method = "shrinkage", quiet = FALSE)
+compute_seb_proj_var(
+  gwas.DT,
+  shrink.DT,
+  man.DT,
+  w.DT,
+  ref_gt_dir,
+  method = "shrinkage",
+  quiet = FALSE
+)
 }
 \arguments{
 \item{gwas.DT}{a data.table - variants and summary statistics}

@@ -4,7 +4,9 @@
 \name{lyons_egpa}
 \alias{lyons_egpa}
 \title{EGPA combined GWAS summary statistics}
-\format{A data.table object of odds ratios, beta standard errors and p values.}
+\format{
+A data.table object of odds ratios, beta standard errors and p values.
+}
 \usage{
 data(lyons_egpa)
 }

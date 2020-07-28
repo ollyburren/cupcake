@@ -134,7 +134,7 @@
 <div id="snp-manifest" class="section level3">
 <h3 class="hasAnchor">
 <a href="#snp-manifest" class="anchor"></a>SNP Manifest</h3>
-<p>Each row of this file (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/support/sparse_snp_manifest.RDS) describes a non redundant (see above) set of SNPs to include in the basis. Note that for <em>de novo</em> basis creation this should represent the maximal number of SNPs for which data is available across all basis studies.</p>
+<p>Each row of this file (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/RtmpzljjHk/temp_libpath5e962e03c59/cupcake/extdata/sparse_imd_basis/support/sparse_snp_manifest.RDS) describes a non redundant (see above) set of SNPs to include in the basis. Note that for <em>de novo</em> basis creation this should represent the maximal number of SNPs for which data is available across all basis studies.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">SNP_MANIFEST_FILE</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">.</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">
@@ -189,12 +189,12 @@
 <li>ref_a1.af - The allele frequency of ref_a1 (estimated from a suitable reference population).</li>
 <li>ld.block - A number grouping a block of SNPs in high LD (see note).</li>
 </ol>
-<p>The ld.block column assigns each SNP to an approximately LD independent block. We have derived ours from HapMap recombination data and these are available in /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/hapmap.ld.tab.</p>
+<p>The ld.block column assigns each SNP to an approximately LD independent block. We have derived ours from HapMap recombination data and these are available in /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/RtmpzljjHk/temp_libpath5e962e03c59/cupcake/extdata/sparse_imd_basis/hapmap.ld.tab.</p>
 </div>
 <div id="trait-manifest" class="section level3">
 <h3 class="hasAnchor">
 <a href="#trait-manifest" class="anchor"></a>Trait Manifest</h3>
-<p>Each row of this file describes a trait (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/Rtmp3YYB4J/temp_libpath5b8b70f35407/cupcake/extdata/sparse_imd_basis/support/sparse_trait_manifest.tab) toinclude in basis creation.</p>
+<p>Each row of this file describes a trait (see /private/var/folders/zw/s4pwsm154rs7fjpf1v8jcvym0000gp/T/RtmpzljjHk/temp_libpath5e962e03c59/cupcake/extdata/sparse_imd_basis/support/sparse_trait_manifest.tab) toinclude in basis creation.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu">fread</span>(<span class="no">TRAIT_MANIFEST_FILE</span>) <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">.</span>,<span class="kw">n</span><span class="kw">=</span><span class="fl">5</span>) <span class="kw">%&gt;%</span> <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>()</pre></body></html></div>
 <table class="table">
 <thead><tr class="header">

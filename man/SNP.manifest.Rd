@@ -4,7 +4,9 @@
 \name{SNP.manifest}
 \alias{SNP.manifest}
 \title{Burren sparse basis files}
-\format{TODO}
+\format{
+TODO
+}
 \usage{
 data(burren_imd_13_traits)
 }
